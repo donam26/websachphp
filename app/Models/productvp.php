@@ -110,7 +110,7 @@ class productvp extends Model
         'is_rent_all_apartment' => 'boolean',
         'is_hot' => 'boolean',
         'is_hidden_phone' => 'boolean',
-        'expire_contract_date' => 'date'
+        'expire_contract_date'
     ];
 
     public function getStatusBadgeAttribute()
