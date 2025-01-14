@@ -7,7 +7,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">Quản lý bất động sản</h1>
         <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-1"></i>Thêm bất động sản mới
+            <i class="bi bi-plus-circle me-1"></i>Thêm sản phẩm thuê
         </a>
     </div>
 
@@ -208,24 +208,24 @@
                                 <td>{!! $product->status_badge !!}</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.products.show', $product) }}" 
-                                           class="btn btn-sm btn-info" 
+                                        <a href="{{ route('admin.products.show', $product) }}"
+                                           class="btn btn-sm btn-info"
                                            title="Chi tiết">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.products.edit', $product) }}" 
-                                           class="btn btn-sm btn-primary" 
+                                        <a href="{{ route('admin.products.edit', $product) }}"
+                                           class="btn btn-sm btn-primary"
                                            title="Sửa">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <form action="{{ route('admin.products.destroy', $product) }}" 
-                                              method="POST" 
+                                        <form action="{{ route('admin.products.destroy', $product) }}"
+                                              method="POST"
                                               class="d-inline"
                                               onsubmit="return confirm('Bạn có chắc chắn muốn xóa bất động sản này?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" 
-                                                    class="btn btn-sm btn-danger" 
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-danger"
                                                     title="Xóa">
                                                 <i class="bi bi-trash"></i>
                                             </button>
