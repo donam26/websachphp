@@ -5,7 +5,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        <h1 class="h3 mb-0 text-gray-800">Dashboardss</h1>
         <div>
             <button class="btn btn-primary" onclick="window.print()">
                 <i class="bi bi-printer"></i> In báo cáo
@@ -260,4 +260,4 @@ new Chart(orderCtx, {
 });
 </script>
 @endpush
-@endsection 
+@endsection
