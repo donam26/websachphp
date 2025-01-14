@@ -8,29 +8,29 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <style>
         :root {
-            --primary-color: #4e73df;
+            --primary-color: #191919;
             --secondary-color: #858796;
             --success-color: #1cc88a;
             --info-color: #36b9cc;
             --warning-color: #f6c23e;
             --danger-color: #e74a3b;
         }
-        
+
         body {
             background-color: #f8f9fc;
         }
-        
+
         .sidebar {
             background: linear-gradient(180deg, var(--primary-color) 10%, #224abe 100%);
             min-height: 100vh;
             transition: all 0.3s;
         }
-        
+
         .sidebar .nav-item {
             position: relative;
             margin-bottom: 5px;
         }
-        
+
         .sidebar .nav-link {
             color: rgba(255, 255, 255, 0.8);
             padding: 1rem;
@@ -38,49 +38,49 @@
             align-items: center;
             transition: all 0.3s;
         }
-        
+
         .sidebar .nav-link:hover {
             color: #fff;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 5px;
         }
-        
+
         .sidebar .nav-link i {
             margin-right: 0.75rem;
             font-size: 1.1rem;
         }
-        
+
         .sidebar .nav-link.active {
             color: #fff;
             background: rgba(255, 255, 255, 0.15);
             border-radius: 5px;
         }
-        
+
         .topbar {
             background-color: #fff;
             box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
         }
-        
+
         .topbar .dropdown-toggle::after {
             display: none;
         }
-        
+
         .card {
             border: none;
             border-radius: .35rem;
             box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
         }
-        
+
         .card-header {
             background-color: #f8f9fc;
             border-bottom: 1px solid #e3e6f0;
         }
-        
+
         .dropdown-menu {
             box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
             border: none;
         }
-        
+
         .alert {
             border: none;
             border-radius: .35rem;
@@ -94,7 +94,8 @@
             <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-4">
                     <div class="text-center mb-4">
-                        <h4 class="text-white">Book Store</h4>
+                        <h4 class="text-white"><img style ='width: 90px;  height: 90px; ' src="{{ asset('storage/images/logo.jpg') }}" ></h4>
+
                     </div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -103,13 +104,15 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.books.*') ? 'active' : '' }}" href="{{ route('admin.books.index') }}">
-                                <i class="bi bi-book"></i> Quản lý sách
+                            <a class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}" href="{{ route('admin.products.index') }}">
+                                <i class="bi bi-house"></i>
+                                <span>Sản phẩm thuê </span>
                             </a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" href="{{ route('admin.orders.index') }}">
-                                <i class="bi bi-cart"></i> Quản lý đơn hàng
+                            <a class="nav-link {{ request()->routeIs('admin.productsvp.*') ? 'active' : '' }}" href="{{ route('admin.productsvp.index') }}">
+                                <i class="bi bi-house"></i> Sản phẩm văn phòng
                             </a>
                         </li>
                         <li class="nav-item">
@@ -118,34 +121,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.categories.index') }}">
-                                <i class="bi bi-list"></i>
-                                <span>Quản lý danh mục</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.discounts.index') }}">
-                                <i class="bi bi-ticket-perforated"></i>
-                                <span>Quản lý voucher</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.employees.*') ? 'active' : '' }}" href="{{ route('admin.employees.index') }}">
                                 <i class="bi bi-person-badge"></i>
                                 <span>Quản lý nhân viên</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}" href="{{ route('admin.products.index') }}">
-                                <i class="bi bi-person-badge"></i>
-                                <span>Quản lý BDS</span>
-                            </a>
-                        </li>
-                        <li class="nav-item mt-3">
-                            <a class="nav-link" href="{{ route('home') }}" target="_blank">
-                                <i class="bi bi-shop"></i> Xem cửa hàng
-                            </a>
-                        </li>
+
+
                     </ul>
                 </div>
             </nav>
@@ -157,7 +139,7 @@
                         <button class="btn btn-link d-md-none" type="button" data-bs-toggle="collapse" data-bs-target=".sidebar">
                             <i class="bi bi-list"></i>
                         </button>
-                        
+
                         <div class="d-flex align-items-center ms-auto">
                             <div class="dropdown">
                                 <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
@@ -209,4 +191,4 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @stack('scripts')
 </body>
-</html> 
+</html>
