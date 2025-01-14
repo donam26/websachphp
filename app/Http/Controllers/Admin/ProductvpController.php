@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Productvp;
+use App\Models\productvp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -42,7 +42,7 @@ class ProductvpController extends Controller
 
     public function index(Request $request)
     {
-        $query = Productvp::query();
+        $query = productvp::query();
         $ward =  DB::select('SELECT id, name FROM ward order by id desc');
         $district =  DB::select('SELECT id, name FROM district order by id ');
         // Filter by title/name
@@ -125,94 +125,94 @@ class ProductvpController extends Controller
         return view('admin.productsvp.index',compact('products', 'types', 'formalities', 'provinces','ward','district'));
     }
 
-    // public function create()
-    // {
-    //     return view('admin.productsvp.create');
-    // }
+    public function create()
+    {
+        return view('admin.productsvp.create');
+    }
 
-    // public function store(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), $this->getValidationRules());
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), $this->getValidationRules());
 
-    //     if ($validator->fails()) {
-    //         return redirect()->back()
-    //             ->withErrors($validator)
-    //             ->withInput();
-    //     }
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-    //     try {
-    //         DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-    //         // Lấy dữ liệu từ request
-    //         $data = $request->all();
+            // Lấy dữ liệu từ request
+            $data = $request->all();
 
-    //         // Tạo sản phẩm mới
-    //         Productvp::create($data);
+            // Tạo sản phẩm mới
+            Productvp::create($data);
 
-    //         DB::commit();
-    //         return redirect()->route('admin.productsvp.index')
-    //             ->with('success', 'Thêm bất động sản thành công!');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return redirect()->back()
-    //             ->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())
-    //             ->withInput();
-    //     }
-    // }
+            DB::commit();
+            return redirect()->route('admin.productsvp.index')
+                ->with('success', 'Thêm bất động sản thành công!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
 
-    // public function show(Productvp $product)
-    // {
-    //     return view('admin.productsvp.show', compact('product'));
-    // }
+    public function show(productvp $product)
+    {
+        return view('admin.productsvp.show', compact('product'));
+    }
 
-    // public function edit(Productvp $product)
-    // {
-    //     return view('admin.productsvp.edit', compact('product'));
-    // }
+    public function edit(productvp $product)
+    {
+        return view('admin.productsvp.edit', compact('product'));
+    }
 
-    // public function update(Request $request, Productvp $Productvp)
-    // {
-    //     $validator = Validator::make($request->all(), $this->getValidationRules($Productvp->id));
+    public function update(Request $request, productvp $productvp)
+    {
+        $validator = Validator::make($request->all(), $this->getValidationRules($productvp->id));
 
-    //     if ($validator->fails()) {
-    //         return redirect()->back()
-    //             ->withErrors($validator)
-    //             ->withInput();
-    //     }
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-    //     try {
-    //         DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-    //         // Lấy dữ liệu từ request
-    //         $data = $request->all();
+            // Lấy dữ liệu từ request
+            $data = $request->all();
 
-    //         // Cập nhật sản phẩm
-    //         $Productvp->update($data);
+            // Cập nhật sản phẩm
+            $productvp->update($data);
 
-    //         DB::commit();
-    //         return redirect()->route('admin.productsvp.index')
-    //             ->with('success', 'Cập nhật thông tin bất động sản thành công!');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return redirect()->back()
-    //             ->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())
-    //             ->withInput();
-    //     }
-    // }
+            DB::commit();
+            return redirect()->route('admin.productvp.index')
+                ->with('success', 'Cập nhật thông tin bất động sản thành công!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
 
-    // public function destroy(Productvp $product)
-    // {
-    //     try {
-    //         DB::beginTransaction();
+    public function destroy(Productvp $product)
+    {
+        try {
+            DB::beginTransaction();
 
-    //         $product->delete();
+            $product->delete();
 
-    //         DB::commit();
-    //         return redirect()->route('admin.productsvp.index')
-    //             ->with('success', 'Xóa bất động sản thành công!');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return redirect()->back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
-    //     }
-    // }
+            DB::commit();
+            return redirect()->route('admin.productsvp.index')
+                ->with('success', 'Xóa bất động sản thành công!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+        }
+    }
 }
