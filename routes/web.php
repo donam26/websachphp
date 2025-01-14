@@ -18,6 +18,8 @@ use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\LocationController;
 
 // Route cho khách
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -118,4 +120,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('discounts', DiscountController::class);
 
     Route::resource('employees', EmployeeController::class);
+
+    Route::resource('products', ProductController::class);
+
+    // Routes cho địa chỉ
+    Route::get('/provinces', [LocationController::class, 'getProvinces'])->name('provinces.index');
+    Route::get('/districts/{province}', [LocationController::class, 'getDistricts'])->name('districts.index');
+    Route::get('/wards/{district}', [LocationController::class, 'getWards'])->name('wards.index');
 });

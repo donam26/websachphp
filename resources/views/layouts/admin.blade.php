@@ -135,6 +135,12 @@
                                 <span>Quản lý nhân viên</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}" href="{{ route('admin.products.index') }}">
+                                <i class="bi bi-person-badge"></i>
+                                <span>Quản lý BDS</span>
+                            </a>
+                        </li>
                         <li class="nav-item mt-3">
                             <a class="nav-link" href="{{ route('home') }}" target="_blank">
                                 <i class="bi bi-shop"></i> Xem cửa hàng
@@ -198,6 +204,7 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @stack('scripts')
