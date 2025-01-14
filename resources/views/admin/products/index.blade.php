@@ -179,74 +179,68 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Loại</th>
-                            <th>Tiêu đề</th>
-                            <th>Mô tả</th>
-                            <th>Địa chỉ</th>
-                            <th>Giá</th>
-                            <th>Diện tích</th>
-                            <th>Trạng thái</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($products as $product)
-                        <tr>
-                            <td>{{ $product->type }}</td>
-                            <td>
-                                <div class="fw-bold">{{ $product->title }}</div>
-                                <small class="text-muted">{{ $product->name }}</small>
-                            </td>
-                            <td>{{ $product->content }}</td>
-                            <td>{{ $product->full_address }}</td>
-                            <td>{{ $product->formatted_price }}</td>
-                            <td>{{ $product->formatted_area }}</td>
-
-                            <td>
-                                @if($product->close_deal_type === 'active')
-                                    <span class="badge bg-success">đang mở</span>
-                                @else
-                                    <span class="badge bg-danger">đóng</span>
-                                @endif
-                            </td>
-
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('admin.products.show', $product) }}"
-                                       class="btn btn-sm btn-info"
-                                       title="Chi tiết">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="{{ route('admin.products.edit', $product) }}"
-                                       class="btn btn-sm btn-primary"
-                                       title="Sửa">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form action="{{ route('admin.products.destroy', $product) }}"
-                                          method="POST"
-                                          class="d-inline"
-                                          onsubmit="return confirm('Bạn có chắc chắn muốn xóa bất động sản này?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                                class="btn btn-sm btn-danger"
-                                                title="Xóa">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="7" class="text-center">Không có dữ liệu</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                <div style="min-width: 1200px">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th style="min-width: 100px">Loại</th>
+                                <th style="min-width: 200px">Tiêu đề</th>
+                                <th style="min-width: 300px">Mô tả</th>
+                                <th style="min-width: 300px">Địa chỉ</th>
+                                <th style="min-width: 150px">Giá</th>
+                                <th style="min-width: 150px">Diện tích</th>
+                                <th style="min-width: 120px">Trạng thái</th>
+                                <th style="min-width: 120px">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($products as $product)
+                            <tr>
+                                <td>{{ $product->type }}</td>
+                                <td>
+                                    <div class="fw-bold">{{ $product->title }}</div>
+                                    <small class="text-muted">{{ $product->name }}</small>
+                                </td>
+                                <td>{{ Str::limit($product->content, 100) }}</td>
+                                <td>{{ $product->full_address }}</td>
+                                <td>{{ $product->formatted_price }}</td>
+                                <td>{{ $product->formatted_area }}</td>
+                                <td>{!! $product->status_badge !!}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ route('admin.products.show', $product) }}" 
+                                           class="btn btn-sm btn-info" 
+                                           title="Chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ route('admin.products.edit', $product) }}" 
+                                           class="btn btn-sm btn-primary" 
+                                           title="Sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form action="{{ route('admin.products.destroy', $product) }}" 
+                                              method="POST" 
+                                              class="d-inline"
+                                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa bất động sản này?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" 
+                                                    class="btn btn-sm btn-danger" 
+                                                    title="Xóa">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="8" class="text-center">Không có dữ liệu</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="d-flex justify-content-end mt-3">
