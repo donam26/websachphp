@@ -11,6 +11,7 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'id',
         'title',
         'content',
         'ward_id',
@@ -19,8 +20,8 @@ class Product extends Model
         'district_id',
         'district_name',
         'province_id',
-        'province_name',
-        'street',
+        // 'province_name',
+        // 'street',
         'house_number',
         'formality',
         'type',
@@ -83,7 +84,8 @@ class Product extends Model
         'source_id',
         'contact_id',
         'room_number_total',
-        'rating_stars'
+        'rating_stars',
+        'texture'
     ];
 
     protected $casts = [

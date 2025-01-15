@@ -197,6 +197,16 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-primary mb-4">Kết cấu</h5>
+                    <div class="texture">
+                        {!! nl2br(e($product->texture)) ?? 'Chưa có mô tả' !!}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-@endsection 
+@endsection

@@ -217,6 +217,7 @@
                                 <th style="min-width: 300">Ảnh</th>
                                 <th style="min-width: 150px">Loại</th>
                                 <th style="min-width: 200px">Tiêu đề</th>
+                                <th style="min-width: 200px">Kết cấu</th>
                                 {{-- <th style="min-width: 300px">Mô tả</th> --}}
                                 <th style="min-width: 100px">Ngang</th>
                                 <th style="min-width: 100px">Dài</th>
@@ -244,6 +245,7 @@
                                     <div class="fw-bold">{{ $product->title }}</div>
                                     <small class="text-muted">{{ $product->name }}</small>
                                 </td>
+                                <td> </td>
                                 {{-- <td>{{ Str::limit($product->content, 100) }}</td> --}}
                                 <td>{{ $product->width }}</td>
                                 <td>{{ $product->length }}</td>
