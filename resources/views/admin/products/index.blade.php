@@ -223,7 +223,7 @@
 
                                 <th style="min-width: 100px">Diện tích</th>
                                 <th style="min-width: 250px">Giá thuê</th>
-
+                                <th style="min-width: 120px">Trạng thái</th>
                                 {{-- <th style="min-width: 100px">Số điện thoại</th> --}}
 
                                 <th style="min-width: 150px">Quận/huyện</th>
@@ -231,7 +231,7 @@
                                 {{-- <th style="min-width: 150px">Đường</th> --}}
                                 <th style="min-width: 200px">Số nhà</th>
 
-                                <th style="min-width: 120px">Trạng thái</th>
+
                                 <th style="min-width: 120px">Thao tác</th>
                             </tr>
                         </thead>
@@ -260,11 +260,6 @@
 
                                 <td>{{ $product->formatted_area }}</td>
                                 <td>{{ number_format($product->price)}} VND</td>
-                                <td>{{ $product->district_name  }}</td>
-                                <td>{{ $product->ward_name}}</td>
-                                {{-- <td></td> --}}
-                                <td>{{ $product->house_number }}</td>
-
                                 <td>
                                     @if($product->close_deal_type === 'active')
                                         <span class="badge bg-success">đang mở</span>
@@ -272,6 +267,12 @@
                                         <span class="badge bg-danger">đóng</span>
                                     @endif
                                 </td>
+                                <td>{{ $product->district_name  }}</td>
+                                <td>{{ $product->ward_name}}</td>
+                                {{-- <td></td> --}}
+                                <td>{{ $product->house_number }}</td>
+
+
                                 <td>
                                     <div class="btn-group" role="group">
                                         <a href="{{ route('admin.products.show', $product) }}" target="_blank"

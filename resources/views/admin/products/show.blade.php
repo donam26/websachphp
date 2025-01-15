@@ -57,7 +57,27 @@
                 </div>
             </div>
         </div>
-
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-primary mb-4">Thông tin chủ nhà</h5>
+                    <table class="table table-borderless">
+                        <tr>
+                            <td width="30%"><strong>Tên chủ nhà:</strong></td>
+                            <td>{{ $product->host_name ?? 'Chưa cập nhật' }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Số điện thoại 1:</strong></td>
+                            <td>{{ $product->host_phone1 ?? 'Chưa cập nhật' }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Số điện thoại 2:</strong></td>
+                            <td>{{ $product->host_phone2 ?? 'Chưa cập nhật' }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
         <!-- Thông tin địa chỉ -->
         <div class="col-md-6 mb-4">
             <div class="card h-100">
@@ -164,27 +184,7 @@
         </div>
 
         <!-- Thông tin chủ nhà -->
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title text-primary mb-4">Thông tin chủ nhà</h5>
-                    <table class="table table-borderless">
-                        <tr>
-                            <td width="30%"><strong>Tên chủ nhà:</strong></td>
-                            <td>{{ $product->host_name ?? 'Chưa cập nhật' }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Số điện thoại 1:</strong></td>
-                            <td>{{ $product->host_phone1 ?? 'Chưa cập nhật' }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Số điện thoại 2:</strong></td>
-                            <td>{{ $product->host_phone2 ?? 'Chưa cập nhật' }}</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
+
 
         <!-- Mô tả -->
         <div class="col-md-12 mb-4">
