@@ -265,12 +265,12 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.products.show', $product) }}"
+                                        <a href="{{ route('admin.products.show', $product) }}" target="_blank"
                                            class="btn btn-sm btn-info"
                                            title="Chi tiết">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.products.edit', $product) }}"
+                                        <a href="{{ route('admin.products.edit', $product) }}" target="_blank"
                                            class="btn btn-sm btn-primary"
                                            title="Sửa">
                                             <i class="bi bi-pencil"></i>
