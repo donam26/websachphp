@@ -51,7 +51,7 @@ class ProductController extends Controller
                   ->orWhere('name', 'like', "%{$search}%");
             });
         }
-
+        $query->orderBy('updated_at', 'desc');
         // Filter by type
         if ($request->filled('type')) {
             $query->where('type', $request->type);
@@ -67,14 +67,35 @@ class ProductController extends Controller
             $query->where('status', $request->status);
         }
 
+        $search_price =  $request->input('price_from');
+        $search_price1 =  $request->input('price_to');
+        $search_p = (int)$search_price; // Ép kiểu thành số nguyên
+        $search_p1 = (int)$search_price1; // Ép kiểu thành số nguyên
+
         // Filter by price range
+        // if ($request->filled('price_from')) {
+        //     $query->where('price', '>=', $request->price_from);
+        // }
+        // if ($request->filled('price_to')) {
+        //     $query->where('price', '<=', $request->price_to);
+        // }
         if ($request->filled('price_from')) {
-            $query->where('price', '>=', $request->price_from);
+            var_dump($search_p);
+            $query->Where('price', '>', $search_p);
         }
         if ($request->filled('price_to')) {
-            $query->where('price', '<=', $request->price_to);
+       
+            $query->Where('price', '<', $search_p1);
+        }
+        if ($request->filled('is_hot')) {
+
+            $query->Where('is_hot', '=', 'true');
         }
 
+        // echo $search_price;
+        // echo $search_price1;
+
+        // Log::info('Test data:', $search_price);
         // Filter by area range
         if ($request->filled('area_from')) {
             $query->where('acreage', '>=', $request->area_from);

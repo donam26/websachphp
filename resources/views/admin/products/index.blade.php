@@ -189,6 +189,22 @@
                     </div>
 
                 </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Tính năng</label>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="is_hot"
+                                 value="1" 
+                                      >
+                                <label class="form-check-label" for="feature_elevator">
+                                    <b>BĐS hot <i class="bi bi-star" style ="color:yellow"></i> </b>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
 
                 <div class="d-flex justify-content-between">
 
