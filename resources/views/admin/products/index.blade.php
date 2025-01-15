@@ -241,8 +241,17 @@
                                 <td></td>
                                 <td>{{ $product->type }}</td>
                                 <td>
-                                    <div class="fw-bold">{{ $product->title }}</div>
-                                    <small class="text-muted">{{ $product->name }}</small>
+
+                                    <div class="fw-bold">  <a href="{{ route('admin.products.show', $product) }}"
+                                         target="_blank"
+                                        class="link-black link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                                        title="Chi tiết"
+                                        style ="text-decoration: none; color:black"
+                                        >
+                                        {{ $product->title }}
+                                     </a>
+                                     </div>
+                                    {{-- <small class="text-muted">{{ $product->name }}</small> --}}
                                 </td>
                                 <td> </td>
                                 {{-- <td>{{ Str::limit($product->content, 100) }}</td> --}}
@@ -320,3 +329,4 @@
 @endpush --}}
 
 @endsection
+
