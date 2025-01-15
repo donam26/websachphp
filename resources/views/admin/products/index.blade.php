@@ -28,7 +28,7 @@
 
                     <!-- Loại BĐS -->
                     <div class="col-md-4 mb-3">
-                        <label for="type" class="form-label">Loại BĐS</label>
+                        <label for="type" class="form-label">Loại hình</label>
                         <select class="form-select" id="type" name="type">
                             <option value="">Tất cả loại</option>
                             @foreach($types as $type)
@@ -61,7 +61,7 @@
                                name="price_from"
                                value="{{ request('price_from') }}"
                                min="0"
-                               step="1000000">
+                               step="1000">
                     </div>
 
                     <div class="col-md-3 mb-3">
@@ -72,7 +72,7 @@
                                name="price_to"
                                value="{{ request('price_to') }}"
                                min="0"
-                               step="1000000">
+                               step="10000">
                     </div>
 
                     <!-- Khoảng diện tích -->
@@ -97,77 +97,105 @@
                                min="0"
                                step="0.1">
                     </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="height_from" class="form-label">Chiều dài từ </label>
+                        <input type="number"
+                               class="form-control"
+                               id="height_from"
+                               name="height_from"
+                               value="{{ request('height_from') }}"
+                               min="0"
+                               step="0.1">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="height_to" class="form-label">Chiều dài đến</label>
+                        <input type="number"
+                               class="form-control"
+                               id="height_to"
+                               name="height_to"
+                               value="{{ request('height_to') }}"
+                               min="0"
+                               step="0.1">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="width_from" class="form-label">Chiều rộng từ </label>
+                        <input type="number"
+                               class="form-control"
+                               id="width_from"
+                               name="width_from"
+                               value="{{ request('width_from') }}"
+                               min="0"
+                               step="0.1">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="width_to" class="form-label">Chiều rộng đến</label>
+                        <input type="number"
+                               class="form-control"
+                               id="width_to"
+                               name="width_to"
+                               value="{{ request('width_to') }}"
+                               min="0"
+                               step="0.1">
+                    </div>
 
-                    <!-- Địa điểm -->
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-2 mb-3">
                         <label for="province_id" class="form-label">Tỉnh/Thành phố</label>
-                        <select class="form-select" id="province_id" name="province_id">
-                            <option value="">Chọn tỉnh/thành phố</option>
-                            @foreach($provinces as $province)
-                                <option value="{{ $province }}" {{ request('province_id') == $province ? 'selected' : '' }}>
-                                    {{ $province }}
+                        <select name="province_id" class="form-select">
+                            <option value="">Tất cả</option>
+                            @foreach($city as $city)
+                                <option value="{{ $city->id }}"
+                                        {{ request('name') == $city->id ? 'selected' : '' }}>
+                                    {{ $city->name }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Trạng thái -->
-                    <div class="col-md-4 mb-3">
-                        <label for="status" class="form-label">Trạng thái</label>
-                        <select class="form-select" id="status" name="status">
-                            <option value="">Tất cả trạng thái</option>
-                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Đang hoạt động</option>
-                            <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Ngừng hoạt động</option>
-                            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
-                            <option value="sold" {{ request('status') == 'sold' ? 'selected' : '' }}>Đã bán</option>
-                            <option value="rented" {{ request('status') == 'rented' ? 'selected' : '' }}>Đã cho thuê</option>
+                    <div class="col-md-2 mb-3">
+                        <label for="district_id" class="form-label">Quận/huyện</label>
+                        <select name="district_id" class="form-select">
+                            <option value="">Tất cả</option>
+                            @foreach($district as $district)
+                                <option value="{{ $district->id }}"
+                                        {{ request('name') == $district->id ? 'selected' : '' }}>
+                                    {{ $district->name }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
-                    <!-- Tính năng -->
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Tính năng</label>
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="features[]" value="elevator" id="feature_elevator"
-                                           {{ in_array('elevator', (array)request('features')) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="feature_elevator">
-                                        Thang máy
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="features[]" value="basement" id="feature_basement"
-                                           {{ in_array('basement', (array)request('features')) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="feature_basement">
-                                        Tầng hầm
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="features[]" value="terrace" id="feature_terrace"
-                                           {{ in_array('terrace', (array)request('features')) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="feature_terrace">
-                                        Sân thượng
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="features[]" value="corner" id="feature_corner"
-                                           {{ in_array('corner', (array)request('features')) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="feature_corner">
-                                        Nhà góc
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md-2 mb-3">
+                        <label for="ward_id" class="form-label">Phường/xã</label>
+                        <select name="ward_id" class="form-select">
+                            <option value="">Tất cả</option>
+                            @foreach($ward as $ward)
+                                <option value="{{ $ward->id }}"
+                                        {{ request('id') == $ward->id ? 'selected' : '' }}>
+                                    {{ $ward->name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="houseid" class="form-label">Số nhà có chứa</label>
+                        <input type="Text"
+                               class="form-control"
+                               id="houseid"
+                               name="houseid"
+                               value="{{ request('houseid') }}"
+                               min="0"
+                               step="0.1">
+                    </div>
+
                 </div>
 
                 <div class="d-flex justify-content-between">
+
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-search me-1"></i>Tìm kiếm
                     </button>
+
                     <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
                         <i class="bi bi-arrow-counterclockwise me-1"></i>Đặt lại
                     </a>
@@ -178,16 +206,26 @@
 
     <div class="card">
         <div class="card-body">
+
+            <b> {{ $countproduct }}</b>
             <div class="table-responsive">
                 <div style="min-width: 1200px">
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="min-width: 100px">Loại</th>
+                                <th style="min-width: 300">Ảnh</th>
+                                <th style="min-width: 150px">Loại</th>
                                 <th style="min-width: 200px">Tiêu đề</th>
                                 <th style="min-width: 300px">Mô tả</th>
-                                <th style="min-width: 300px">Địa chỉ</th>
-                                <th style="min-width: 150px">Giá</th>
+                                <th style="min-width: 100px">Sđt</th>
+                                {{-- <th style="min-width: 100px">Số điện thoại</th> --}}
+                                <th style="min-width: 100px">dài</th>
+                                <th style="min-width: 150px">Rộng</th>
+                                <th style="min-width: 200px">Giá</th>
+                                <th style="min-width: 150px">Quận/huyện</th>
+                                <th style="min-width: 150px">Phường/xã</th>
+                                {{-- <th style="min-width: 150px">Đường</th> --}}
+                                <th style="min-width: 200px">Số nhà</th>
                                 <th style="min-width: 150px">Diện tích</th>
                                 <th style="min-width: 120px">Trạng thái</th>
                                 <th style="min-width: 120px">Thao tác</th>
@@ -196,16 +234,30 @@
                         <tbody>
                             @forelse($products as $product)
                             <tr>
+                                <td></td>
                                 <td>{{ $product->type }}</td>
                                 <td>
                                     <div class="fw-bold">{{ $product->title }}</div>
                                     <small class="text-muted">{{ $product->name }}</small>
                                 </td>
                                 <td>{{ Str::limit($product->content, 100) }}</td>
-                                <td>{{ $product->full_address }}</td>
-                                <td>{{ $product->formatted_price }}</td>
+                                <td>{{ Str::limit($product->host_phone1, 100) }}</td>
+                                <td>{{ $product->length }}</td>
+                                <td>{{ $product->width }}</td>
+
+                                <td>{{ number_format($product->price)}} VND</td>
+                                <td>{{ $product->district_name  }}</td>
+                                <td>{{ $product->ward_name}}</td>
+                                {{-- <td></td> --}}
+                                <td>{{ $product->house_number }}</td>
                                 <td>{{ $product->formatted_area }}</td>
-                                <td>{!! $product->status_badge !!}</td>
+                                <td>
+                                    @if($product->close_deal_type === 'active')
+                                        <span class="badge bg-success">đang mở</span>
+                                    @else
+                                        <span class="badge bg-danger">đóng</span>
+                                    @endif
+                                </td>
                                 <td>
                                     <div class="btn-group" role="group">
                                         <a href="{{ route('admin.products.show', $product) }}"
@@ -241,9 +293,10 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="d-flex justify-content-end mt-3">
             </div>
 
-            <div class="d-flex justify-content-end mt-3">
+
                 {{ $products->links() }}
             </div>
         </div>

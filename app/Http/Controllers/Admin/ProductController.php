@@ -37,11 +37,12 @@ class ProductController extends Controller
             'status' => 'required|in:active,inactive,pending,sold,rented'
         ];
     }
-
     public function index(Request $request)
     {
         $query = Product::query();
-
+        $city =  DB::select('SELECT id, name FROM city order by id desc');
+        $ward =  DB::select('SELECT id, name FROM ward order by id desc');
+        $district =  DB::select('SELECT id, name FROM district order by id ');
         // Filter by title/name
         if ($request->filled('search')) {
             $search = $request->search;
@@ -82,19 +83,39 @@ class ProductController extends Controller
             $query->where('acreage', '<=', $request->area_to);
         }
 
+        // Filter by area range
+        if ($request->filled('height_from')) {
+            $query->where('length', '>=', $request->height_from);
+        }
+        if ($request->filled('height_to')) {
+            $query->where('length', '<=', $request->height_to);
+        }
+
+        // Filter by area range
+        if ($request->filled('width_from')) {
+            $query->where('width', '>=', $request->width_from);
+        }
+        if ($request->filled('width_to')) {
+            $query->where('width', '<=', $request->width_from);
+        }
         // Filter by location
         if ($request->filled('province_id')) {
             $query->where('province_id', $request->province_id);
-            
-            if ($request->filled('district_id')) {
-                $query->where('district_id', $request->district_id);
-                
-                if ($request->filled('ward_id')) {
-                    $query->where('ward_id', $request->ward_id);
-                }
-            }
+
+
+        }
+        if ($request->filled('district_id')) {
+            $query->where('district_id', $request->district_id);
+
+
+        }
+        if ($request->filled('houseid')) {
+            $query-> where('house_number', 'like', $request->houseid);
         }
 
+        if ($request->filled('ward_id')) {
+            $query->where('ward_id', $request->ward_id);
+        }
         // Filter by features
         if ($request->filled('features')) {
             $features = $request->features;
@@ -117,9 +138,9 @@ class ProductController extends Controller
         $formalities = Product::distinct()->pluck('formality');
         $provinces = Product::distinct()->pluck('province_id');
 
-        $products = $query->latest()->paginate(10);
-
-        return view('admin.products.index', compact('products', 'types', 'formalities', 'provinces'));
+        $products = $query->latest()->paginate(20)->appends($request->all());
+        $countproduct = $query->count();
+        return view('admin.products.index', compact('products', 'types', 'formalities', 'provinces','ward','city','district','countproduct'));
     }
 
     public function create()
@@ -139,13 +160,13 @@ class ProductController extends Controller
 
         try {
             DB::beginTransaction();
-            
+
             // Lấy dữ liệu từ request
             $data = $request->all();
-            
+
             // Tạo sản phẩm mới
             Product::create($data);
-            
+
             DB::commit();
             return redirect()->route('admin.products.index')
                 ->with('success', 'Thêm bất động sản thành công!');
@@ -179,13 +200,13 @@ class ProductController extends Controller
 
         try {
             DB::beginTransaction();
-            
+
             // Lấy dữ liệu từ request
             $data = $request->all();
-            
+
             // Cập nhật sản phẩm
             $product->update($data);
-            
+
             DB::commit();
             return redirect()->route('admin.products.index')
                 ->with('success', 'Cập nhật thông tin bất động sản thành công!');
@@ -201,9 +222,9 @@ class ProductController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             $product->delete();
-            
+
             DB::commit();
             return redirect()->route('admin.products.index')
                 ->with('success', 'Xóa bất động sản thành công!');
@@ -212,4 +233,4 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
         }
     }
-} 
+}
