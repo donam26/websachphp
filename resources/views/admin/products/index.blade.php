@@ -151,6 +151,7 @@
                         </select>
                     </div>
 
+
                     <div class="col-md-2 mb-3">
                         <label for="district_id" class="form-label">Quận/huyện</label>
                         <select name="district_id" class="form-select">
@@ -302,7 +303,7 @@
         </div>
     </div>
 </div>
-
+{{--
 @push('scripts')
 <script>
     // Auto submit form when select fields change
@@ -312,6 +313,6 @@
         });
     });
 </script>
-@endpush
+@endpush --}}
 
 @endsection
