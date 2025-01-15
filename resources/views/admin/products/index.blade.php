@@ -118,7 +118,7 @@
                                step="0.1">
                     </div>
                     <div class="col-md-3 mb-3">
-                        <label for="width_from" class="form-label">Chiều rộng từ </label>
+                        <label for="width_from" class="form-label">Chiều ngang từ </label>
                         <input type="number"
                                class="form-control"
                                id="width_from"
@@ -128,7 +128,7 @@
                                step="0.1">
                     </div>
                     <div class="col-md-3 mb-3">
-                        <label for="width_to" class="form-label">Chiều rộng đến</label>
+                        <label for="width_to" class="form-label">Chiều ngang đến</label>
                         <input type="number"
                                class="form-control"
                                id="width_to"
@@ -218,16 +218,19 @@
                                 <th style="min-width: 150px">Loại</th>
                                 <th style="min-width: 200px">Tiêu đề</th>
                                 <th style="min-width: 300px">Mô tả</th>
-                                <th style="min-width: 100px">Sđt</th>
+                                <th style="min-width: 150px">Ngang</th>
+                                <th style="min-width: 100px">Dài</th>
+
+                                <th style="min-width: 150px">Diện tích</th>
+                                <th style="min-width: 200px">Giá thuê</th>
+
                                 {{-- <th style="min-width: 100px">Số điện thoại</th> --}}
-                                <th style="min-width: 100px">dài</th>
-                                <th style="min-width: 150px">Rộng</th>
-                                <th style="min-width: 200px">Giá</th>
+
                                 <th style="min-width: 150px">Quận/huyện</th>
                                 <th style="min-width: 150px">Phường/xã</th>
                                 {{-- <th style="min-width: 150px">Đường</th> --}}
                                 <th style="min-width: 200px">Số nhà</th>
-                                <th style="min-width: 150px">Diện tích</th>
+
                                 <th style="min-width: 120px">Trạng thái</th>
                                 <th style="min-width: 120px">Thao tác</th>
                             </tr>
@@ -242,16 +245,16 @@
                                     <small class="text-muted">{{ $product->name }}</small>
                                 </td>
                                 <td>{{ Str::limit($product->content, 100) }}</td>
-                                <td>{{ Str::limit($product->host_phone1, 100) }}</td>
-                                <td>{{ $product->length }}</td>
                                 <td>{{ $product->width }}</td>
+                                <td>{{ $product->length }}</td>
 
+                                <td>{{ $product->formatted_area }}</td>
                                 <td>{{ number_format($product->price)}} VND</td>
                                 <td>{{ $product->district_name  }}</td>
                                 <td>{{ $product->ward_name}}</td>
                                 {{-- <td></td> --}}
                                 <td>{{ $product->house_number }}</td>
-                                <td>{{ $product->formatted_area }}</td>
+
                                 <td>
                                     @if($product->close_deal_type === 'active')
                                         <span class="badge bg-success">đang mở</span>
