@@ -144,13 +144,12 @@
                             <option value="">Tất cả</option>
                             @foreach($city as $city)
                                 <option value="{{ $city->id }}"
-                                        {{ request('name') == $city->id ? 'selected' : '' }}>
+                                        {{ request('province_id') == $city->id ? 'selected' : '' }}>
                                     {{ $city->name }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-
 
                     <div class="col-md-2 mb-3">
                         <label for="district_id" class="form-label">Quận/huyện</label>
@@ -158,7 +157,7 @@
                             <option value="">Tất cả</option>
                             @foreach($district as $district)
                                 <option value="{{ $district->id }}"
-                                        {{ request('name') == $district->id ? 'selected' : '' }}>
+                                        {{ request('district_id') == $district->id ? 'selected' : '' }}>
                                     {{ $district->name }}
                                 </option>
                             @endforeach
@@ -171,7 +170,7 @@
                             <option value="">Tất cả</option>
                             @foreach($ward as $ward)
                                 <option value="{{ $ward->id }}"
-                                        {{ request('id') == $ward->id ? 'selected' : '' }}>
+                                        {{ request('ward_id') == $ward->id ? 'selected' : '' }}>
                                     {{ $ward->name }}
                                 </option>
                             @endforeach
