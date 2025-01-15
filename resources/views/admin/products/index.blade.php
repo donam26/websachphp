@@ -216,12 +216,12 @@
                                 <th style="min-width: 300">Ảnh</th>
                                 <th style="min-width: 150px">Loại</th>
                                 <th style="min-width: 200px">Tiêu đề</th>
-                                <th style="min-width: 300px">Mô tả</th>
-                                <th style="min-width: 150px">Ngang</th>
+                                {{-- <th style="min-width: 300px">Mô tả</th> --}}
+                                <th style="min-width: 100px">Ngang</th>
                                 <th style="min-width: 100px">Dài</th>
 
-                                <th style="min-width: 150px">Diện tích</th>
-                                <th style="min-width: 200px">Giá thuê</th>
+                                <th style="min-width: 100px">Diện tích</th>
+                                <th style="min-width: 250px">Giá thuê</th>
 
                                 {{-- <th style="min-width: 100px">Số điện thoại</th> --}}
 
@@ -243,7 +243,7 @@
                                     <div class="fw-bold">{{ $product->title }}</div>
                                     <small class="text-muted">{{ $product->name }}</small>
                                 </td>
-                                <td>{{ Str::limit($product->content, 100) }}</td>
+                                {{-- <td>{{ Str::limit($product->content, 100) }}</td> --}}
                                 <td>{{ $product->width }}</td>
                                 <td>{{ $product->length }}</td>
 
