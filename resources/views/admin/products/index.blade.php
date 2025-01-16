@@ -195,7 +195,7 @@
                         <div class="col-6">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="is_hot"
-                                 value="1" 
+                                 value="1"
                                       >
                                 <label class="form-check-label" for="feature_elevator">
                                     <b>BĐS hot <i class="bi bi-star" style ="color:yellow"></i> </b>

@@ -131,5 +131,4 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/provinces', [LocationController::class, 'getProvinces'])->name('provinces.index');
     Route::get('/districts/{province}', [LocationController::class, 'getDistricts'])->name('districts.index');
     Route::get('/wards/{district}', [LocationController::class, 'getWards'])->name('wards.index');
-    Route::get('/filter', [CustomerController::class, 'filter'])->name('filter');
 });
