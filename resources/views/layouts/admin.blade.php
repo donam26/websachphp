@@ -7,7 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <style>
-  table {
+   .card mb-4 {
+
+    box-sizing: border-box; /* Bao gồm padding và border vào kích thước */
+    padding: 5px;         /* Thêm khoảng cách bên trong */
+    }
+    table {
       width: 100%; /* Bảng chiếm toàn bộ chiều rộng */
       border-collapse: collapse; /* Loại bỏ khoảng cách giữa các ô */
     }
