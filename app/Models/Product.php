@@ -117,6 +117,16 @@ class Product extends Model
         'expire_contract_date' => 'date'
     ];
 
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
+
+    public function files()
+    {
+        return $this->hasMany(ProductFile::class);
+    }
+
     public function getStatusBadgeAttribute()
     {
         return match($this->status) {

@@ -255,7 +255,17 @@
                         <tbody>
                             @forelse($products as $product)
                             <tr>
-                                <td></td>
+                                <td>
+                                    @if(isset($product->images) && $product->images->count() > 0)
+                                        <img src="{{ asset('storage/' . $product->images->first()->path) }}" 
+                                             alt="Ảnh sản phẩm"
+                                             style="max-width: 100px; height: auto;">
+                                    @else
+                                        <img src="{{ asset('images/no-image.jpg') }}" 
+                                             alt="Không có ảnh"
+                                             style="max-width: 100px; height: auto;">
+                                    @endif
+                                </td>
                                 <td>{{ $product->type }}</td>
                                 <td>
 

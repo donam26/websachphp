@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -34,7 +36,9 @@ class ProductController extends Controller
             'direction' => 'nullable|string',
             'host_name' => 'nullable|string',
             'host_phone1' => 'nullable|string',
-            'status' => 'required|in:active,inactive,pending,sold,rented'
+            'status' => 'required|in:active,inactive,pending,sold,rented',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'files.*' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120'
         ];
     }
     public function index(Request $request)
@@ -182,17 +186,50 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
 
-            // Lấy dữ liệu từ request
-            $data = $request->all();
+            // Lấy dữ liệu từ request và thêm các giá trị mặc định
+            $data = array_merge($request->all(), [
+                'status' => $request->status ?? 'pending',
+                'is_hot' => $request->has('is_hot'),
+                'show_in_web' => true,
+            ]);
 
             // Tạo sản phẩm mới
-            Product::create($data);
+            $product = Product::create($data);
+
+            // Xử lý upload ảnh
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $path = $image->store('products/images', 'public');
+                    $product->images()->create([
+                        'path' => $path,
+                        'is_primary' => false
+                    ]);
+                }
+                // Đặt ảnh đầu tiên làm ảnh chính
+                if ($firstImage = $product->images()->first()) {
+                    $firstImage->update(['is_primary' => true]);
+                }
+            }
+
+            // Xử lý upload file
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    $path = $file->store('products/files', 'public');
+                    $product->files()->create([
+                        'name' => $file->getClientOriginalName(),
+                        'path' => $path,
+                        'type' => $file->getClientMimeType(),
+                        'size' => $file->getSize()
+                    ]);
+                }
+            }
 
             DB::commit();
             return redirect()->route('admin.products.index')
                 ->with('success', 'Thêm bất động sản thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Lỗi khi tạo sản phẩm: ' . $e->getMessage());
             return redirect()->back()
                 ->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())
                 ->withInput();
@@ -228,6 +265,46 @@ class ProductController extends Controller
             // Cập nhật sản phẩm
             $product->update($data);
 
+            // Xử lý upload ảnh mới
+            if ($request->hasFile('images')) {
+                // Xóa ảnh cũ
+                foreach ($product->images as $image) {
+                    Storage::disk('public')->delete($image->path);
+                }
+                $product->images()->delete();
+
+                // Upload ảnh mới
+                foreach ($request->file('images') as $image) {
+                    $path = $image->store('products/images', 'public');
+                    $product->images()->create([
+                        'path' => $path,
+                        'is_primary' => false
+                    ]);
+                }
+                // Đặt ảnh đầu tiên làm ảnh chính
+                $product->images()->first()->update(['is_primary' => true]);
+            }
+
+            // Xử lý upload file mới
+            if ($request->hasFile('files')) {
+                // Xóa file cũ
+                foreach ($product->files as $file) {
+                    Storage::disk('public')->delete($file->path);
+                }
+                $product->files()->delete();
+
+                // Upload file mới
+                foreach ($request->file('files') as $file) {
+                    $path = $file->store('products/files', 'public');
+                    $product->files()->create([
+                        'name' => $file->getClientOriginalName(),
+                        'path' => $path,
+                        'type' => $file->getClientMimeType(),
+                        'size' => $file->getSize()
+                    ]);
+                }
+            }
+
             DB::commit();
             return redirect()->route('admin.products.index')
                 ->with('success', 'Cập nhật thông tin bất động sản thành công!');
@@ -244,6 +321,17 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
 
+            // Xóa ảnh
+            foreach ($product->images as $image) {
+                Storage::disk('public')->delete($image->path);
+            }
+
+            // Xóa file
+            foreach ($product->files as $file) {
+                Storage::disk('public')->delete($file->path);
+            }
+
+            // Xóa sản phẩm (các bản ghi trong bảng product_images và product_files sẽ tự động bị xóa do có onDelete('cascade'))
             $product->delete();
 
             DB::commit();
@@ -251,7 +339,8 @@ class ProductController extends Controller
                 ->with('success', 'Xóa bất động sản thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
         }
     }
 }
