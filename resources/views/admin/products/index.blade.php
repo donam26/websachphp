@@ -232,14 +232,15 @@
                                 <th style="min-width: 300">Ảnh</th>
                                 <th style="min-width: 150px">Loại</th>
                                 <th style="min-width: 200px">Tiêu đề</th>
-                                <th style="min-width: 200px">Kết cấu</th>
+                                <th style="min-width: 120px">Trạng thái</th>
+
                                 {{-- <th style="min-width: 300px">Mô tả</th> --}}
                                 <th style="min-width: 100px">Ngang</th>
                                 <th style="min-width: 100px">Dài</th>
 
                                 <th style="min-width: 100px">Diện tích</th>
                                 <th style="min-width: 250px">Giá thuê</th>
-                                <th style="min-width: 120px">Trạng thái</th>
+                                <th style="min-width: 200px">Kết cấu</th>
                                 {{-- <th style="min-width: 100px">Số điện thoại</th> --}}
 
                                 <th style="min-width: 150px">Quận/huyện</th>
@@ -258,7 +259,7 @@
                                 <td>{{ $product->type }}</td>
                                 <td>
 
-                                    <div class="fw-bold">  <a href="{{ route('admin.products.show', $product) }}"
+                                    <div class="fw-bold">  <a href="{{ route('admin.products.show', $product->id) }}"
                                          target="_blank"
                                         class="link-black link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                                         title="Chi tiết"
@@ -269,13 +270,6 @@
                                      </div>
                                     {{-- <small class="text-muted">{{ $product->name }}</small> --}}
                                 </td>
-                                <td> </td>
-                                {{-- <td>{{ Str::limit($product->content, 100) }}</td> --}}
-                                <td>{{ $product->width }}</td>
-                                <td>{{ $product->length }}</td>
-
-                                <td>{{ $product->formatted_area }}</td>
-                                <td>{{ number_format($product->price)}} VND</td>
                                 <td>
                                     @if($product->close_deal_type === 'active')
                                         <span class="badge bg-success">đang mở</span>
@@ -283,6 +277,14 @@
                                         <span class="badge bg-danger">đóng</span>
                                     @endif
                                 </td>
+
+                                {{-- <td>{{ Str::limit($product->content, 100) }}</td> --}}
+                                <td>{{ $product->width }}</td>
+                                <td>{{ $product->length }}</td>
+
+                                <td>{{ $product->formatted_area }}</td>
+                                <td>{{ number_format($product->price)}} VND</td>
+                                <td> </td>
                                 <td>{{ $product->district_name  }}</td>
                                 <td>{{ $product->ward_name}}</td>
                                 {{-- <td></td> --}}
@@ -291,17 +293,17 @@
 
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.products.show', $product) }}" target="_blank"
+                                        <a href="{{ route('admin.products.show', $product->id) }}" target="_blank"
                                            class="btn btn-sm btn-info"
                                            title="Chi tiết">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.products.edit', $product) }}" target="_blank"
+                                        <a href="{{ route('admin.products.edit', $product->id) }}" target="_blank"
                                            class="btn btn-sm btn-primary"
                                            title="Sửa">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <form action="{{ route('admin.products.destroy', $product) }}"
+                                        <form action="{{ route('admin.products.destroy', $product->id) }}"
                                               method="POST"
                                               class="d-inline"
                                               onsubmit="return confirm('Bạn có chắc chắn muốn xóa bất động sản này?')">
