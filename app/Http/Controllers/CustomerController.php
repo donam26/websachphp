@@ -231,8 +231,8 @@ class CustomerController extends Controller
         $width = $customer->width;
         $query = Product::query();
         $query->where('price', '<=', $price)
-                 ->Where('width', '<=', $width)
-                 ->Where('length', '<=', $length)
+                //  ->Where('width', '<=', $width)
+                //  ->Where('length', '<=', $length)
                  ;
 
         // echo $query->toSql();
