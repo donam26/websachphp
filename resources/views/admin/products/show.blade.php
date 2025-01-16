@@ -207,6 +207,72 @@
                 </div>
             </div>
         </div>
+
+        <!-- Hình ảnh -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-primary mb-4">Hình ảnh</h5>
+                    <div class="row">
+                        @forelse($product->images as $image)
+                            <div class="col-md-3 mb-3">
+                                <img src="{{ asset('storage/' . $image->path) }}" 
+                                     alt="Ảnh sản phẩm"
+                                     class="img-fluid rounded">
+                                @if($image->is_primary)
+                                    <span class="badge bg-primary mt-2">Ảnh chính</span>
+                                @endif
+                            </div>
+                        @empty
+                            <div class="col-12">
+                                <p class="text-muted">Chưa có ảnh</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tài liệu đính kèm -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-primary mb-4">Tài liệu đính kèm</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tên file</th>
+                                    <th>Loại</th>
+                                    <th>Kích thước</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($product->files as $file)
+                                    <tr>
+                                        <td>{{ $file->name }}</td>
+                                        <td>{{ $file->type }}</td>
+                                        <td>{{ number_format($file->size / 1024, 2) }} KB</td>
+                                        <td>
+                                            <a href="{{ asset('storage/' . $file->path) }}" 
+                                               class="btn btn-sm btn-primary"
+                                               target="_blank">
+                                                <i class="bi bi-download"></i> Tải xuống
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center">Chưa có tài liệu đính kèm</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
