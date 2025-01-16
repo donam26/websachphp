@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\ProductvpController;
+use App\Http\Controllers\CustomerController;
 
 // Route cho khách
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -124,9 +125,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::resource('products', ProductController::class);
     Route::resource('productsvp', ProductvpController::class);
+    Route::resource('customer', CustomerController::class);
 
     // Routes cho địa chỉ
     Route::get('/provinces', [LocationController::class, 'getProvinces'])->name('provinces.index');
     Route::get('/districts/{province}', [LocationController::class, 'getDistricts'])->name('districts.index');
     Route::get('/wards/{district}', [LocationController::class, 'getWards'])->name('wards.index');
+    Route::get('/filter', [CustomerController::class, 'filter'])->name('filter');
 });

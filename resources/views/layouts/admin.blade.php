@@ -7,6 +7,46 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <style>
+  table {
+      width: 100%; /* Bảng chiếm toàn bộ chiều rộng */
+      border-collapse: collapse; /* Loại bỏ khoảng cách giữa các ô */
+    }
+
+    th, td {
+      border: 1px solid #ddd; /* Viền cho các ô */
+      padding: 8px; /* Khoảng cách bên trong ô */
+      text-align: left; /* Căn lề trái */
+    }
+
+    /* Responsive: Chuyển bảng thành dạng dọc khi màn hình nhỏ hơn 600px */
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block; /* Chuyển đổi thành khối */
+      }
+
+      thead tr {
+        display: none; /* Ẩn phần tiêu đề của bảng */
+      }
+
+      tr {
+        margin-bottom: 15px; /* Khoảng cách giữa các hàng */
+      }
+
+      td {
+        position: relative; /* Để hiển thị tiêu đề cột */
+        padding-left: 50%; /* Chừa chỗ cho tiêu đề cột */
+      }
+
+      td::before {
+        content: attr(data-label); /* Lấy tiêu đề từ thuộc tính data-label */
+        position: absolute;
+        left: 10px; /* Căn lề trái */
+        top: 50%;
+        transform: translateY(-50%); /* Căn giữa theo chiều dọc */
+        font-weight: bold; /* In đậm tiêu đề */
+      }
+    }
+
         :root {
             --primary-color: #191919;
             --secondary-color: #858796;
@@ -115,15 +155,16 @@
                                 <i class="bi bi-house"></i> Sản phẩm văn phòng
                             </a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
                                 <i class="bi bi-people"></i> Quản lý người dùng
                             </a>
-                        </li>
+                        </li> --}}
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.employees.*') ? 'active' : '' }}" href="{{ route('admin.employees.index') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.customer.*') ? 'active' : '' }}"
+                                href="{{ route('admin.customer.index') }}">
                                 <i class="bi bi-person-badge"></i>
-                                <span>Quản lý nhân viên</span>
+                                <span>Khách hàng</span>
                             </a>
                         </li>
 
@@ -189,6 +230,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     @stack('scripts')
 </body>
 </html>
