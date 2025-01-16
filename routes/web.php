@@ -24,7 +24,6 @@ use App\Http\Controllers\Admin\ProductvpController;
 use App\Http\Controllers\CustomerController;
 
 // Route cho khách
-Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Route xác thực
 Route::middleware('guest')->group(function () {
@@ -45,32 +44,9 @@ Route::prefix('books')->group(function () {
 
 // Route cho user đã đăng nhập
 Route::middleware('auth')->group(function () {
-    // Quản lý giỏ hàng
-    Route::prefix('cart')->group(function () {
-        Route::get('/', [CartController::class, 'index'])->name('cart.index');
-        Route::post('/add', [CartController::class, 'add'])->name('cart.add');
-        Route::put('/{cartItem}', [CartController::class, 'update'])->name('cart.update');
-        Route::delete('/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
-        Route::delete('/', [CartController::class, 'clear'])->name('cart.clear');
-    });
 
-    // Áp dụng mã giảm giá
-    Route::post('/discounts/apply', [App\Http\Controllers\DiscountController::class, 'apply'])->name('discounts.apply');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
-    // Thanh toán
-    Route::post('/checkout', [CheckoutController::class, 'store'])->name('orders.checkout');
-
-    // Quản lý đơn hàng
-    Route::prefix('orders')->group(function () {
-        Route::get('/', [OrderController::class, 'index'])->name('orders.index');
-        Route::get('/{order}', [OrderController::class, 'show'])->name('orders.show');
-    });
-
-    // Thanh toán VNPay
-    Route::prefix('vnpay')->group(function () {
-        Route::get('/create-payment/{order}', [VNPayController::class, 'createPayment'])->name('vnpay.create');
-        Route::get('/return', [VNPayController::class, 'return'])->name('vnpay.return');
-    });
 
     // Thông tin cá nhân
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
@@ -124,6 +100,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('employees', EmployeeController::class);
 
     Route::resource('products', ProductController::class);
+    Route::delete('products/images/{image}', [ProductController::class, 'deleteImage'])->name('products.deleteImage');
     Route::resource('productsvp', ProductvpController::class);
     Route::resource('customer', CustomerController::class);
 
@@ -132,3 +109,5 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/districts/{province}', [LocationController::class, 'getDistricts'])->name('districts.index');
     Route::get('/wards/{district}', [LocationController::class, 'getWards'])->name('wards.index');
 });
+
+Route::get('/products/{id}', [App\Http\Controllers\HomeController::class, 'show'])->name('products.show');

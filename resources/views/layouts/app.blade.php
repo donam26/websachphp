@@ -185,14 +185,7 @@
                         </a>
                     </li>
                     @else
-                    <li class="nav-item">
-                        <a class="nav-link cart-link" href="{{ route('cart.index') }}">
-                            <i class="bi bi-cart3"></i> Giỏ hàng
-                            @if(Auth::user()->cart->count() > 0)
-                            <span class="badge bg-danger">{{ Auth::user()->cart->count() }}</span>
-                            @endif
-                        </a>
-                    </li>
+                  
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle"></i> {{ Auth::user()->username }}
@@ -206,13 +199,8 @@
                             <li><a class="dropdown-item" href="{{ route('profile') }}">
                                     <i class="bi bi-person"></i> Thông tin cá nhân
                                 </a></li>
-                            <li><a class="dropdown-item" href="{{ route('orders.index') }}">
-                                    <i class="bi bi-bag"></i> Đơn hàng của tôi
-                                </a></li>
-                            <li><a class="dropdown-item" href="#">
-                                    <i class="bi bi-heart"></i> Sách yêu thích
-                                </a></li>
-                            <li>
+                          
+                          
                                 <hr class="dropdown-divider">
                             </li>
                             <li>

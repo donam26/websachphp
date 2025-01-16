@@ -259,21 +259,11 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
 
-            // Lấy dữ liệu từ request
-            $data = $request->all();
+            // Cập nhật thông tin sản phẩm
+            $product->update($request->all());
 
-            // Cập nhật sản phẩm
-            $product->update($data);
-
-            // Xử lý upload ảnh mới
+            // Xử lý upload ảnh mới nếu có
             if ($request->hasFile('images')) {
-                // Xóa ảnh cũ
-                foreach ($product->images as $image) {
-                    Storage::disk('public')->delete($image->path);
-                }
-                $product->images()->delete();
-
-                // Upload ảnh mới
                 foreach ($request->file('images') as $image) {
                     $path = $image->store('products/images', 'public');
                     $product->images()->create([
@@ -281,19 +271,14 @@ class ProductController extends Controller
                         'is_primary' => false
                     ]);
                 }
-                // Đặt ảnh đầu tiên làm ảnh chính
-                $product->images()->first()->update(['is_primary' => true]);
+                // Nếu chưa có ảnh chính, đặt ảnh đầu tiên làm ảnh chính
+                if (!$product->images()->where('is_primary', true)->exists()) {
+                    $product->images()->first()->update(['is_primary' => true]);
+                }
             }
 
-            // Xử lý upload file mới
+            // Xử lý upload file mới nếu có
             if ($request->hasFile('files')) {
-                // Xóa file cũ
-                foreach ($product->files as $file) {
-                    Storage::disk('public')->delete($file->path);
-                }
-                $product->files()->delete();
-
-                // Upload file mới
                 foreach ($request->file('files') as $file) {
                     $path = $file->store('products/files', 'public');
                     $product->files()->create([
@@ -313,6 +298,33 @@ class ProductController extends Controller
             return redirect()->back()
                 ->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())
                 ->withInput();
+        }
+    }
+
+    public function deleteImage($imageId)
+    {
+        try {
+            DB::beginTransaction();
+
+            $image = \App\Models\ProductImage::findOrFail($imageId);
+            $product = $image->product;
+
+            // Xóa file ảnh
+            Storage::disk('public')->delete($image->path);
+
+            // Xóa record trong database
+            $image->delete();
+
+            // Nếu ảnh bị xóa là ảnh chính và còn ảnh khác, đặt ảnh đầu tiên làm ảnh chính
+            if ($image->is_primary && $product->images()->exists()) {
+                $product->images()->first()->update(['is_primary' => true]);
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Xóa ảnh thành công!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi xóa ảnh: ' . $e->getMessage());
         }
     }
 

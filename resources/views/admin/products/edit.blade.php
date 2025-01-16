@@ -135,12 +135,24 @@
                             <div class="row">
                                 @forelse($product->images as $image)
                                     <div class="col-md-2 mb-2">
-                                        <img src="{{ asset('storage/' . $image->path) }}" 
-                                             alt="Ảnh sản phẩm"
-                                             class="img-fluid rounded">
-                                        @if($image->is_primary)
-                                            <span class="badge bg-primary mt-1">Ảnh chính</span>
-                                        @endif
+                                        <div class="position-relative">
+                                            <img src="{{ asset('storage/' . $image->path) }}" 
+                                                 alt="Ảnh sản phẩm"
+                                                 class="img-fluid rounded">
+                                            @if($image->is_primary)
+                                                <span class="badge bg-primary mt-1">Ảnh chính</span>
+                                            @endif
+                                            <form action="{{ route('admin.products.deleteImage', $image->id) }}" 
+                                                  method="POST" 
+                                                  class="mt-1"
+                                                  onsubmit="return confirm('Bạn có chắc chắn muốn xóa ảnh này?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-trash"></i> Xóa
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 @empty
                                     <div class="col-12">
