@@ -186,8 +186,12 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
 
+            // Tạo mã code tự động
+            $code = 'BDS' . date('ymd') . str_pad(Product::count() + 1, 4, '0', STR_PAD_LEFT);
+
             // Lấy dữ liệu từ request và thêm các giá trị mặc định
             $data = array_merge($request->all(), [
+                'code' => $code,
                 'status' => $request->status ?? 'pending',
                 'is_hot' => $request->has('is_hot'),
                 'show_in_web' => true,
@@ -229,7 +233,7 @@ class ProductController extends Controller
                 ->with('success', 'Thêm bất động sản thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Lỗi khi tạo sản phẩm: ' . $e->getMessage());
+            Log::error('Lỗi khi tạo sản phẩm: ' . $e->getMessage());
             return redirect()->back()
                 ->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())
                 ->withInput();

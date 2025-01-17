@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->unique(); // Mã sản phẩm unique
             $table->string('title')->nullable();
             $table->text('content')->nullable();
             $table->string('ward_id')->nullable();
