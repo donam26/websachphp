@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <style>
-  
+
   table {
       width: 100%; /* Bảng chiếm toàn bộ chiều rộng */
       border-collapse: collapse; /* Loại bỏ khoảng cách giữa các ô */
@@ -151,11 +151,11 @@
                             </a>
                         </li>
 
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.productsvp.*') ? 'active' : '' }}" href="{{ route('admin.productsvp.index') }}">
                                 <i class="bi bi-house"></i> Sản phẩm văn phòng
                             </a>
-                        </li>
+                        </li> --}}
                         {{-- <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
                                 <i class="bi bi-people"></i> Quản lý người dùng

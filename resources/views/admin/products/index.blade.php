@@ -26,14 +26,18 @@
                                value="{{ request('search') }}">
                     </div>
 
-                    <!-- Loại BĐS -->
                     <div class="col-md-4 mb-3">
-                        <label for="type" class="form-label">Loại hình</label>
-                        <select class="form-select" id="type" name="type">
-                            <option value="">Tất cả loại</option>
-                            @foreach($types as $type)
-                                <option value="{{ $type }}" {{ request('type') == $type ? 'selected' : '' }}>
-                                    {{ $type }}
+                        <label for="status" class="form-label">Trạng thái</label>
+                        <select name="status" class="form-select">
+                            <option value="">Tất cả</option>
+                            @foreach($status as $status)
+                                <option value="{{ $status->status }}"
+                                        {{ request('status') == $status->status ? 'selected' : '' }}>
+                                        @if($status->status === 'active')
+                                        <span class="badge bg-success">đang mở</span>
+                                    @else
+                                        <span class="badge bg-danger">đóng</span>
+                                    @endif
                                 </option>
                             @endforeach
                         </select>
@@ -190,7 +194,7 @@
 
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">Tính năng</label>
+                    <label class="form-label">Loại bất động sản</label>
                     <div class="row">
                         <div class="col-6">
                             <div class="form-check">
@@ -198,7 +202,15 @@
                                  value="1"
                                       >
                                 <label class="form-check-label" for="feature_elevator">
-                                    <b>BĐS hot <i class="bi bi-star" style ="color:yellow"></i> </b>
+                                    <b>BĐS hot <i class="bi bi-star" style ="color:rgb(255, 0, 0)"></i> </b>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="type_input"
+                                 value="vp"
+                                      >
+                                <label class="form-check-label" for="feature_elevator">
+                                    <b>sản phẩm văn phòng <i class="bi bi-star" style ="color:rgb(0, 38, 255)"></i> </b>
                                 </label>
                             </div>
                         </div>
@@ -257,18 +269,18 @@
                             <tr>
                                 <td>
                                     @if(isset($product->images) && $product->images->count() > 0)
-                                        <img src="{{ asset('storage/' . $product->images->first()->path) }}" 
+                                        <img src="{{ asset('storage/' . $product->images->first()->path) }}"
                                              alt="Ảnh sản phẩm"
                                              style="max-width: 100px; height: auto;">
                                     @else
-                                        <img src="{{ asset('images/no-image.jpg') }}" 
+                                        <img src="{{ asset('images/no-image.jpg') }}"
                                              alt="Không có ảnh"
                                              style="max-width: 100px; height: auto;">
                                     @endif
                                 </td>
                                 <td>{{ $product->type }}</td>
                                 <td>
-                                    <div class="fw-bold">  
+                                    <div class="fw-bold">
                                         <a href="{{ route('admin.products.show', $product->code) }}"
                                            target="_blank"
                                            class="link-black link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
@@ -279,7 +291,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    @if($product->close_deal_type === 'active')
+                                    @if($product->status === 'active')
                                         <span class="badge bg-success">đang mở</span>
                                     @else
                                         <span class="badge bg-danger">đóng</span>
@@ -290,9 +302,9 @@
                                 <td>{{ $product->width }}</td>
                                 <td>{{ $product->length }}</td>
 
-                                <td>{{ $product->formatted_area }}</td>
+                                <td>{{ $product->acreage }}</td>
                                 <td>{{ number_format($product->price)}} VND</td>
-                                <td> </td>
+                                <td> {{ $product->texture }}</td>
                                 <td>{{ $product->district_name  }}</td>
                                 <td>{{ $product->ward_name}}</td>
                                 {{-- <td></td> --}}
@@ -301,13 +313,13 @@
 
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.products.show', $product->code) }}" 
+                                        <a href="{{ route('admin.products.show', $product->code) }}"
                                            target="_blank"
                                            class="btn btn-sm btn-info"
                                            title="Chi tiết">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.products.edit', $product->code) }}" 
+                                        <a href="{{ route('admin.products.edit', $product->code) }}"
                                            target="_blank"
                                            class="btn btn-sm btn-primary"
                                            title="Sửa">

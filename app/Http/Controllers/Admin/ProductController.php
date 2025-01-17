@@ -37,7 +37,8 @@ class ProductController extends Controller
             'host_phone1' => 'nullable|string',
             'status' => 'required|in:active,inactive,pending,sold,rented',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'files.*' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120'
+            'files.*' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120',
+            'texture' => 'nullable|string'
         ];
     }
     public function index(Request $request)
@@ -46,6 +47,8 @@ class ProductController extends Controller
         $city =  DB::select('SELECT id, name FROM city order by id desc');
         $ward =  DB::select('SELECT id, name FROM ward order by id desc');
         $district =  DB::select('SELECT id, name FROM district order by id ');
+        $status =  DB::select('SELECT distinct status FROM Products  ');
+
         // Filter by title/name
         if ($request->filled('search')) {
             $search = $request->search;
@@ -54,7 +57,7 @@ class ProductController extends Controller
                   ->orWhere('name', 'like', "%{$search}%");
             });
         }
-        $query->orderBy('updated_at', 'desc');
+        $query->orderBy('updated_at', 'desc','type','desc',);
         // Filter by type
         if ($request->filled('type')) {
             $query->where('type', $request->type);
@@ -87,7 +90,7 @@ class ProductController extends Controller
             $query->Where('price', '>', $search_p);
         }
         if ($request->filled('price_to')) {
-       
+
             $query->Where('price', '<', $search_p1);
         }
         if ($request->filled('is_hot')) {
@@ -140,6 +143,13 @@ class ProductController extends Controller
         if ($request->filled('ward_id')) {
             $query->where('ward_id', $request->ward_id);
         }
+        if ($request->filled('type_input')) {
+
+            $query->Where('type', '=', 'văn phòng');
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
         // Filter by features
         if ($request->filled('features')) {
             $features = $request->features;
@@ -164,7 +174,7 @@ class ProductController extends Controller
 
         $products = $query->latest()->paginate(20)->appends($request->all());
         $countproduct = $query->count();
-        return view('admin.products.index', compact('products', 'types', 'formalities', 'provinces','ward','city','district','countproduct'));
+        return view('admin.products.index', compact('products', 'types', 'formalities', 'provinces','ward','city','district','countproduct','status'));
     }
 
     public function create()
@@ -187,7 +197,7 @@ class ProductController extends Controller
 
             // Lấy dữ liệu từ request và thêm các giá trị mặc định
             $data = array_merge($request->all(), [
-                'status' => $request->status ?? 'pending',
+                // 'status' => $request->status ?? 'pending',
                 'is_hot' => $request->has('is_hot'),
                 'show_in_web' => true,
             ]);
@@ -268,7 +278,7 @@ class ProductController extends Controller
                 'is_hot' => $request->has('is_hot'),
                 'show_in_web' => $request->has('show_in_web'),
             ]);
-            
+
             $product->update($data);
 
             // Xử lý upload ảnh mới nếu có
@@ -342,7 +352,7 @@ class ProductController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             $product = Product::where('code', $code)->firstOrFail();
 
             // Xóa ảnh

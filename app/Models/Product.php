@@ -33,7 +33,8 @@ class Product extends Model
         'host_phone2',
         'status',
         'is_hot',
-        'show_in_web'
+        'show_in_web',
+        'texture'
     ];
 
     protected $casts = [

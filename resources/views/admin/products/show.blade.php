@@ -41,7 +41,13 @@
                         </tr>
                         <tr>
                             <td><strong>Trạng thái:</strong></td>
-                            <td>{!! $product->status_badge !!}</td>
+                            <td>
+                                @if($product->status == 'active')
+                                    <span class="badge bg-success">Đang mở</span>
+                                @else
+                                    <span class="badge bg-dange">Đóng</span>
+                                @endif
+                            </td>
                         </tr>
                         <tr>
                             <td><strong>Tin nổi bật:</strong></td>
@@ -90,15 +96,15 @@
                         </tr>
                         <tr>
                             <td><strong>Tỉnh/Thành phố:</strong></td>
-                            <td>{{ $product->province_id }}</td>
+                            <td>{{ $product->province_name }}</td>
                         </tr>
                         <tr>
                             <td><strong>Quận/Huyện:</strong></td>
-                            <td>{{ $product->district_id }}</td>
+                            <td>{{ $product->district_name }}</td>
                         </tr>
                         <tr>
                             <td><strong>Phường/Xã:</strong></td>
-                            <td>{{ $product->ward_id }}</td>
+                            <td>{{ $product->ward_name }}</td>
                         </tr>
                         <tr>
                             <td><strong>Đường/Phố:</strong></td>
@@ -121,11 +127,11 @@
                     <table class="table table-borderless">
                         <tr>
                             <td width="30%"><strong>Giá:</strong></td>
-                            <td>{{ $product->formatted_price }}</td>
+                            <td>{{ $product->price }}</td>
                         </tr>
                         <tr>
                             <td><strong>Diện tích:</strong></td>
-                            <td>{{ $product->formatted_area }}</td>
+                            <td>{{ $product->acreage }}</td>
                         </tr>
                         <tr>
                             <td><strong>Chiều rộng:</strong></td>
@@ -216,7 +222,7 @@
                     <div class="row">
                         @forelse($product->images as $image)
                             <div class="col-md-3 mb-3">
-                                <img src="{{ asset('storage/' . $image->path) }}" 
+                                <img src="{{ asset('storage/' . $image->path) }}"
                                      alt="Ảnh sản phẩm"
                                      class="img-fluid rounded">
                                 @if($image->is_primary)
@@ -255,7 +261,7 @@
                                         <td>{{ $file->type }}</td>
                                         <td>{{ number_format($file->size / 1024, 2) }} KB</td>
                                         <td>
-                                            <a href="{{ asset('storage/' . $file->path) }}" 
+                                            <a href="{{ asset('storage/' . $file->path) }}"
                                                class="btn btn-sm btn-primary"
                                                target="_blank">
                                                 <i class="bi bi-download"></i> Tải xuống

@@ -35,20 +35,16 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="status" class="form-label">Trạng thái <span class="text-danger">*</span></label>
-                            <select class="form-select @error('status') is-invalid @enderror"
+                            <label for="status" class="form-label">Trạng thái <span class="text-danger"></span></label>
+                            <select class="form-select"
                                 id="status"
                                 name="status"
                                 required>
-                                <option value="active" {{ old('status', $product->status) == 'active' ? 'selected' : '' }}>Đang hoạt động</option>
-                                <option value="inactive" {{ old('status', $product->status) == 'inactive' ? 'selected' : '' }}>Ngừng hoạt động</option>
-                                <option value="pending" {{ old('status', $product->status) == 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
-                                <option value="sold" {{ old('status', $product->status) == 'sold' ? 'selected' : '' }}>Đã bán</option>
-                                <option value="rented" {{ old('status', $product->status) == 'rented' ? 'selected' : '' }}>Đã cho thuê</option>
+                                <option value="active" {{ old('status', $product->status) == 'active' ? 'selected' : '' }}>Đang mở</option>
+                                <option value="close" {{ old('status', $product->status) == 'close' ? 'selected' : '' }}>Đóng</option>
+
                             </select>
-                            @error('status')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -123,6 +119,16 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="texture" class="form-label">Kết cấu</label>
+                            <textarea class="form-control @error('texture') is-invalid @enderror"
+                                id="texture"
+                                name="texture"
+                                rows="4">{{ old('texture', $product->texture) }}</textarea>
+                            @error('texture')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                 </div>
 
@@ -142,8 +148,8 @@
                                         @if($image->is_primary)
                                         <span class="badge bg-primary mt-1">Ảnh chính</span>
                                         @endif
-                                        <a href="javascript:void(0)" 
-                                           onclick="if(confirm('Bạn có chắc chắn muốn xóa ảnh này?')) { 
+                                        <a href="javascript:void(0)"
+                                           onclick="if(confirm('Bạn có chắc chắn muốn xóa ảnh này?')) {
                                                document.getElementById('delete-image-' + {{ $image->id }}).submit();
                                            }"
                                            class="btn btn-danger btn-sm mt-1">
@@ -414,9 +420,9 @@
 </div>
 
 @foreach($product->images as $image)
-<form id="delete-image-{{ $image->id }}" 
-      action="{{ route('admin.products.deleteImage', $image->id) }}" 
-      method="POST" 
+<form id="delete-image-{{ $image->id }}"
+      action="{{ route('admin.products.deleteImage', $image->id) }}"
+      method="POST"
       style="display: none;">
     @csrf
     @method('DELETE')
