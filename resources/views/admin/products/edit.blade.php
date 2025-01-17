@@ -13,7 +13,10 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('admin.products.update', $product->code) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.products.update', $product->code) }}" 
+                  method="POST" 
+                  enctype="multipart/form-data"
+                  id="editProductForm">
                 @csrf
                 @method('PUT')
 
@@ -407,7 +410,7 @@
 
                 <!-- Nút submit -->
                 <div class="mt-4">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" onclick="return confirm('Bạn có chắc chắn muốn lưu thay đổi?')">
                         <i class="bi bi-save me-1"></i>Lưu thay đổi
                     </button>
                 </div>
@@ -415,4 +418,12 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.getElementById('editProductForm').addEventListener('submit', function(e) {
+    console.log('Form submitted');
+});
+</script>
+@endpush
 @endsection

@@ -249,10 +249,14 @@ class ProductController extends Controller
 
     public function update(Request $request, $code)
     {
+        Log::info('Update method called with code: ' . $code);
+        Log::info('Request data: ', $request->all());
+
         $product = Product::where('code', $code)->firstOrFail();
         $validator = Validator::make($request->all(), $this->getValidationRules());
 
         if ($validator->fails()) {
+            Log::error('Validation failed: ', $validator->errors()->toArray());
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
@@ -268,6 +272,7 @@ class ProductController extends Controller
                 'show_in_web' => $request->has('show_in_web'),
             ]);
             
+            Log::info('Data to update: ', $data);
             $product->update($data);
 
             // Xử lý upload ảnh mới nếu có
@@ -299,11 +304,12 @@ class ProductController extends Controller
             }
 
             DB::commit();
+            Log::info('Product updated successfully');
             return redirect()->route('admin.products.index')
                 ->with('success', 'Cập nhật thông tin bất động sản thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Lỗi khi cập nhật sản phẩm: ' . $e->getMessage());
+            Log::error('Error updating product: ' . $e->getMessage());
             return redirect()->back()
                 ->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())
                 ->withInput();
