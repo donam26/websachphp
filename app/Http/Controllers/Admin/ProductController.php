@@ -240,19 +240,22 @@ class ProductController extends Controller
         }
     }
 
-    public function show(Product $product)
+    public function show($id)
     {
+        $product = Product::findOrFail($id);
         return view('admin.products.show', compact('product'));
     }
 
-    public function edit(Product $product)
+    public function edit($id)
     {
+        $product = Product::findOrFail($id);
         return view('admin.products.edit', compact('product'));
     }
 
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), $this->getValidationRules($product->id));
+        $product = Product::findOrFail($id);
+        $validator = Validator::make($request->all(), $this->getValidationRules($id));
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -305,12 +308,12 @@ class ProductController extends Controller
         }
     }
 
-    public function deleteImage($imageId)
+    public function deleteImage($id)
     {
         try {
             DB::beginTransaction();
 
-            $image = \App\Models\ProductImage::findOrFail($imageId);
+            $image = \App\Models\ProductImage::findOrFail($id);
             $product = $image->product;
 
             // Xóa file ảnh
@@ -332,10 +335,12 @@ class ProductController extends Controller
         }
     }
 
-    public function destroy(Product $product)
+    public function destroy($id)
     {
         try {
             DB::beginTransaction();
+            
+            $product = Product::findOrFail($id);
 
             // Xóa ảnh
             foreach ($product->images as $image) {

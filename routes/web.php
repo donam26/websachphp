@@ -100,7 +100,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('employees', EmployeeController::class);
 
     Route::resource('products', ProductController::class);
-    Route::delete('products/images/{image}', [ProductController::class, 'deleteImage'])->name('products.deleteImage');
+    Route::delete('products/images/{id}', [ProductController::class, 'deleteImage'])->name('products.deleteImage');
     Route::resource('productsvp', ProductvpController::class);
     Route::resource('customer', CustomerController::class);
 

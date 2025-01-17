@@ -13,7 +13,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.products.update', ['product' => $product->id]) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -142,7 +142,7 @@
                                             @if($image->is_primary)
                                                 <span class="badge bg-primary mt-1">Ảnh chính</span>
                                             @endif
-                                            <form action="{{ route('admin.products.deleteImage', $image->id) }}" 
+                                            <form action="{{ route('admin.products.deleteImage', ['id' => $image->id]) }}" 
                                                   method="POST" 
                                                   class="mt-1"
                                                   onsubmit="return confirm('Bạn có chắc chắn muốn xóa ảnh này?')">
