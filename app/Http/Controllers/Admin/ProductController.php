@@ -23,7 +23,6 @@ class ProductController extends Controller
             'district_name' => 'nullable|string',
             'province_id' => 'nullable|string',
             'province_name' => 'nullable|string',
-            'street' => 'nullable|string',
             'house_number' => 'nullable|string',
             'formality' => 'nullable|string',
             'type' => 'nullable|string',
