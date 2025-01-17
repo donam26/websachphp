@@ -18,7 +18,6 @@ class Product extends Model
         'district_name',
         'ward_id',
         'ward_name',
-        'street',
         'house_number',
         'price',
         'currency',
