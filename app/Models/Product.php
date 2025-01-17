@@ -7,20 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $fillable = [
-        'code',
         'title',
-        'name',
         'content',
-        'ward_id',
-        'ward_name',
-        'district_id',
-        'district_name',
+        'name',
+        'type',
+        'formality',
         'province_id',
         'province_name',
+        'district_id',
+        'district_name',
+        'ward_id',
+        'ward_name',
         'street',
         'house_number',
-        'formality',
-        'type',
         'price',
         'currency',
         'acreage',
@@ -29,6 +28,7 @@ class Product extends Model
         'floor_number',
         'room_number_total',
         'direction',
+        'balcony_direction',
         'host_name',
         'host_phone1',
         'host_phone2',
@@ -38,15 +38,18 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'price' => 'float',
-        'acreage' => 'float',
-        'width' => 'float',
-        'length' => 'float',
+        'price' => 'decimal:2',
+        'acreage' => 'decimal:2',
+        'width' => 'decimal:2',
+        'length' => 'decimal:2',
         'floor_number' => 'integer',
         'room_number_total' => 'integer',
         'is_hot' => 'boolean',
         'show_in_web' => 'boolean'
     ];
+
+    public $incrementing = true;
+    protected $primaryKey = 'code';
 
     public function images()
     {

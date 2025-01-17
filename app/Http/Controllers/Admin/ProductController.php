@@ -185,8 +185,6 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
 
-            // Tạo mã code tự động
-
             // Lấy dữ liệu từ request và thêm các giá trị mặc định
             $data = array_merge($request->all(), [
                 'status' => $request->status ?? 'pending',
