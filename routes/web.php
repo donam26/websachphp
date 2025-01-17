@@ -99,8 +99,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::resource('employees', EmployeeController::class);
 
-    Route::resource('products', ProductController::class);
+    // Quản lý sản phẩm
+    Route::get('products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::post('products', [ProductController::class, 'store'])->name('products.store');
+    Route::get('products/{code}', [ProductController::class, 'show'])->name('products.show');
+    Route::get('products/{code}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('products/{code}', [ProductController::class, 'update'])->name('products.update');
+    Route::delete('products/{code}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::delete('products/images/{id}', [ProductController::class, 'deleteImage'])->name('products.deleteImage');
+
     Route::resource('productsvp', ProductvpController::class);
     Route::resource('customer', CustomerController::class);
 

@@ -240,22 +240,22 @@ class ProductController extends Controller
         }
     }
 
-    public function show($id)
+    public function show($code)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::where('code', $code)->firstOrFail();
         return view('admin.products.show', compact('product'));
     }
 
-    public function edit($id)
+    public function edit($code)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::where('code', $code)->firstOrFail();
         return view('admin.products.edit', compact('product'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $code)
     {
-        $product = Product::findOrFail($id);
-        $validator = Validator::make($request->all(), $this->getValidationRules($id));
+        $product = Product::where('code', $code)->firstOrFail();
+        $validator = Validator::make($request->all(), $this->getValidationRules($product->id));
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -335,12 +335,12 @@ class ProductController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($code)
     {
         try {
             DB::beginTransaction();
             
-            $product = Product::findOrFail($id);
+            $product = Product::where('code', $code)->firstOrFail();
 
             // Xóa ảnh
             foreach ($product->images as $image) {
