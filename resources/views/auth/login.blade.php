@@ -51,9 +51,6 @@
                                 Đăng nhập
                             </button>
 
-                            <a class="btn btn-link" href="{{ route('register') }}">
-                                Chưa có tài khoản? Đăng ký ngay
-                            </a>
                         </div>
                     </form>
                 </div>

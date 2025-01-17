@@ -179,11 +179,6 @@
                             <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('register') }}">
-                            <i class="bi bi-person-plus"></i> Đăng ký
-                        </a>
-                    </li>
                     @else
                   
                     <li class="nav-item dropdown">
