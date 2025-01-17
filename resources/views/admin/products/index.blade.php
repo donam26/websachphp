@@ -268,8 +268,7 @@
                                 </td>
                                 <td>{{ $product->type }}</td>
                                 <td>
-
-                                    <div class="fw-bold">  <a href="{{ route('admin.products.show', $product->id) }}"
+                                    <div class="fw-bold">  <a href="{{ route('admin.products.show', ['product' => $product->id]) }}"
                                          target="_blank"
                                         class="link-black link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                                         title="Chi tiết"
