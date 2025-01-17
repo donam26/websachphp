@@ -47,7 +47,7 @@ class ProductController extends Controller
         $city =  DB::select('SELECT id, name FROM city order by id desc');
         $ward =  DB::select('SELECT id, name FROM ward order by id desc');
         $district =  DB::select('SELECT id, name FROM district order by id ');
-        $status =  DB::select('SELECT distinct status FROM Products  ');
+        $status =  DB::select('SELECT distinct status FROM products  ');
 
         // Filter by title/name
         if ($request->filled('search')) {
