@@ -186,11 +186,9 @@ class ProductController extends Controller
             DB::beginTransaction();
 
             // Tạo mã code tự động
-            $code = 'BDS' . date('ymd') . str_pad(Product::count() + 1, 4, '0', STR_PAD_LEFT);
 
             // Lấy dữ liệu từ request và thêm các giá trị mặc định
             $data = array_merge($request->all(), [
-                'code' => $code,
                 'status' => $request->status ?? 'pending',
                 'is_hot' => $request->has('is_hot'),
                 'show_in_web' => true,
@@ -239,22 +237,22 @@ class ProductController extends Controller
         }
     }
 
-    public function show($code)
+    public function show($id)
     {
-        $product = Product::where('code', $code)->firstOrFail();
+        $product = Product::findOrFail($id);
         return view('admin.products.show', compact('product'));
     }
 
-    public function edit($code)
+    public function edit($id)
     {
-        $product = Product::where('code', $code)->firstOrFail();
+        $product = Product::findOrFail($id);
         return view('admin.products.edit', compact('product'));
     }
 
-    public function update(Request $request, $code)
+    public function update(Request $request, $id)
     {
-        $product = Product::where('code', $code)->firstOrFail();
-        $validator = Validator::make($request->all(), $this->getValidationRules($product->id));
+        $product = Product::findOrFail($id);
+        $validator = Validator::make($request->all(), $this->getValidationRules($id));
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -334,12 +332,12 @@ class ProductController extends Controller
         }
     }
 
-    public function destroy($code)
+    public function destroy($id)
     {
         try {
             DB::beginTransaction();
             
-            $product = Product::where('code', $code)->firstOrFail();
+            $product = Product::findOrFail($id);
 
             // Xóa ảnh
             foreach ($product->images as $image) {
