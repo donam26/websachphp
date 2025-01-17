@@ -57,10 +57,10 @@
                                     value="1"
                                     {{ old('is_hot', $product->is_hot) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="is_hot">
-                                    Tin nổi bật
+                                    Sản phẩm hot
                                 </label>
                             </div>
-                            <div class="form-check">
+                            {{-- <div class="form-check">
                                 <input type="checkbox"
                                     class="form-check-input"
                                     id="show_in_web"
@@ -70,7 +70,7 @@
                                 <label class="form-check-label" for="show_in_web">
                                     Hiển thị trên web
                                 </label>
-                            </div>
+                            </div> --}}
                         </div>
 
                         <div class="col-md-6 mb-3">
