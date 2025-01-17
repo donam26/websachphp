@@ -268,16 +268,15 @@
                                 </td>
                                 <td>{{ $product->type }}</td>
                                 <td>
-                                    <div class="fw-bold">  <a href="{{ route('admin.products.show', ['product' => $product->id]) }}"
-                                         target="_blank"
-                                        class="link-black link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
-                                        title="Chi tiết"
-                                        style ="text-decoration: none; color:black"
-                                        >
-                                        {{ $product->title }}
-                                     </a>
-                                     </div>
-                                    {{-- <small class="text-muted">{{ $product->name }}</small> --}}
+                                    <div class="fw-bold">  
+                                        <a href="{{ route('admin.products.show', $product) }}"
+                                           target="_blank"
+                                           class="link-black link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                                           title="Chi tiết"
+                                           style="text-decoration: none; color:black">
+                                            {{ $product->title }}
+                                        </a>
+                                    </div>
                                 </td>
                                 <td>
                                     @if($product->close_deal_type === 'active')
@@ -302,17 +301,19 @@
 
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.products.show', $product->id) }}" target="_blank"
+                                        <a href="{{ route('admin.products.show', $product) }}" 
+                                           target="_blank"
                                            class="btn btn-sm btn-info"
                                            title="Chi tiết">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.products.edit', $product->id) }}" target="_blank"
+                                        <a href="{{ route('admin.products.edit', $product) }}" 
+                                           target="_blank"
                                            class="btn btn-sm btn-primary"
                                            title="Sửa">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <form action="{{ route('admin.products.destroy', $product->id) }}"
+                                        <form action="{{ route('admin.products.destroy', $product) }}"
                                               method="POST"
                                               class="d-inline"
                                               onsubmit="return confirm('Bạn có chắc chắn muốn xóa bất động sản này?')">
