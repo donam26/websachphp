@@ -57,7 +57,7 @@
                                     value="1"
                                     {{ old('is_hot', $product->is_hot) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="is_hot">
-                                    Sản phẩm hot
+                                    Bất động sản hot
                                 </label>
                             </div>
                             {{-- <div class="form-check">
