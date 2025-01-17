@@ -50,8 +50,7 @@ class HomeController extends Controller
         $provinces = Product::distinct()->pluck('province_id');
 
         // Get products with pagination
-        $products = $query->where('show_in_web', true)
-                         ->where('status', 'active')
+        $products = $query
                          ->latest()
                          ->paginate(10)
                          ->appends($request->all());
@@ -59,9 +58,9 @@ class HomeController extends Controller
         return view('home', compact('products', 'types', 'formalities', 'provinces'));
     }
 
-    public function show($id)
+    public function show($code)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::where('code', $code)->firstOrFail();
         return view('products.show', compact('product'));
     }
 } 

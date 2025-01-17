@@ -46,7 +46,7 @@ Route::prefix('books')->group(function () {
 Route::middleware('auth')->group(function () {
 
     Route::get('/', [HomeController::class, 'index'])->name('home');
-
+    Route::get('/products/{code}', [App\Http\Controllers\HomeController::class, 'show'])->name('products.show');
 
     // Thông tin cá nhân
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
@@ -121,4 +121,3 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/wards/{district}', [LocationController::class, 'getWards'])->name('wards.index');
 });
 
-Route::get('/products/{id}', [App\Http\Controllers\HomeController::class, 'show'])->name('products.show');

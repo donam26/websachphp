@@ -128,7 +128,7 @@
                                     ])) }}
                                 </td>
                                 <td>
-                                    <a href="{{ route('products.show', $product->id) }}" 
+                                    <a href="{{ route('products.show', $product->code) }}" 
                                        class="btn btn-sm btn-info">
                                         <i class="bi bi-eye"></i> Chi tiết
                                     </a>

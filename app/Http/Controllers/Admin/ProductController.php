@@ -249,6 +249,7 @@ class ProductController extends Controller
 
     public function update(Request $request, $code)
     {
+        logger('ok');
         $product = Product::where('code', $code)->firstOrFail();
         $validator = Validator::make($request->all(), $this->getValidationRules());
 
