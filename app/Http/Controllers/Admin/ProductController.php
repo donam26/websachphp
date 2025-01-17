@@ -262,7 +262,13 @@ class ProductController extends Controller
             DB::beginTransaction();
 
             // Cập nhật thông tin sản phẩm
-            $product->update($request->all());
+            $data = array_merge($request->all(), [
+                'status' => $request->status ?? 'pending',
+                'is_hot' => $request->has('is_hot'),
+                'show_in_web' => $request->has('show_in_web'),
+            ]);
+            
+            $product->update($data);
 
             // Xử lý upload ảnh mới nếu có
             if ($request->hasFile('images')) {
@@ -297,6 +303,7 @@ class ProductController extends Controller
                 ->with('success', 'Cập nhật thông tin bất động sản thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Lỗi khi cập nhật sản phẩm: ' . $e->getMessage());
             return redirect()->back()
                 ->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())
                 ->withInput();

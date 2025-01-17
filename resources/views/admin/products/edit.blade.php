@@ -405,7 +405,8 @@
                     </div>
                 </div>
 
-                <div class="text-end">
+                <!-- Nút submit -->
+                <div class="mt-4">
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-save me-1"></i>Lưu thay đổi
                     </button>
