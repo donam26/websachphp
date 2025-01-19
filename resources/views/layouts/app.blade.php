@@ -8,6 +8,7 @@
     <title>@yield('title') - Book Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -61,12 +62,12 @@
             color: white;
         }
 
-        .badge {
+        /* .badge {
             position: absolute;
             top: 0;
             right: 0;
             transform: translate(50%, -50%);
-        }
+        } */
 
         .cart-link {
             position: relative;
@@ -163,7 +164,7 @@
                 </ul>
 
                 <!-- Form tìm kiếm -->
-                <form class="d-flex me-3" action="{{ route('books.index') }}" method="GET">
+                {{-- <form class="d-flex me-3" action="{{ route('books.index') }}" method="GET">
                     <div class="input-group">
                         <input type="text" class="form-control" name="search"
                             placeholder="Tìm kiếm sách..." value="{{ request('search') }}">
@@ -171,7 +172,7 @@
                             <i class="bi bi-search"></i>
                         </button>
                     </div>
-                </form>
+                </form> --}}
                 <ul class="navbar-nav">
                     @guest
                     <li class="nav-item">
@@ -234,7 +235,7 @@
         </div>
     </main>
 
-    
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
