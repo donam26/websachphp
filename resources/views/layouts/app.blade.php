@@ -129,7 +129,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="{{ route('home') }}">
-                <i class="bi bi-book"></i> Book Store
+                HQ Land
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -138,9 +138,9 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-grid"></i> Danh mục
+                            {{-- <i class="bi bi-grid"></i> Danh mục --}}
                         </a>
-                        <ul class="dropdown-menu">
+                        {{-- <ul class="dropdown-menu">
                             @foreach($categories as $category)
                             <li>
                                 <a class="dropdown-item" href="{{ route('books.index', ['category' => $category->slug]) }}">
@@ -148,16 +148,16 @@
                                 </a>
                             </li>
                             @endforeach
-                        </ul>
+                        </ul> --}}
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('books.index', ['sort' => 'best_seller']) }}">
-                            <i class="bi bi-star"></i> Sách bán chạy
+                            {{-- <i class="bi bi-star"></i> Sách bán chạy --}}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('books.index', ['sort' => 'discount']) }}">
-                            <i class="bi bi-percent"></i> Khuyến mãi
+                            {{-- <i class="bi bi-percent"></i> Khuyến mãi --}}
                         </a>
                     </li>
                 </ul>
@@ -180,7 +180,7 @@
                         </a>
                     </li>
                     @else
-                  
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle"></i> {{ Auth::user()->username }}
@@ -194,8 +194,8 @@
                             <li><a class="dropdown-item" href="{{ route('profile') }}">
                                     <i class="bi bi-person"></i> Thông tin cá nhân
                                 </a></li>
-                          
-                          
+
+
                                 <hr class="dropdown-divider">
                             </li>
                             <li>
@@ -234,54 +234,7 @@
         </div>
     </main>
 
-    <footer class="footer mt-auto">
-        <div class="container">
-
-            <div class="row">
-
-                <div class="col-md-4">
-
-                <h5><i class="bi bi-book"></i> Book Store</h5>
-                    <p><i class="bi bi-geo-alt-fill"></i> Hòa Bình 7-Minh Khai-Hai Bà Trưng-Hà nội</p>
-                    <p><i class="bi bi-telephone-fill"></i> 0868422559</p>
-                    <p><i class="bi bi-envelope-fill"></i> vutronghien@bookstore.com</p>
-
-
-                </div>
-
-                <div class="col-md-4">
-
-                <h5>Thông tin</h5>
-
-                    <ul class="list-unstyled">
-
-                    <li><a href="#"><i class="bi bi-info-circle"></i> Về chúng tôi</a></li>
-                        <li><a href="#"><i class="bi bi-shield-check"></i> Chính sách bảo mật</a></li>
-                        <li><a href="#"><i class="bi bi-file-text"></i> Điều khoản sử dụng</a></li>
-                        <li><a href="#"><i class="bi bi-truck"></i> Chính sách vận chuyển</a></li>
-
-
-                    </ul>
-
-                </div>
-
-                <div class="col-md-4">
-
-                <h5>Theo dõi chúng tôi</h5>
-                    <div class="social-links">
-                        <a href="https://www.facebook.com/profile.php?id=100037547257504&mibextid=wwXIfr&rdid=mZmWEG2J8O2e0B4j&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F15joXD2CbD%2F%3Fmibextid%3DwwXIfr#" class="me-3"><i class="bi bi-facebook fs-4"></i></a>
-                        <a href="https://www.instagram.com/blacknote1209/profilecard/?igsh=OXdqY2MxYzNycGcw" class="me-3"><i class="bi bi-instagram fs-4"></i></a>
-                        <a href="#" class="me-3"><i class="bi bi-twitter fs-4"></i></a>
-                    </div>
-
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </footer>
+    
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

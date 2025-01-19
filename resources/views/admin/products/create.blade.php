@@ -22,11 +22,11 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="title" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
-                            <input type="text" 
-                                   class="form-control @error('title') is-invalid @enderror" 
-                                   id="title" 
-                                   name="title" 
-                                   value="{{ old('title') }}" 
+                            <input type="text"
+                                   class="form-control @error('title') is-invalid @enderror"
+                                   id="title"
+                                   name="title"
+                                   value="{{ old('title') }}"
                                    required>
                             @error('title')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -35,9 +35,9 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="status" class="form-label">Trạng thái <span class="text-danger">*</span></label>
-                            <select class="form-select @error('status') is-invalid @enderror" 
-                                    id="status" 
-                                    name="status" 
+                            <select class="form-select @error('status') is-invalid @enderror"
+                                    id="status"
+                                    name="status"
                                     required>
                                 <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Đang hoạt động</option>
                                 <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Ngừng hoạt động</option>
@@ -53,22 +53,22 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Tùy chọn</label>
                             <div class="form-check">
-                                <input type="checkbox" 
-                                       class="form-check-input" 
-                                       id="is_hot" 
-                                       name="is_hot" 
-                                       value="1" 
+                                <input type="checkbox"
+                                       class="form-check-input"
+                                       id="is_hot"
+                                       name="is_hot"
+                                       value="1"
                                        {{ old('is_hot') ? 'checked' : '' }}>
                                 <label class="form-check-label" for="is_hot">
                                     Tin nổi bật
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input type="checkbox" 
-                                       class="form-check-input" 
-                                       id="show_in_web" 
-                                       name="show_in_web" 
-                                       value="1" 
+                                <input type="checkbox"
+                                       class="form-check-input"
+                                       id="show_in_web"
+                                       name="show_in_web"
+                                       value="1"
                                        {{ old('show_in_web', true) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="show_in_web">
                                     Hiển thị trên web
@@ -78,10 +78,10 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="name" class="form-label">Tên BĐS</label>
-                            <input type="text" 
-                                   class="form-control @error('name') is-invalid @enderror" 
-                                   id="name" 
-                                   name="name" 
+                            <input type="text"
+                                   class="form-control @error('name') is-invalid @enderror"
+                                   id="name"
+                                   name="name"
                                    value="{{ old('name') }}">
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -90,10 +90,10 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="type" class="form-label">Loại BĐS</label>
-                            <input type="text" 
-                                   class="form-control @error('type') is-invalid @enderror" 
-                                   id="type" 
-                                   name="type" 
+                            <input type="text"
+                                   class="form-control @error('type') is-invalid @enderror"
+                                   id="type"
+                                   name="type"
                                    value="{{ old('type') }}">
                             @error('type')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -102,10 +102,10 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="formality" class="form-label">Hình thức</label>
-                            <input type="text" 
-                                   class="form-control @error('formality') is-invalid @enderror" 
-                                   id="formality" 
-                                   name="formality" 
+                            <input type="text"
+                                   class="form-control @error('formality') is-invalid @enderror"
+                                   id="formality"
+                                   name="formality"
                                    value="{{ old('formality') }}">
                             @error('formality')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -114,9 +114,9 @@
 
                         <div class="col-md-12 mb-3">
                             <label for="content" class="form-label">Mô tả</label>
-                            <textarea class="form-control @error('content') is-invalid @enderror" 
-                                      id="content" 
-                                      name="content" 
+                            <textarea class="form-control @error('content') is-invalid @enderror"
+                                      id="content"
+                                      name="content"
                                       rows="4">{{ old('content') }}</textarea>
                             @error('content')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -131,11 +131,11 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="images" class="form-label">Hình ảnh</label>
-                            <input type="file" 
-                                   class="form-control @error('images.*') is-invalid @enderror" 
-                                   id="images" 
-                                   name="images[]" 
-                                   multiple 
+                            <input type="file"
+                                   class="form-control @error('images.*') is-invalid @enderror"
+                                   id="images"
+                                   name="images[]"
+                                   multiple
                                    accept="image/*">
                             <small class="text-muted">Có thể chọn nhiều ảnh. Định dạng: JPG, PNG, GIF</small>
                             @error('images.*')
@@ -145,10 +145,10 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="files" class="form-label">Tài liệu đính kèm</label>
-                            <input type="file" 
-                                   class="form-control @error('files.*') is-invalid @enderror" 
-                                   id="files" 
-                                   name="files[]" 
+                            <input type="file"
+                                   class="form-control @error('files.*') is-invalid @enderror"
+                                   id="files"
+                                   name="files[]"
                                    multiple>
                             <small class="text-muted">Có thể chọn nhiều file. Định dạng: PDF, DOC, DOCX, XLS, XLSX</small>
                             @error('files.*')
@@ -164,11 +164,12 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="province_id" class="form-label">Tỉnh/Thành phố</label>
-                            <input type="text" 
-                                   class="form-control @error('province_id') is-invalid @enderror" 
-                                   id="province_id" 
-                                   name="province_id" 
-                                   value="{{ old('province_id') }}">
+                            <select class="form-select @error('province_id') is-invalid @enderror"
+                                    id="province_id"
+                                    name="province_id">
+                                <option value="">Chọn tỉnh/thành phố</option>
+                            </select>
+                            <input type="hidden" name="province_name" id="province_name">
                             @error('province_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -176,11 +177,12 @@
 
                         <div class="col-md-4 mb-3">
                             <label for="district_id" class="form-label">Quận/Huyện</label>
-                            <input type="text" 
-                                   class="form-control @error('district_id') is-invalid @enderror" 
-                                   id="district_id" 
-                                   name="district_id" 
-                                   value="{{ old('district_id') }}">
+                            <select class="form-select @error('district_id') is-invalid @enderror"
+                                    id="district_id"
+                                    name="district_id">
+                                <option value="">Chọn quận/huyện</option>
+                            </select>
+                            <input type="hidden" name="district_name" id="district_name">
                             @error('district_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -188,34 +190,35 @@
 
                         <div class="col-md-4 mb-3">
                             <label for="ward_id" class="form-label">Phường/Xã</label>
-                            <input type="text" 
-                                   class="form-control @error('ward_id') is-invalid @enderror" 
-                                   id="ward_id" 
-                                   name="ward_id" 
-                                   value="{{ old('ward_id') }}">
+                            <select class="form-select @error('ward_id') is-invalid @enderror"
+                                    id="ward_id"
+                                    name="ward_id">
+                                <option value="">Chọn phường/xã</option>
+                            </select>
+                            <input type="hidden" name="ward_name" id="ward_name">
                             @error('ward_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="street" class="form-label">Đường/Phố</label>
-                            <input type="text" 
-                                   class="form-control @error('street') is-invalid @enderror" 
-                                   id="street" 
-                                   name="street" 
+                            <input type="text"
+                                   class="form-control @error('street') is-invalid @enderror"
+                                   id="street"
+                                   name="street"
                                    value="{{ old('street') }}">
                             @error('street')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="house_number" class="form-label">Số nhà</label>
-                            <input type="text" 
-                                   class="form-control @error('house_number') is-invalid @enderror" 
-                                   id="house_number" 
-                                   name="house_number" 
+                            <input type="text"
+                                   class="form-control @error('house_number') is-invalid @enderror"
+                                   id="house_number"
+                                   name="house_number"
                                    value="{{ old('house_number') }}">
                             @error('house_number')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -230,11 +233,11 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="price" class="form-label">Giá</label>
-                            <input type="number" 
-                                   class="form-control @error('price') is-invalid @enderror" 
-                                   id="price" 
-                                   name="price" 
-                                   value="{{ old('price') }}" 
+                            <input type="number"
+                                   class="form-control @error('price') is-invalid @enderror"
+                                   id="price"
+                                   name="price"
+                                   value="{{ old('price') }}"
                                    step="0.01">
                             @error('price')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -243,10 +246,10 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="currency" class="form-label">Đơn vị tiền tệ</label>
-                            <input type="text" 
-                                   class="form-control @error('currency') is-invalid @enderror" 
-                                   id="currency" 
-                                   name="currency" 
+                            <input type="text"
+                                   class="form-control @error('currency') is-invalid @enderror"
+                                   id="currency"
+                                   name="currency"
                                    value="{{ old('currency', 'VNĐ') }}">
                             @error('currency')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -255,11 +258,11 @@
 
                         <div class="col-md-4 mb-3">
                             <label for="width" class="form-label">Chiều rộng (m)</label>
-                            <input type="number" 
-                                   class="form-control @error('width') is-invalid @enderror" 
-                                   id="width" 
-                                   name="width" 
-                                   value="{{ old('width') }}" 
+                            <input type="number"
+                                   class="form-control @error('width') is-invalid @enderror"
+                                   id="width"
+                                   name="width"
+                                   value="{{ old('width') }}"
                                    step="0.01">
                             @error('width')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -268,11 +271,11 @@
 
                         <div class="col-md-4 mb-3">
                             <label for="length" class="form-label">Chiều dài (m)</label>
-                            <input type="number" 
-                                   class="form-control @error('length') is-invalid @enderror" 
-                                   id="length" 
-                                   name="length" 
-                                   value="{{ old('length') }}" 
+                            <input type="number"
+                                   class="form-control @error('length') is-invalid @enderror"
+                                   id="length"
+                                   name="length"
+                                   value="{{ old('length') }}"
                                    step="0.01">
                             @error('length')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -281,11 +284,11 @@
 
                         <div class="col-md-4 mb-3">
                             <label for="acreage" class="form-label">Diện tích (m²)</label>
-                            <input type="number" 
-                                   class="form-control @error('acreage') is-invalid @enderror" 
-                                   id="acreage" 
-                                   name="acreage" 
-                                   value="{{ old('acreage') }}" 
+                            <input type="number"
+                                   class="form-control @error('acreage') is-invalid @enderror"
+                                   id="acreage"
+                                   name="acreage"
+                                   value="{{ old('acreage') }}"
                                    step="0.01">
                             @error('acreage')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -300,10 +303,10 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="host_name" class="form-label">Tên chủ nhà</label>
-                            <input type="text" 
-                                   class="form-control @error('host_name') is-invalid @enderror" 
-                                   id="host_name" 
-                                   name="host_name" 
+                            <input type="text"
+                                   class="form-control @error('host_name') is-invalid @enderror"
+                                   id="host_name"
+                                   name="host_name"
                                    value="{{ old('host_name') }}">
                             @error('host_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -312,10 +315,10 @@
 
                         <div class="col-md-4 mb-3">
                             <label for="host_phone1" class="form-label">Số điện thoại 1</label>
-                            <input type="text" 
-                                   class="form-control @error('host_phone1') is-invalid @enderror" 
-                                   id="host_phone1" 
-                                   name="host_phone1" 
+                            <input type="text"
+                                   class="form-control @error('host_phone1') is-invalid @enderror"
+                                   id="host_phone1"
+                                   name="host_phone1"
                                    value="{{ old('host_phone1') }}">
                             @error('host_phone1')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -324,10 +327,10 @@
 
                         <div class="col-md-4 mb-3">
                             <label for="host_phone2" class="form-label">Số điện thoại 2</label>
-                            <input type="text" 
-                                   class="form-control @error('host_phone2') is-invalid @enderror" 
-                                   id="host_phone2" 
-                                   name="host_phone2" 
+                            <input type="text"
+                                   class="form-control @error('host_phone2') is-invalid @enderror"
+                                   id="host_phone2"
+                                   name="host_phone2"
                                    value="{{ old('host_phone2') }}">
                             @error('host_phone2')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -346,3 +349,109 @@
     </div>
 </div>
 @endsection
+
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        // Load tỉnh/thành phố khi trang được load
+        loadProvinces();
+
+        // Sự kiện khi chọn tỉnh/thành phố
+        $('#province_id').change(function() {
+            const provinceId = $(this).val();
+            const provinceName = $(this).find('option:selected').text();
+            $('#province_name').val(provinceName);
+
+            if (provinceId) {
+                loadDistricts(provinceId);
+                $('#ward_id').html('<option value="">Chọn phường/xã</option>');
+                $('#district_name').val('');
+                $('#ward_name').val('');
+            } else {
+                $('#district_id').html('<option value="">Chọn quận/huyện</option>');
+                $('#ward_id').html('<option value="">Chọn phường/xã</option>');
+                $('#province_name').val('');
+                $('#district_name').val('');
+                $('#ward_name').val('');
+            }
+        });
+
+        // Sự kiện khi chọn quận/huyện
+        $('#district_id').change(function() {
+            const districtId = $(this).val();
+            const districtName = $(this).find('option:selected').text();
+            $('#district_name').val(districtName);
+
+            if (districtId) {
+                loadWards(districtId);
+                $('#ward_name').val('');
+            } else {
+                $('#ward_id').html('<option value="">Chọn phường/xã</option>');
+                $('#district_name').val('');
+                $('#ward_name').val('');
+            }
+        });
+
+        // Sự kiện khi chọn phường/xã
+        $('#ward_id').change(function() {
+            const wardName = $(this).find('option:selected').text();
+            $('#ward_name').val(wardName);
+        });
+
+        // Hàm load tỉnh/thành phố
+        function loadProvinces() {
+            $.ajax({
+                url: 'https://provinces.open-api.vn/api/p/',
+                type: 'GET',
+                success: function(data) {
+                    let html = '<option value="">Chọn tỉnh/thành phố</option>';
+                    data.forEach(function(province) {
+                        html += `<option value="${province.code}">${province.name}</option>`;
+                    });
+                    $('#province_id').html(html);
+                },
+                error: function() {
+                    alert('Không thể tải danh sách tỉnh/thành phố');
+                }
+            });
+        }
+
+        // Hàm load quận/huyện
+        function loadDistricts(provinceId) {
+            $.ajax({
+                url: `https://provinces.open-api.vn/api/p/${provinceId}?depth=2`,
+                type: 'GET',
+                success: function(data) {
+                    let html = '<option value="">Chọn quận/huyện</option>';
+                    data.districts.forEach(function(district) {
+                        html += `<option value="${district.code}">${district.name}</option>`;
+                    });
+                    $('#district_id').html(html);
+                },
+                error: function() {
+                    alert('Không thể tải danh sách quận/huyện');
+                }
+            });
+        }
+
+        // Hàm load phường/xã
+        function loadWards(districtId) {
+            $.ajax({
+                url: `https://provinces.open-api.vn/api/d/${districtId}?depth=2`,
+                type: 'GET',
+                success: function(data) {
+                    let html = '<option value="">Chọn phường/xã</option>';
+                    data.wards.forEach(function(ward) {
+                        html += `<option value="${ward.code}">${ward.name}</option>`;
+                    });
+                    $('#ward_id').html(html);
+                },
+                error: function() {
+                    alert('Không thể tải danh sách phường/xã');
+                }
+            });
+        }
+    });
+</script>
+@endpush

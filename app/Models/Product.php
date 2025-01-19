@@ -34,7 +34,8 @@ class Product extends Model
         'status',
         'is_hot',
         'show_in_web',
-        'texture'
+        'texture',
+        'street_id',
     ];
 
     protected $casts = [

@@ -203,6 +203,18 @@
                                                     target="_blank">
                                                     <i class="bi bi-download"></i> Tải xuống
                                                 </a>
+                                                {{-- <a href="{{ asset('storage/' . $file->path) }}"
+                                                    class="btn btn-sm btn-primary"
+                                                    target="_blank">
+                                                    <i class="bi bi-download"></i> Tải xuống
+                                                </a> --}}
+                                                <a href="javascript:void(0)"
+                                                onclick="if(confirm('Bạn có chắc chắn muốn xóa ảnh này?')) {
+                                                    document.getElementById('delete-file-' + {{ $file->id }}).submit();
+                                                }"
+                                                class="btn btn-danger btn-sm mt-1">
+                                                 <i class="bi bi-trash"></i> Xóa
+                                             </a>
                                             </td>
                                         </tr>
                                         @empty
@@ -236,53 +248,56 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="province_id" class="form-label">Tỉnh/Thành phố</label>
-                            <input type="text"
-                                class="form-control @error('province_id') is-invalid @enderror"
-                                id="province_id"
-                                name="province_id"
-                                value="{{ old('province_id', $product->province_id) }}">
+                            <select class="form-select @error('province_id') is-invalid @enderror"
+                                    id="province_id"
+                                    name="province_id">
+                                <option value="">Chọn tỉnh/thành phố</option>
+                            </select>
+                            <input type="hidden" name="province_name" id="province_name" value="{{ old('province_name', $product->province_name) }}">
                             @error('province_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="col-md-4 mb-3">
                             <label for="district_id" class="form-label">Quận/Huyện</label>
-                            <input type="text"
-                                class="form-control @error('district_id') is-invalid @enderror"
-                                id="district_id"
-                                name="district_id"
-                                value="{{ old('district_id', $product->district_id) }}">
+                            <select class="form-select @error('district_id') is-invalid @enderror"
+                                    id="district_id"
+                                    name="district_id">
+                                <option value="">Chọn quận/huyện</option>
+                            </select>
+                            <input type="hidden" name="district_name" id="district_name" value="{{ old('district_name', $product->district_name) }}">
                             @error('district_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="col-md-4 mb-3">
                             <label for="ward_id" class="form-label">Phường/Xã</label>
-                            <input type="text"
-                                class="form-control @error('ward_id') is-invalid @enderror"
-                                id="ward_id"
-                                name="ward_id"
-                                value="{{ old('ward_id', $product->ward_id) }}">
+                            <select class="form-select @error('ward_id') is-invalid @enderror"
+                                    id="ward_id"
+                                    name="ward_id">
+                                <option value="">Chọn phường/xã</option>
+                            </select>
+                            <input type="hidden" name="ward_name" id="ward_name" value="{{ old('ward_name', $product->ward_name) }}">
                             @error('ward_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="street" class="form-label">Đường/Phố</label>
+
+                            <label for="street" class="form-label">Đờng/Phố</label>
                             <input type="text"
-                                class="form-control @error('street') is-invalid @enderror"
-                                id="street"
-                                name="street"
-                                value="{{ old('street', $product->street) }}">
+                                   class="form-control @error('street') is-invalid @enderror"
+                                   id="street"
+                                   name="street"
+                                   value="{{ old('street', $product->street) }}">
                             @error('street')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="house_number" class="form-label">Số nhà</label>
                             <input type="text"
                                 class="form-control @error('house_number') is-invalid @enderror"
@@ -428,4 +443,136 @@
     @method('DELETE')
 </form>
 @endforeach
+
+@foreach($product->files as $file)
+<form id="delete-file-{{ $file->id }}"
+      action="{{ route('admin.products.deleteFile', $file->id) }}"
+      method="POST"
+      style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+@endforeach
+
 @endsection
+
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        // Load tỉnh/thành phố khi trang được load
+        loadProvinces();
+
+        // Sự kiện khi chọn tỉnh/thành phố
+        $('#province_id').change(function() {
+            const provinceId = $(this).val();
+            const provinceName = $(this).find('option:selected').text();
+            $('#province_name').val(provinceName);
+
+            if (provinceId) {
+                loadDistricts(provinceId);
+                $('#ward_id').html('<option value="">Chọn phường/xã</option>');
+                $('#district_name').val('');
+                $('#ward_name').val('');
+            } else {
+                $('#district_id').html('<option value="">Chọn quận/huyện</option>');
+                $('#ward_id').html('<option value="">Chọn phường/xã</option>');
+                $('#province_name').val('');
+                $('#district_name').val('');
+                $('#ward_name').val('');
+            }
+        });
+
+        // Sự kiện khi chọn quận/huyện
+        $('#district_id').change(function() {
+            const districtId = $(this).val();
+            const districtName = $(this).find('option:selected').text();
+            $('#district_name').val(districtName);
+
+            if (districtId) {
+                loadWards(districtId);
+                $('#ward_name').val('');
+            } else {
+                $('#ward_id').html('<option value="">Chọn phường/xã</option>');
+                $('#district_name').val('');
+                $('#ward_name').val('');
+            }
+        });
+
+        // Sự kiện khi chọn phường/xã
+        $('#ward_id').change(function() {
+            const wardName = $(this).find('option:selected').text();
+            $('#ward_name').val(wardName);
+        });
+
+        // Hàm load tỉnh/thành phố
+        function loadProvinces() {
+            $.ajax({
+                url: 'https://provinces.open-api.vn/api/p/',
+                type: 'GET',
+                success: function(data) {
+                    let html = '<option value="">Chọn tỉnh/thành phố</option>';
+                    data.forEach(function(province) {
+                        const selected = province.code == '{{ old('province_id', $product->province_id) }}' ? 'selected' : '';
+                        html += `<option value="${province.code}" ${selected}>${province.name}</option>`;
+                    });
+                    $('#province_id').html(html);
+
+                    // Nếu có province_id, load districts
+                    const provinceId = $('#province_id').val();
+                    if (provinceId) {
+                        loadDistricts(provinceId);
+                    }
+                },
+                error: function() {
+                    alert('Không thể tải danh sách tỉnh/thành phố');
+                }
+            });
+        }
+
+        // Hàm load quận/huyện
+        function loadDistricts(provinceId) {
+            $.ajax({
+                url: `https://provinces.open-api.vn/api/p/${provinceId}?depth=2`,
+                type: 'GET',
+                success: function(data) {
+                    let html = '<option value="">Chọn quận/huyện</option>';
+                    data.districts.forEach(function(district) {
+                        const selected = district.code == '{{ old('district_id', $product->district_id) }}' ? 'selected' : '';
+                        html += `<option value="${district.code}" ${selected}>${district.name}</option>`;
+                    });
+                    $('#district_id').html(html);
+
+                    // Nếu có district_id, load wards
+                    const districtId = $('#district_id').val();
+                    if (districtId) {
+                        loadWards(districtId);
+                    }
+                },
+                error: function() {
+                    alert('Không thể tải danh sách quận/huyện');
+                }
+            });
+        }
+
+        // Hàm load phường/xã
+        function loadWards(districtId) {
+            $.ajax({
+                url: `https://provinces.open-api.vn/api/d/${districtId}?depth=2`,
+                type: 'GET',
+                success: function(data) {
+                    let html = '<option value="">Chọn phường/xã</option>';
+                    data.wards.forEach(function(ward) {
+                        const selected = ward.code == '{{ old('ward_id', $product->ward_id) }}' ? 'selected' : '';
+                        html += `<option value="${ward.code}" ${selected}>${ward.name}</option>`;
+                    });
+                    $('#ward_id').html(html);
+                },
+                error: function() {
+                    alert('Không thể tải danh sách phường/xã');
+                }
+            });
+        }
+    });
+</script>
+@endpush

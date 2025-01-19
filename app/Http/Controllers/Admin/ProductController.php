@@ -35,10 +35,11 @@ class ProductController extends Controller
             'direction' => 'nullable|string',
             'host_name' => 'nullable|string',
             'host_phone1' => 'nullable|string',
-            'status' => 'required|in:active,inactive,pending,sold,rented',
+            'status' => 'required|in:active,inactive,pending,sold,rented,close',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'files.*' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120',
-            'texture' => 'nullable|string'
+            'texture' => 'nullable|string',
+            'street_id' => 'nullable|string'
         ];
     }
     public function index(Request $request)
@@ -347,7 +348,32 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi xóa ảnh: ' . $e->getMessage());
         }
     }
+    public function deleteFile($id)
+    {
+        try {
+            DB::beginTransaction();
 
+            $File = \App\Models\ProductFile::findOrFail($id);
+            $product = $File->product;
+
+            // Xóa file ảnh
+            Storage::disk('public')->delete($File->path);
+
+            // Xóa record trong database
+            $File->delete();
+
+            // Nếu ảnh bị xóa là ảnh chính và còn ảnh khác, đặt ảnh đầu tiên làm ảnh chính
+            if ($File->is_primary && $product->file()->exists()) {
+                $product->file()->first()->update(['is_primary' => true]);
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Xóa file thành công!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi xóa file: ' . $e->getMessage());
+        }
+    }
     public function destroy($code)
     {
         try {
@@ -362,7 +388,7 @@ class ProductController extends Controller
 
             // Xóa file
             foreach ($product->files as $file) {
-                Storage::disk('public')->delete($file->path);
+                Storage::disk('file')->delete($file->path);
             }
 
             // Xóa sản phẩm (các bản ghi trong bảng product_images và product_files sẽ tự động bị xóa do có onDelete('cascade'))
