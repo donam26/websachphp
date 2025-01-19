@@ -272,12 +272,11 @@
                                         </a>
                                     </div>
                                 </td>
-                                <td >
-
+                                <td>
                                     @if($product->status === 'active')
-                                        đang mở
+                                        <span class="badge bg-success">đang mở</span>
                                     @else
-                                        đóng
+                                        <span class="badge bg-danger">đóng</span>
                                     @endif
                                 </td>
 
