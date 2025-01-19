@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\ProductvpController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\Admin\CategoryControllerAddUserController;
 
 // Route cho khách
 
@@ -114,6 +115,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::resource('productsvp', ProductvpController::class);
     Route::resource('customer', CustomerController::class);
+    Route::resource('Adduser', CategoryControllerAddUserController::class);
 
     // Routes cho địa chỉ
     Route::get('/provinces', [LocationController::class, 'getProvinces'])->name('provinces.index');

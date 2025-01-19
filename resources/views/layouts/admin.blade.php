@@ -152,11 +152,6 @@
                         </li>
 
                         {{-- <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.productsvp.*') ? 'active' : '' }}" href="{{ route('admin.productsvp.index') }}">
-                                <i class="bi bi-house"></i> Sản phẩm văn phòng
-                            </a>
-                        </li> --}}
-                        {{-- <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
                                 <i class="bi bi-people"></i> Quản lý người dùng
                             </a>
@@ -168,7 +163,13 @@
                                 <span>Khách hàng</span>
                             </a>
                         </li>
-
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.Adduser.*') ? 'active' : '' }}"
+                                href="{{ route('admin.Adduser.index') }}">
+                                <i class="bi bi-person-badge"></i>
+                                <span>Tạo nhân viên</span>
+                            </a>
+                        </li>
 
                     </ul>
                 </div>
