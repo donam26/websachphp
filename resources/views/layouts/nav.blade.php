@@ -139,13 +139,10 @@
 
                     </div>
                     <ul class="nav flex-column">
+
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
-                                <i class="bi bi-speedometer2"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}" href="{{ route('admin.products.index') }}">
+                            <a class="nav-link"
+                                href="{{ route('home') }}">
                                 <i class="bi bi-house"></i>
                                 <span>Sản phẩm thuê </span>
                             </a>
@@ -163,13 +160,7 @@
                                 <span>Khách hàng</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.Adduser.*') ? 'active' : '' }}"
-                                href="{{ route('admin.Adduser.index') }}">
-                                <i class="bi bi-person-badge"></i>
-                                <span>Tạo nhân viên</span>
-                            </a>
-                        </li>
+
 
                     </ul>
                 </div>
@@ -189,21 +180,28 @@
                                     <i class="bi bi-person-circle me-2"></i>
                                     <span>{{ Auth::user()->username }}</span>
                                 </a>
+
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('profile') }}">
-                                            <i class="bi bi-person me-2"></i> Thông tin cá nhân
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <form action="{{ route('logout') }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="dropdown-item">
-                                                <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
-                                            </button>
-                                        </form>
-                                    </li>
+                                    @if(Auth::user()->role === 'admin')
+                            <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                                    <i class="bi bi-speedometer2"></i> Quản trị
+                                </a></li>
+                            @endif
+                            <li><a class="dropdown-item" href="{{ route('profile') }}">
+                                    <i class="bi bi-person"></i> Thông tin cá nhân
+                                </a></li>
+
+
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                                    </button>
+                                </form>
+                            </li>
                                 </ul>
                             </div>
                         </div>
