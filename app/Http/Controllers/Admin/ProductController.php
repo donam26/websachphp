@@ -37,7 +37,7 @@ class ProductController extends Controller
             'host_phone1' => 'nullable|string',
             'status' => 'required|in:active,inactive,pending,sold,rented,close',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'files.*' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120',
+            'files.*' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:21000',
             'texture' => 'nullable|string',
             'street_id' => 'nullable|string'
         ];
@@ -96,7 +96,7 @@ class ProductController extends Controller
         }
         if ($request->filled('is_hot')) {
 
-            $query->Where('is_hot', '=', 'true');
+            $query->Where('is_hot', '=', '1');
         }
 
         // echo $search_price;
