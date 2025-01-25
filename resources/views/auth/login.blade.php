@@ -36,7 +36,7 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3">
+                        {{-- <div class="mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="remember"
                                        id="remember" {{ old('remember') ? 'checked' : '' }}>
@@ -44,7 +44,7 @@
                                     Ghi nhớ đăng nhập
                                 </label>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="mb-0">
                             <button type="submit" class="btn btn-primary">
