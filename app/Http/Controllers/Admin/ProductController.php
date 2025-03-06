@@ -48,7 +48,7 @@ class ProductController extends Controller
         $city =  DB::select('SELECT id, name FROM city order by id desc');
         $ward =  DB::select('SELECT id, name FROM ward order by id desc');
         $district =  DB::select('SELECT id, name FROM district order by id ');
-        $status =  DB::select('SELECT distinct status FROM products  ');
+        $status =  DB::select('SELECT distinct status FROM products order by status ');
 
         // Filter by title/name
         if ($request->filled('search')) {
@@ -126,23 +126,61 @@ class ProductController extends Controller
         if ($request->filled('width_to')) {
             $query->where('width', '<=', $request->width_from);
         }
+
         // Filter by location
+        // if ($request->filled('province_id')) {
+        //     $query->where('province_id', $request->province_id);
+
+
+        // }
         if ($request->filled('province_id')) {
-            $query->where('province_id', $request->province_id);
-
-
+            $province_id = $request->province_id;
+            $query->where(function($q) use ($province_id) {
+                $q->where('title', 'like', "%{$province_id}%")
+                  ->orWhere('province_id', 'like', "%{$province_id}%")
+                  ->orWhere('province_name', 'like', "%{$province_id}%")
+                  
+                  ;
+            });
         }
         if ($request->filled('district_id')) {
-            $query->where('district_id', $request->district_id);
-
-
+            $district_id = $request->district_id;
+            $query->where(function($q) use ($district_id) {
+                $q->where('title', 'like', "%{$district_id}%")
+                  ->orWhere('district_id', 'like', "%{$district_id}%")
+                  ->orWhere('district_name', 'like', "%{$district_id}%")
+                  
+                  ;
+            });
         }
+        // if ($request->filled('district_id')) {
+        //     $query->where('district_id', $request->district_id);
+
+
+        // }
+        // if ($request->filled('houseid')) {
+        //     $query-> where('house_number', 'like', $request->houseid);
+        // }
         if ($request->filled('houseid')) {
-            $query-> where('house_number', 'like', $request->houseid);
+            $houseid = $request->houseid;
+            $query->where(function($q) use ($houseid) {
+                $q->where('title', 'like', "%{$houseid}%")
+                  ->orWhere('houseid', 'like', "%{$houseid}%")
+                  ;
+            });
         }
-
+        // if ($request->filled('ward_id')) {
+        //     $query->where('ward_id', $request->ward_id);
+        // }
         if ($request->filled('ward_id')) {
-            $query->where('ward_id', $request->ward_id);
+            $ward_id = $request->ward_id;
+            $query->where(function($q) use ($ward_id) {
+                $q->where('title', 'like', "%{$ward_id}%")
+                  ->orWhere('ward_id', 'like', "%{$ward_id}%")
+                  ->orWhere('ward_name', 'like', "%{$ward_id}%")
+                  
+                  ;
+            });
         }
         if ($request->filled('type_input')) {
 

@@ -29,10 +29,10 @@
                     <div class="col-md-4 mb-3">
                         <label for="status" class="form-label">Trạng thái</label>
                         <select name="status" class="form-select">
-                            <option value="">Tất cả</option>
+                            <option value="" selected >Tất cả</option>
                             @foreach($status as $status)
                                 <option value="{{ $status->status }}"
-                                        {{ request('status') == $status->status ? 'selected' : '' }}>
+                                        {{ request('status') == $status->status ?  : '' }}>
                                         @if($status->status === 'active')
                                         <span class="badge bg-success">đang mở</span>
                                     @else
@@ -144,7 +144,15 @@
 
                     <div class="col-md-2 mb-3">
                         <label for="province_id" class="form-label">Tỉnh/Thành phố</label>
-                        <select name="province_id" class="form-select">
+                        <input type="text"
+                               class="form-control"
+                               id="province_id"
+                               name="province_id"
+                               value="{{ request('province_id') }}"
+                               min="0"
+                               step="0.1">
+                        
+                        <!-- <select name="province_id" class="form-select">
                             <option value="">Tất cả</option>
                             @foreach($city as $city)
                                 <option value="{{ $city->id }}"
@@ -152,12 +160,19 @@
                                     {{ $city->name }}
                                 </option>
                             @endforeach
-                        </select>
+                        </select> -->
                     </div>
 
                     <div class="col-md-2 mb-3">
                         <label for="district_id" class="form-label">Quận/huyện</label>
-                        <select name="district_id" class="form-select">
+                        <input type="text"
+                               class="form-control"
+                               id="district_id"
+                               name="district_id"
+                               value="{{ request('district_id') }}"
+                               min="0"
+                               step="0.1">
+                        <!-- <select name="district_id" class="form-select">
                             <option value="">Tất cả</option>
                             @foreach($district as $district)
                                 <option value="{{ $district->id }}"
@@ -165,12 +180,12 @@
                                     {{ $district->name }}
                                 </option>
                             @endforeach
-                        </select>
+                        </select> -->
                     </div>
 
                     <div class="col-md-2 mb-3">
                         <label for="ward_id" class="form-label">Phường/xã</label>
-                        <select name="ward_id" class="form-select">
+                        <!-- <select name="ward_id" class="form-select">
                             <option value="">Tất cả</option>
                             @foreach($ward as $ward)
                                 <option value="{{ $ward->id }}"
@@ -178,7 +193,14 @@
                                     {{ $ward->name }}
                                 </option>
                             @endforeach
-                        </select>
+                        </select> -->
+                        <input type="text"
+                               class="form-control"
+                               id="ward_id"
+                               name="ward_id"
+                               value="{{ request('ward_id') }}"
+                               min="0"
+                               step="0.1">
                     </div>
 
                     <div class="col-md-3 mb-3">
@@ -259,8 +281,8 @@
                                 <th style="min-width: 150px">Phường/xã</th>
                                 {{-- <th style="min-width: 150px">Đường</th> --}}
                                 <th style="min-width: 200px">Số nhà</th>
-
-
+                                <th style="min-width: 200px">Ngày tạo</th>    
+                                <th style="min-width: 200px">Ngày điều chỉnh</th>   
                                 <th style="min-width: 120px">Thao tác</th>
                             </tr>
                         </thead>
@@ -309,6 +331,8 @@
                                 <td>{{ $product->ward_name}}</td>
                                 {{-- <td></td> --}}
                                 <td>{{ $product->house_number }}</td>
+                                <td>{{ $product->created_at }}</td>
+                                <td>{{ $product->updated_at }}</td>
 
 
                                 <td>
