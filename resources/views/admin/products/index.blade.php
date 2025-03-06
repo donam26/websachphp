@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">Quản lý bất động sản</h1>
-        <a href="{{ route('admin.products.create') }}" class="btn btn-warning">
+        <a href="{{ route('admin.products.create') }}" class="btn btn-warning" style="background: #E9C780 ">
             <i class="bi bi-plus-circle me-1"></i>Thêm sản phẩm thuê
         </a>
     </div>
@@ -263,28 +263,28 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="min-width: 300 ; background: #FEC92C " >Ảnh</th>
-                                <th style="min-width: 150px ; background: #FEC92C;">Loại</th>
-                                <th style="min-width: 200px ; background: #FEC92C; ">Tiêu đề</th>
-                                <th style="min-width: 120px ; background: #FEC92C;">Trạng thái</th>
+                                <th style="min-width: 300 ; background: #E9C780 " >Ảnh</th>
+                                <th style="min-width: 150px ; background: #E9C780;">Loại</th>
+                                <th style="min-width: 200px ; background: #E9C780; ">Tiêu đề</th>
+                                <th style="min-width: 120px ; background: #E9C780;">Trạng thái</th>
 
                                 {{-- <th style="min-width: 300px ">Mô tả</th> --}}
-                                <th style="min-width: 100px ; background: #FEC92C; ">Ngang</th>
-                                <th style="min-width: 100px ; background: #FEC92C;">Dài</th>
+                                <th style="min-width: 100px ; background: #E9C780; ">Ngang</th>
+                                <th style="min-width: 100px ; background: #E9C780;">Dài</th>
 
-                                <th style="min-width: 100px ; background: #FEC92C;">Diện tích</th>
-                                <th style="min-width: 250px ; background: #FEC92C; ">Giá thuê</th>
-                                <th style="min-width: 200px ; background: #FEC92C; ">Kết cấu</th>
-                                <th style="min-width: 200px ; background: #FEC92C; ">Ngày tạo</th>    
-                                <th style="min-width: 200px ; background: #FEC92C; ">Ngày điều chỉnh</th> 
+                                <th style="min-width: 100px ; background: #E9C780;">Diện tích</th>
+                                <th style="min-width: 250px ; background: #E9C780; ">Giá thuê</th>
+                                <th style="min-width: 200px ; background: #E9C780; ">Kết cấu</th>
+                                <th style="min-width: 200px ; background: #E9C780; ">Ngày tạo</th>    
+                                <th style="min-width: 200px ; background: #E9C780; ">Ngày điều chỉnh</th> 
                                 {{-- <th style="min-width: 100px">Số điện thoại</th> --}}
 
-                                <th style="min-width: 150px ; background: #FEC92C; ">Quận/huyện</th>
-                                <th style="min-width: 150px ; background: #FEC92C; ">Phường/xã</th>
+                                <th style="min-width: 150px ; background: #E9C780; ">Quận/huyện</th>
+                                <th style="min-width: 150px ; background: #E9C780; ">Phường/xã</th>
                                 {{-- <th style="min-width: 150px">Đường</th> --}}
-                                <th style="min-width: 200px ; background: #FEC92C; ">Số nhà</th>
+                                <th style="min-width: 200px ; background: #E9C780; ">Số nhà</th>
                                  
-                                <th style="min-width: 120px ; background: #FEC92C; ">Thao tác</th>
+                                <th style="min-width: 120px ; background: #E9C780; ">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -308,7 +308,7 @@
                                            target="_blank"
                                            class="link-black link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                                            title="Chi tiết"
-                                           style="text-decoration: none; color:#459DE2">
+                                           style="text-decoration: none; color: black">
                                             {{ $product->title }}
                                         </a>
                                     </div>

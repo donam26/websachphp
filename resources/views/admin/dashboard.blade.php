@@ -47,10 +47,10 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th style ="background: #FEC92C ; font-size: 20px">MÔ TẢ</th>
-                                    <th style ="min-width: 200px ;background: #FEC92C ; font-size: 20px">GIÁ</th>
-                                    <th style ="min-width: 200px ;background: #FEC92C ; font-size: 20px">NGÀY TẠO</th>
-                                    <th style ="min-width: 200px ;background: #FEC92C ; font-size: 20px">NGÀY CẬP NHẬT</th>
+                                    <th style ="background: #E9C780 ; font-size: 20px">MÔ TẢ</th>
+                                    <th style ="min-width: 200px ;background: #E9C780 ; font-size: 20px">GIÁ</th>
+                                    <th style ="min-width: 200px ;background: #E9C780 ; font-size: 20px">NGÀY TẠO</th>
+                                    <th style ="min-width: 200px ;background: #E9C780 ; font-size: 20px">NGÀY CẬP NHẬT</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -61,7 +61,7 @@
                                            target="_blank"
                                            class="link-black link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                                            title="Chi tiết"
-                                           style="text-decoration: none; color:#459DE2">
+                                           style="text-decoration: none; color:black">
                                             {{ $products->title }}
                                         </a>
                                     </div></td>
@@ -90,10 +90,10 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th style ="background: #FEC92C ; font-size: 20px">MÔ TẢ</th>
-                                    <th style ="min-width: 200px ;background: #FEC92C ; font-size: 20px">GIÁ</th>
-                                    <th style ="min-width: 200px ;background: #FEC92C ; font-size: 20px">NGÀY TẠO</th>
-                                    <th style ="min-width: 200px ;background: #FEC92C ; font-size: 20px">NGÀY CẬP NHẬT</th>
+                                    <th style ="background: #E9C780 ; font-size: 20px">MÔ TẢ</th>
+                                    <th style ="min-width: 200px ;background: #E9C780 ; font-size: 20px">GIÁ</th>
+                                    <th style ="min-width: 200px ;background: #E9C780 ; font-size: 20px">NGÀY TẠO</th>
+                                    <th style ="min-width: 200px ;background: #E9C780 ; font-size: 20px">NGÀY CẬP NHẬT</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -104,7 +104,7 @@
                                            target="_blank"
                                            class="link-black link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                                            title="Chi tiết"
-                                           style="text-decoration: none; color:#459DE2">
+                                           style="text-decoration: none; color:black">
                                             {{ $Topprice->title }}
                                         </a>
                                     </div> </b> </td>
