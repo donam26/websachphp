@@ -275,14 +275,15 @@
                                 <th style="min-width: 100px">Diện tích</th>
                                 <th style="min-width: 250px">Giá thuê</th>
                                 <th style="min-width: 200px">Kết cấu</th>
+                                <th style="min-width: 200px">Ngày tạo</th>    
+                                <th style="min-width: 200px">Ngày điều chỉnh</th> 
                                 {{-- <th style="min-width: 100px">Số điện thoại</th> --}}
 
                                 <th style="min-width: 150px">Quận/huyện</th>
                                 <th style="min-width: 150px">Phường/xã</th>
                                 {{-- <th style="min-width: 150px">Đường</th> --}}
                                 <th style="min-width: 200px">Số nhà</th>
-                                <th style="min-width: 200px">Ngày tạo</th>    
-                                <th style="min-width: 200px">Ngày điều chỉnh</th>   
+                                 
                                 <th style="min-width: 120px">Thao tác</th>
                             </tr>
                         </thead>
@@ -327,12 +328,13 @@
                                 <td>{{ $product->acreage }}</td>
                                 <td>{{ number_format($product->price)}} VND</td>
                                 <td> {{ $product->texture }}</td>
+                                <td>{{ $product->created_at }}</td>
+                                <td>{{ $product->updated_at }}</td>
                                 <td>{{ $product->district_name  }}</td>
                                 <td>{{ $product->ward_name}}</td>
                                 {{-- <td></td> --}}
                                 <td>{{ $product->house_number }}</td>
-                                <td>{{ $product->created_at }}</td>
-                                <td>{{ $product->updated_at }}</td>
+                               
 
 
                                 <td>
