@@ -134,12 +134,17 @@
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-4">
-                    <div class="text-center mb-4">
-                        <h4 class="text-white"><img style ='width: 90px;  height: 90px; ' src="https://hqland.id.vn/storage/products/images/logo%20HQ.png" ></h4>
-
-                    </div>
+                  
                     <ul class="nav flex-column">
+                         <li class="nav-item">
+                            <a class="nav-link"
+                                href="{{ route('home') }}">
+                                <i class="bi bi-house"></i>
+                                <div class="text-white"><img style ='width: 90px;  height: 90px; '
+                         src="https://hqland.id.vn/storage/products/images/logo%20HQ.png" ></div>
 
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link"
                                 href="{{ route('home') }}">

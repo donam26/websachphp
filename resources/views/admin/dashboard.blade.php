@@ -7,7 +7,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">Nổi bật</h1>
         <div>
-            <button class="btn btn-primary" onclick="window.print()">
+            <button class="btn btn-warning" onclick="window.print()">
                 <i class="bi bi-printer"></i> In báo cáo
             </button>
         </div>
@@ -47,16 +47,24 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th style ="background: #FFCC33 ; font-size: 20px">Mô tả</th>
-                                    <th style ="min-width: 200px ;background: #FFCC33 ; font-size: 20px">Giá</th>
-                                    <th style ="min-width: 200px ;background: #FFCC33 ; font-size: 20px">Ngày tạo</th>
-                                    <th style ="min-width: 200px ;background: #FFCC33 ; font-size: 20px">Ngày cập nhật</th>
+                                    <th style ="background: #FEC92C ; font-size: 20px">MÔ TẢ</th>
+                                    <th style ="min-width: 200px ;background: #FEC92C ; font-size: 20px">GIÁ</th>
+                                    <th style ="min-width: 200px ;background: #FEC92C ; font-size: 20px">NGÀY TẠO</th>
+                                    <th style ="min-width: 200px ;background: #FEC92C ; font-size: 20px">NGÀY CẬP NHẬT</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($Topproducts as $products)
                                     <tr>
-                                        <td> <b>{{ $products->title }} </b></td>
+                                        <td> <div class="fw-bold">
+                                        <a href="{{ route('admin.products.show', $products->code) }}"
+                                           target="_blank"
+                                           class="link-black link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                                           title="Chi tiết"
+                                           style="text-decoration: none; color:#459DE2">
+                                            {{ $products->title }}
+                                        </a>
+                                    </div></td>
                                         <td>{{ number_format($products->price)}} VNĐ</td>
                                         <td>{{ $products->created_at }}</td>
                                         <td>{{ $products->updated_at }}</td>
@@ -72,7 +80,7 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold text-danger" style =" font-size: 25px"><b>Top 20 Sản phẩm giá trị cao</b></h6>
-                    <a href="{{ route('admin.products.index') }}" class="btn btn-sm btn-primary">
+                    <a href="{{ route('admin.products.index') }}" class="btn btn-sm btn-warning">
                         Xem tất cả
                     </a>
         
@@ -81,18 +89,26 @@
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
-                                <tr >
-                                    <th style ="background: #FFCC33 ; font-size: 20px">Mô tả</th>
-                                    <th style ="min-width: 200px ;background: #FFCC33 ; font-size: 20px">Giá</th>
-                                    <th style ="min-width: 200px ;background: #FFCC33 ; font-size: 20px">Ngày tạo</th>
-                                    <th style ="min-width: 200px ;background: #FFCC33 ; font-size: 20px">Ngày cập nhật</th>
+                                <tr>
+                                    <th style ="background: #FEC92C ; font-size: 20px">MÔ TẢ</th>
+                                    <th style ="min-width: 200px ;background: #FEC92C ; font-size: 20px">GIÁ</th>
+                                    <th style ="min-width: 200px ;background: #FEC92C ; font-size: 20px">NGÀY TẠO</th>
+                                    <th style ="min-width: 200px ;background: #FEC92C ; font-size: 20px">NGÀY CẬP NHẬT</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($Topprice as $Topprice)
                                     <tr>
-                                        <td> <b>{{ $products->title }} </b> </td>
-                                        <td>{{ number_format($products->price)}} VNĐ</td>
+                                        <td> <div class="fw-bold">
+                                        <a href="{{ route('admin.products.show', $products->code) }}"
+                                           target="_blank"
+                                           class="link-black link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                                           title="Chi tiết"
+                                           style="text-decoration: none; color:#459DE2">
+                                            {{ $Topprice->title }}
+                                        </a>
+                                    </div> </b> </td>
+                                        <td>{{ number_format($Topprice->price)}} VNĐ</td>
                                         <td>{{ $Topprice->created_at }}</td>
                                         <td>{{ $Topprice->updated_at }}</td>
                                     </tr>

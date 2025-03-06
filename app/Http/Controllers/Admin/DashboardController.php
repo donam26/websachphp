@@ -20,7 +20,9 @@ class DashboardController extends Controller
       
         $Product = Product::query();
         $Topproducts = Product::orderBy('updated_at', 'desc')->take(20)->get();
-        $Topprice = Product::orderBy('price', 'desc')->take(20)->get();
+        // $Topprice = Product::orderBy('price', 'desc')->take(20)->get();
+        $Topprice =  DB::select('SELECT * FROM `products` order by price DESC limit 20');
+
         $User = User::query();
         $totalUsers = $User->count();
         // Tổng doanh thu

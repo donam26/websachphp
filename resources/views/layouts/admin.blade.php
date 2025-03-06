@@ -135,7 +135,8 @@
             <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-4">
                     <div class="text-center mb-4">
-                        <h4 class="text-white"><img style ='width: 90px;  height: 90px; ' src="https://hqland.id.vn/storage/products/images/logo%20HQ.png" ></h4>
+                        <div class="text-white"><img style ='width: 120px;  height: 120px; '
+                         src="https://hqland.id.vn/storage/products/images/logo%20HQ.png" alt="Logo" class="logo"></div>
 
                     </div>
                     <ul class="nav flex-column">
