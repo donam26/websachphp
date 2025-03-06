@@ -118,7 +118,7 @@
         }
 
         .dropdown-menu {
-            box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
+            box-shadow: 0 .15rem 1.75rem 0 rgba(7, 7, 7, 0.15);
             border: none;
         }
 
@@ -144,7 +144,7 @@
                             <a class="nav-link"
                                 href="{{ route('home') }}">
                                 <i class="bi bi-house"></i>
-                                <span>Sản phẩm thuê </span>
+                                <span>Sản phẩm</span>
                             </a>
                         </li>
 

@@ -141,7 +141,7 @@
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
-                                <i class="bi bi-speedometer2"></i> Dashboard
+                                <i class="bi bi-speedometer2"></i> Nổi bật
                             </a>
                         </li>
                         <li class="nav-item">
@@ -163,6 +163,8 @@
                                 <span>Khách hàng</span>
                             </a>
                         </li>
+                        @if(Auth::user()->IsDelete === 1)
+                        
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.Adduser.*') ? 'active' : '' }}"
                                 href="{{ route('admin.Adduser.index') }}">
@@ -170,7 +172,7 @@
                                 <span>Tạo nhân viên</span>
                             </a>
                         </li>
-
+                        @endif   
                     </ul>
                 </div>
             </nav>

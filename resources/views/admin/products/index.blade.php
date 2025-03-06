@@ -263,28 +263,28 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="min-width: 300">Ảnh</th>
-                                <th style="min-width: 150px">Loại</th>
-                                <th style="min-width: 200px">Tiêu đề</th>
-                                <th style="min-width: 120px">Trạng thái</th>
+                                <th style="min-width: 300 ; background: #3366FF ; color: #FFFFFF" >Ảnh</th>
+                                <th style="min-width: 150px ; background: #3366FF; color: #FFFFFF">Loại</th>
+                                <th style="min-width: 200px ; background: #3366FF; color: #FFFFFF">Tiêu đề</th>
+                                <th style="min-width: 120px ; background: #3366FF; color: #FFFFFF">Trạng thái</th>
 
-                                {{-- <th style="min-width: 300px">Mô tả</th> --}}
-                                <th style="min-width: 100px">Ngang</th>
-                                <th style="min-width: 100px">Dài</th>
+                                {{-- <th style="min-width: 300px ">Mô tả</th> --}}
+                                <th style="min-width: 100px ; background: #3366FF; color: #FFFFFF">Ngang</th>
+                                <th style="min-width: 100px ; background: #3366FF; color: #FFFFFF">Dài</th>
 
-                                <th style="min-width: 100px">Diện tích</th>
-                                <th style="min-width: 250px">Giá thuê</th>
-                                <th style="min-width: 200px">Kết cấu</th>
-                                <th style="min-width: 200px">Ngày tạo</th>    
-                                <th style="min-width: 200px">Ngày điều chỉnh</th> 
+                                <th style="min-width: 100px ; background: #3366FF; color: #FFFFFF">Diện tích</th>
+                                <th style="min-width: 250px ; background: #3366FF; color: #FFFFFF">Giá thuê</th>
+                                <th style="min-width: 200px ; background: #3366FF; color: #FFFFFF">Kết cấu</th>
+                                <th style="min-width: 200px ; background: #3366FF; color: #FFFFFF">Ngày tạo</th>    
+                                <th style="min-width: 200px ; background: #3366FF; color: #FFFFFF">Ngày điều chỉnh</th> 
                                 {{-- <th style="min-width: 100px">Số điện thoại</th> --}}
 
-                                <th style="min-width: 150px">Quận/huyện</th>
-                                <th style="min-width: 150px">Phường/xã</th>
+                                <th style="min-width: 150px ; background: #3366FF; color: #FFFFFF">Quận/huyện</th>
+                                <th style="min-width: 150px ; background: #3366FF; color: #FFFFFF">Phường/xã</th>
                                 {{-- <th style="min-width: 150px">Đường</th> --}}
-                                <th style="min-width: 200px">Số nhà</th>
+                                <th style="min-width: 200px ; background: #3366FF; color: #FFFFFF">Số nhà</th>
                                  
-                                <th style="min-width: 120px">Thao tác</th>
+                                <th style="min-width: 120px ; background: #3366FF; color: #FFFFFF">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -351,6 +351,7 @@
                                            title="Sửa">
                                             <i class="bi bi-pencil"></i>
                                         </a>
+                                        @if($user->IsDelete === 1)
                                         <form action="{{ route('admin.products.destroy', $product->code) }}"
                                               method="POST"
                                               class="d-inline"
@@ -363,6 +364,10 @@
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
+                                        @else
+                                        <span class="badge bg-danger"></span>
+                                        @endif
+                                        
                                     </div>
                                 </td>
                             </tr>

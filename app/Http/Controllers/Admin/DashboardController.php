@@ -7,11 +7,22 @@ use App\Models\Order;
 use App\Models\User;
 use App\Models\Book;
 use Illuminate\Support\Facades\DB;
+use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+      
+        $Product = Product::query();
+        $Topproducts = Product::orderBy('updated_at', 'desc')->take(20)->get();
+        $Topprice = Product::orderBy('price', 'desc')->take(20)->get();
+        $User = User::query();
+        $totalUsers = $User->count();
         // Tổng doanh thu
         $totalRevenue = Order::where('status', 'completed')
             ->sum('total_amount');
@@ -22,9 +33,7 @@ class DashboardController extends Controller
         // Tổng số sách
         $totalBooks = Book::count();
 
-        // Tổng số người dùng
-        $totalUsers = User::where('role', 'user')->count();
-
+        
         // Đơn hàng gần đây
         $recentOrders = Order::with('user')
             ->latest()
@@ -54,7 +63,8 @@ class DashboardController extends Controller
             'totalBooks',
             'totalUsers',
             'recentOrders',
-            'topBooks'
+            'topBooks','Topproducts','Topprice'
+
         ));
     }
 } 

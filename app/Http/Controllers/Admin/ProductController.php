@@ -14,6 +14,7 @@ class ProductController extends Controller
 {
     protected function getValidationRules($productId = null)
     {
+
         return [
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
@@ -49,7 +50,8 @@ class ProductController extends Controller
         $ward =  DB::select('SELECT id, name FROM ward order by id desc');
         $district =  DB::select('SELECT id, name FROM district order by id ');
         $status =  DB::select('SELECT distinct status FROM products order by status ');
-
+        $user = auth()->user();
+       
         // Filter by title/name
         if ($request->filled('search')) {
             $search = $request->search;
@@ -213,7 +215,7 @@ class ProductController extends Controller
 
         $products = $query->latest()->paginate(20)->appends($request->all());
         $countproduct = $query->count();
-        return view('admin.products.index', compact('products', 'types', 'formalities', 'provinces','ward','city','district','countproduct','status'));
+        return view('admin.products.index', compact('products', 'types', 'formalities', 'provinces','ward','city','district','countproduct','status','user'));
     }
 
     public function create()
