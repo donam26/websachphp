@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">Quản lý bất động sản</h1>
-        <a href="{{ route('admin.products.create') }}" class="btn btn-warning" style="background: #E9C780 ">
+        <a href="{{ route('admin.products.create') }}" class="btn btn-warning" >
             <i class="bi bi-plus-circle me-1"></i>Thêm sản phẩm thuê
         </a>
     </div>

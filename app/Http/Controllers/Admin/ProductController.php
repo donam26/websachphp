@@ -167,7 +167,7 @@ class ProductController extends Controller
             $houseid = $request->houseid;
             $query->where(function($q) use ($houseid) {
                 $q->where('title', 'like', "%{$houseid}%")
-                  ->orWhere('houseid', 'like', "%{$houseid}%")
+                  ->orWhere('house_number', 'like', "%{$houseid}%")
                   ;
             });
         }
