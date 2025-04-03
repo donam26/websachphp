@@ -286,7 +286,7 @@
                         </div>
 
 
-                            <label for="street" class="form-label">Đờng/Phố</label>
+                            <label for="street" class="form-label">Đuờng/Phố</label>
                             <input type="text"
                                    class="form-control @error('street') is-invalid @enderror"
                                    id="street"
