@@ -12,20 +12,41 @@ class BookController extends Controller
     {
         $query = Book::query();
 
-        // Xử lý tìm kiếm
+        // Tìm kiếm theo tên hoặc thương hiệu
         if ($search = $request->input('search')) {
-            $query->where('title', 'like', "%{$search}%")
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%")
                   ->orWhere('author', 'like', "%{$search}%");
+            });
         }
 
-        // Xử lý lọc theo danh mục
+        // Lọc theo danh mục
         if ($category = $request->input('category')) {
             $query->whereHas('category', function($q) use ($category) {
                 $q->where('slug', $category);
             });
         }
 
-        // Xử lý sắp xếp
+        // Lọc theo giới tính
+        if ($gender = $request->input('gender')) {
+            $query->where('gender', $gender);
+        }
+
+        // Lọc theo size
+        if ($size = $request->input('size')) {
+            $query->where('sizes', 'like', "%{$size}%");
+        }
+
+        // Lọc theo khoảng giá
+        if ($request->input('price_from')) {
+            $query->where('price', '>=', $request->input('price_from'));
+        }
+        if ($request->input('price_to')) {
+            $query->where('price', '<=', $request->input('price_to'));
+        }
+
+        // Sắp xếp
         switch ($request->input('sort')) {
             case 'price_asc':
                 $query->orderBy('price', 'asc');
@@ -33,12 +54,17 @@ class BookController extends Controller
             case 'price_desc':
                 $query->orderBy('price', 'desc');
                 break;
+            case 'name_asc':
+                $query->orderBy('title', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('title', 'desc');
+                break;
             default:
                 $query->latest();
                 break;
         }
 
-        // Phân trang với 12 item mỗi trang
         $books = $query->with('category')->paginate(12);
         $categories = Category::all();
 
@@ -47,7 +73,7 @@ class BookController extends Controller
 
     public function show(Book $book)
     {
-        // Lấy các sách liên quan cùng thể loại
+        // Lấy sản phẩm liên quan cùng danh mục
         $relatedBooks = Book::where('category_id', $book->category_id)
             ->where('id', '!=', $book->id)
             ->take(4)
@@ -64,4 +90,4 @@ class BookController extends Controller
 
         return view('books.index', compact('books', 'categories'));
     }
-} 
+}

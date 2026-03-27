@@ -1,220 +1,199 @@
 @extends('layouts.admin')
 
-@section('title', 'Chi tiết đơn hàng #' . $order->id)
+@section('title', 'Chi tiet don hang #' . $order->id)
 
 @section('content')
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Chi tiết đơn hàng #{{ $order->id }}</h1>
-        <div>
-            <button class="btn btn-primary" onclick="window.print()">
-                <i class="bi bi-printer"></i> In đơn hàng
-            </button>
-            <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> Quay lại
-            </a>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+    <div style="display:flex;align-items:center;gap:1rem;">
+        <a href="{{ route('admin.orders.index') }}" class="ad-btn ad-btn-outline ad-btn-icon" style="width:40px;height:40px;">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h1 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--ad-primary);margin:0;">
+            Don hang #{{ $order->id }}
+        </h1>
+    </div>
+    <button class="ad-btn ad-btn-outline" onclick="window.print()">
+        <i class="bi bi-printer"></i> In don hang
+    </button>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <!-- Order Items -->
+        <div class="ad-card mb-4">
+            <div class="ad-card-header">
+                <h5>Chi tiet san pham</h5>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="ad-table">
+                    <thead>
+                        <tr>
+                            <th>San pham</th>
+                            <th style="text-align:center;">So luong</th>
+                            <th style="text-align:right;">Don gia</th>
+                            <th style="text-align:right;">Thanh tien</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($order->orderItems as $item)
+                        <tr>
+                            <td>
+                                <div style="display:flex;align-items:center;gap:10px;">
+                                    <img src="{{ asset('storage/books/'.$item->book->image) }}" alt="{{ $item->book->title }}"
+                                         style="width:48px;height:60px;object-fit:cover;border-radius:8px;border:1px solid var(--ad-border);">
+                                    <div>
+                                        <div style="font-weight:500;">{{ $item->book->title }}</div>
+                                        <small style="color:var(--ad-muted);">{{ $item->book->brand ?: $item->book->author }}</small>
+                                        @if($item->size || $item->color)
+                                        <div style="margin-top:4px;display:flex;gap:4px;">
+                                            @if($item->size)
+                                                <span class="ad-badge" style="background:var(--ad-surface);color:var(--ad-text);font-size:0.65rem;">Size: {{ $item->size }}</span>
+                                            @endif
+                                            @if($item->color)
+                                                <span class="ad-badge" style="background:var(--ad-surface);color:var(--ad-text);font-size:0.65rem;">Mau: {{ $item->color }}</span>
+                                            @endif
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align:center;">{{ $item->quantity }}</td>
+                            <td style="text-align:right;white-space:nowrap;">{{ number_format($item->price) }}d</td>
+                            <td style="text-align:right;white-space:nowrap;font-weight:600;">{{ number_format($item->price * $item->quantity) }}d</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="text-align:right;font-weight:600;border-top:2px solid var(--ad-border);">Tong tien:</td>
+                            <td style="text-align:right;font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;border-top:2px solid var(--ad-border);">
+                                {{ number_format($order->total_amount) }}d
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Order History -->
+        <div class="ad-card">
+            <div class="ad-card-header"><h5>Lich su don hang</h5></div>
+            <div class="ad-card-body">
+                @foreach($order->history as $history)
+                <div class="timeline-row">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-body">
+                        <div style="font-size:0.78rem;color:var(--ad-muted);margin-bottom:2px;">
+                            {{ $history->created_at->format('d/m/Y H:i') }}
+                        </div>
+                        <div style="font-weight:600;font-size:0.9rem;">{{ $history->status }}</div>
+                        @if($history->note)
+                        <div style="color:var(--ad-muted);font-size:0.85rem;margin-top:2px;">{{ $history->note }}</div>
+                        @endif
+                    </div>
+                </div>
+                @endforeach
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-lg-8">
-            <!-- Thông tin đơn hàng -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">Thông tin đơn hàng</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Sản phẩm</th>
-                                    <th class="text-center">Số lượng</th>
-                                    <th class="text-end">Đơn giá</th>
-                                    <th class="text-end">Thành tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($order->orderItems as $item)
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="{{ $item->book->image }}" alt="{{ $item->book->title }}" 
-                                                class="img-thumbnail me-3" style="width: 60px;">
-                                            <div>
-                                                <div>{{ $item->book->title }}</div>
-                                                <small class="text-muted">{{ $item->book->author }}</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">{{ $item->quantity }}</td>
-                                    <td class="text-end">{{ number_format($item->price) }}đ</td>
-                                    <td class="text-end">{{ number_format($item->price * $item->quantity) }}đ</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="3" class="text-end"><strong>Tổng tiền:</strong></td>
-                                    <td class="text-end"><strong>{{ number_format($order->total_amount) }}đ</strong></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Lịch sử đơn hàng -->
-            <div class="card">
-                <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">Lịch sử đơn hàng</h6>
-                </div>
-                <div class="card-body">
-                    <div class="timeline">
-                        @foreach($order->history as $history)
-                        <div class="timeline-item">
-                            <div class="timeline-date">{{ $history->created_at->format('d/m/Y H:i') }}</div>
-                            <div class="timeline-content">
-                                <div class="font-weight-bold">{{ $history->status }}</div>
-                                <div class="text-muted">{{ $history->note }}</div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
+    <div class="col-lg-4">
+        <!-- Customer Info -->
+        <div class="ad-card mb-4">
+            <div class="ad-card-header"><h5>Khach hang</h5></div>
+            <div class="ad-card-body">
+                <div style="display:flex;flex-direction:column;gap:0.6rem;font-size:0.875rem;">
+                    <div><span style="color:var(--ad-muted);">Ho ten:</span> <strong>{{ $order->user->full_name }}</strong></div>
+                    <div><span style="color:var(--ad-muted);">Email:</span> {{ $order->user->email }}</div>
+                    <div><span style="color:var(--ad-muted);">SDT:</span> {{ $order->user->phone_number }}</div>
+                    <div><span style="color:var(--ad-muted);">Dia chi:</span> {{ $order->user->address }}</div>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4">
-            <!-- Thông tin khách hàng -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">Thông tin khách hàng</h6>
-                </div>
-                <div class="card-body">
-                    <p><strong>Họ tên:</strong> {{ $order->user->full_name }}</p>
-                    <p><strong>Email:</strong> {{ $order->user->email }}</p>
-                    <p><strong>Số điện thoại:</strong> {{ $order->user->phone_number }}</p>
-                    <p><strong>Địa chỉ:</strong> {{ $order->user->address }}</p>
-                </div>
-            </div>
-
-            <!-- Thông tin thanh toán -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">Thông tin thanh toán</h6>
-                </div>
-                <div class="card-body">
-                    <p><strong>Phương thức:</strong> {{ $order->payment_method }}</p>
-                    <p><strong>Trạng thái:</strong> 
+        <!-- Payment Info -->
+        <div class="ad-card mb-4">
+            <div class="ad-card-header"><h5>Thanh toan</h5></div>
+            <div class="ad-card-body">
+                <div style="display:flex;flex-direction:column;gap:0.6rem;font-size:0.875rem;">
+                    <div>
+                        <span style="color:var(--ad-muted);">Phuong thuc:</span>
+                        <strong>{{ $order->payment_method === 'cod' ? 'COD' : 'VNPay' }}</strong>
+                    </div>
+                    <div>
+                        <span style="color:var(--ad-muted);">Trang thai:</span>
                         @switch($order->payment_status)
                             @case('pending')
-                                <span class="badge bg-warning">Chưa thanh toán</span>
+                                <span class="ad-badge ad-badge-warning">Chua thanh toan</span>
                                 @break
                             @case('completed')
-                                <span class="badge bg-success">Đã thanh toán</span>
+                                <span class="ad-badge ad-badge-success">Da thanh toan</span>
                                 @break
                             @case('failed')
-                                <span class="badge bg-danger">Thanh toán thất bại</span>
+                                <span class="ad-badge ad-badge-danger">That bai</span>
                                 @break
                         @endswitch
-                    </p>
-                    @if($order->payment_method == 'vnpay')
-                        <p><strong>Mã giao dịch:</strong> {{ $order->transaction_id }}</p>
+                    </div>
+                    @if($order->payment_method == 'vnpay' && $order->transaction_id)
+                    <div><span style="color:var(--ad-muted);">Ma GD:</span> <code>{{ $order->transaction_id }}</code></div>
                     @endif
                 </div>
             </div>
+        </div>
 
-            <!-- Cập nhật trạng thái -->
-            <div class="card">
-                <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">Cập nhật trạng thái</h6>
-                </div>
-                <div class="card-body">
-                    <form action="{{ route('admin.orders.update', $order->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <div class="mb-3">
-                            <label class="form-label">Trạng thái</label>
-                            <select name="status" class="form-select">
-                                <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>
-                                    Chờ xác nhận
-                                </option>
-                                <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>
-                                    Đã xác nhận
-                                </option>
-                                <option value="shipping" {{ $order->status == 'shipping' ? 'selected' : '' }}>
-                                    Đang giao
-                                </option>
-                                <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>
-                                    Đã giao
-                                </option>
-                                <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>
-                                    Đã hủy
-                                </option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Ghi chú</label>
-                            <textarea name="note" class="form-control" rows="3"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="bi bi-save"></i> Cập nhật
-                        </button>
-                    </form>
-                </div>
+        <!-- Update Status -->
+        <div class="ad-card">
+            <div class="ad-card-header"><h5>Cap nhat trang thai</h5></div>
+            <div class="ad-card-body">
+                <form action="{{ route('admin.orders.update', $order->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="mb-3">
+                        <label class="form-label">Trang thai</label>
+                        <select name="status" class="form-select">
+                            <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Cho xac nhan</option>
+                            <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Da xac nhan</option>
+                            <option value="shipping" {{ $order->status == 'shipping' ? 'selected' : '' }}>Dang giao</option>
+                            <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Da giao</option>
+                            <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Da huy</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ghi chu</label>
+                        <textarea name="note" class="form-control" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="ad-btn ad-btn-primary w-100" style="justify-content:center;">
+                        <i class="bi bi-check-lg"></i> Cap nhat
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-.timeline {
+.timeline-row {
+    display: flex;
+    gap: 16px;
     position: relative;
-    padding: 20px 0;
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.25rem;
 }
 
-.timeline-item {
-    position: relative;
-    padding-left: 40px;
-    margin-bottom: 20px;
+.timeline-row:not(:last-child) {
+    border-bottom: 1px solid var(--ad-border);
 }
 
-.timeline-item:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: -20px;
-    width: 2px;
-    background: #e3e6f0;
-}
-
-.timeline-item:last-child:before {
-    bottom: 0;
-}
-
-.timeline-item:after {
-    content: '';
-    position: absolute;
-    left: -4px;
-    top: 8px;
-    width: 10px;
-    height: 10px;
+.timeline-dot {
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    background: #4e73df;
+    background: var(--ad-accent);
+    flex-shrink: 0;
+    margin-top: 4px;
+    box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.2);
 }
 
-.timeline-date {
-    font-size: 0.875rem;
-    color: #858796;
-    margin-bottom: 5px;
-}
-
-.timeline-content {
-    background: #f8f9fc;
-    padding: 15px;
-    border-radius: 5px;
-}
+.timeline-body { flex: 1; }
 </style>
-@endsection 
+@endsection

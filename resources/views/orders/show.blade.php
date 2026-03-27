@@ -1,154 +1,138 @@
 @extends('layouts.app')
 
-@section('title', 'Chi tiết đơn hàng #' . $order->id)
+@section('title', 'Chi tiet don hang #' . $order->id)
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="mb-0">
-                    <i class="bi bi-receipt"></i> Chi tiết đơn hàng #{{ $order->id }}
-                </h2>
-                <a href="{{ route('orders.index') }}" class="btn btn-outline-primary">
-                    <i class="bi bi-arrow-left"></i> Quay lại
-                </a>
-            </div>
+<div class="fs-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
+                    <div>
+                        <h1 class="fs-section-title" style="margin-bottom:0.25rem;">Don hang #{{ $order->id }}</h1>
+                        <p style="color:var(--fs-muted);font-size:0.875rem;margin:0;">Dat ngay {{ $order->created_at->format('d/m/Y H:i') }}</p>
+                    </div>
+                    <a href="{{ route('orders.index') }}" class="fs-btn fs-btn-outline" style="font-size:0.78rem;">
+                        <i class="bi bi-arrow-left"></i> Quay lai
+                    </a>
+                </div>
 
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <div class="order-info">
-                                <h5 class="card-title">
-                                    <i class="bi bi-info-circle"></i> Thông tin đơn hàng
-                                </h5>
-                                <div class="list-group list-group-flush">
-                                    <div class="list-group-item border-0 px-0">
-                                        <div class="d-flex justify-content-between">
-                                            <span class="text-muted">Trạng thái</span>
-                                            @switch($order->status)
-                                                @case('pending')
-                                                    <span class="badge bg-warning">
-                                                        <i class="bi bi-clock"></i> Chờ xác nhận
-                                                    </span>
-                                                    @break
-                                                @case('confirmed')
-                                                    <span class="badge bg-info">
-                                                        <i class="bi bi-check-circle"></i> Đã xác nhận
-                                                    </span>
-                                                    @break
-                                                @case('shipping')
-                                                    <span class="badge bg-primary">
-                                                        <i class="bi bi-truck"></i> Đang giao
-                                                    </span>
-                                                    @break
-                                                @case('completed')
-                                                    <span class="badge bg-success">
-                                                        <i class="bi bi-check2-all"></i> Đã giao
-                                                    </span>
-                                                    @break
-                                                @case('cancelled')
-                                                    <span class="badge bg-danger">
-                                                        <i class="bi bi-x-circle"></i> Đã hủy
-                                                    </span>
-                                                    @break
-                                            @endswitch
-                                        </div>
+                <!-- Order Info -->
+                <div class="row g-4" style="margin-bottom:1.5rem;">
+                    <div class="col-md-6">
+                        <div class="fs-card" style="height:100%;">
+                            <div style="padding:1.5rem;">
+                                <h6 style="font-family:'Playfair Display',serif;font-weight:600;margin-bottom:1rem;">
+                                    <i class="bi bi-info-circle" style="color:var(--fs-accent);"></i> Thong tin don hang
+                                </h6>
+                                <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                                        <span style="color:var(--fs-muted);font-size:0.875rem;">Trang thai</span>
+                                        @switch($order->status)
+                                            @case('pending')
+                                                <span class="fs-badge fs-badge-warning">Cho xac nhan</span>
+                                                @break
+                                            @case('confirmed')
+                                                <span class="fs-badge fs-badge-info">Da xac nhan</span>
+                                                @break
+                                            @case('shipping')
+                                                <span class="fs-badge" style="background:#e3f2fd;color:#1565c0;">Dang giao</span>
+                                                @break
+                                            @case('completed')
+                                                <span class="fs-badge fs-badge-success">Da giao</span>
+                                                @break
+                                            @case('cancelled')
+                                                <span class="fs-badge fs-badge-danger">Da huy</span>
+                                                @break
+                                        @endswitch
                                     </div>
-                                    <div class="list-group-item border-0 px-0">
-                                        <div class="d-flex justify-content-between">
-                                            <span class="text-muted">Ngày đặt</span>
-                                            <span>{{ $order->created_at->format('d/m/Y H:i') }}</span>
-                                        </div>
+                                    <div style="display:flex;justify-content:space-between;">
+                                        <span style="color:var(--fs-muted);font-size:0.875rem;">Ngay dat</span>
+                                        <span style="font-weight:500;font-size:0.875rem;">{{ $order->created_at->format('d/m/Y H:i') }}</span>
                                     </div>
-                                    <div class="list-group-item border-0 px-0">
-                                        <div class="d-flex justify-content-between">
-                                            <span class="text-muted">Phương thức thanh toán</span>
-                                            <span>
-                                                @if($order->payment_method === 'cod')
-                                                    <i class="bi bi-cash"></i> Thanh toán khi nhận hàng
-                                                @else
-                                                    <i class="bi bi-credit-card"></i> VNPay
-                                                @endif
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="shipping-info">
-                                <h5 class="card-title">
-                                    <i class="bi bi-truck"></i> Thông tin giao hàng
-                                </h5>
-                                <div class="list-group list-group-flush">
-                                    <div class="list-group-item border-0 px-0">
-                                        <span class="text-muted">Địa chỉ giao hàng</span>
-                                        <p class="mb-0 mt-1">{{ $order->shipping_address }}</p>
+                                    <div style="display:flex;justify-content:space-between;">
+                                        <span style="color:var(--fs-muted);font-size:0.875rem;">Thanh toan</span>
+                                        <span style="font-weight:500;font-size:0.875rem;">
+                                            {{ $order->payment_method === 'cod' ? 'Thanh toan khi nhan hang' : 'VNPay' }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="fs-card" style="height:100%;">
+                            <div style="padding:1.5rem;">
+                                <h6 style="font-family:'Playfair Display',serif;font-weight:600;margin-bottom:1rem;">
+                                    <i class="bi bi-truck" style="color:var(--fs-accent);"></i> Thong tin giao hang
+                                </h6>
+                                <p style="color:var(--fs-muted);font-size:0.875rem;line-height:1.7;margin:0;">
+                                    {{ $order->shipping_address }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title mb-4">
-                        <i class="bi bi-box"></i> Chi tiết sản phẩm
-                    </h5>
-                    <div class="table-responsive">
-                        <table class="table align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th scope="col">Sản phẩm</th>
-                                    <th scope="col" class="text-end">Giá</th>
-                                    <th scope="col" class="text-center">Số lượng</th>
-                                    <th scope="col" class="text-end">Tổng</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($order->orderItems as $item)
-                                    <tr>
-                                        <td style="min-width: 300px;">
-                                            <div class="d-flex align-items-center">
-                                                <img src="{{ asset('storage/books/'.$item->book->image) }}" 
-                                                     alt="{{ $item->book->title }}" 
-                                                     class="rounded"
-                                                     style="width: 60px; height: 80px; object-fit: cover;">
-                                                <div class="ms-3">
-                                                    <h6 class="mb-1">{{ $item->book->title }}</h6>
-                                                    <small class="text-muted">{{ $item->book->author }}</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="text-end">{{ number_format($item->price) }}đ</td>
-                                        <td class="text-center">{{ $item->quantity }}</td>
-                                        <td class="text-end">{{ number_format($item->price * $item->quantity) }}đ</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot class="table-light">
-                                <tr>
-                                    <td colspan="3" class="text-end">Tạm tính:</td>
-                                    <td class="text-end">{{ number_format($order->total_amount - 30000) }}đ</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3" class="text-end">Phí vận chuyển:</td>
-                                    <td class="text-end">30,000đ</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
-                                    <td class="text-end"><strong>{{ number_format($order->total_amount) }}đ</strong></td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                <!-- Order Items -->
+                <div class="fs-card">
+                    <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--fs-border);">
+                        <h6 style="font-family:'Playfair Display',serif;font-weight:600;margin:0;">
+                            <i class="bi bi-box-seam" style="color:var(--fs-accent);"></i> Chi tiet san pham
+                        </h6>
+                    </div>
+                    <div style="padding:1.5rem;">
+                        @foreach($order->orderItems as $item)
+                        <div style="display:flex;align-items:center;gap:1rem;{{ !$loop->last ? 'padding-bottom:1.25rem;margin-bottom:1.25rem;border-bottom:1px solid var(--fs-border);' : '' }}">
+                            <img src="{{ asset('storage/books/'.$item->book->image) }}"
+                                 alt="{{ $item->book->title }}"
+                                 style="width:70px;height:90px;object-fit:cover;border-radius:10px;">
+                            <div style="flex:1;min-width:0;">
+                                <h6 style="font-weight:600;margin-bottom:0.2rem;font-size:0.9rem;">{{ $item->book->title }}</h6>
+                                <p style="color:var(--fs-muted);font-size:0.8rem;margin-bottom:0.35rem;">{{ $item->book->brand ?: $item->book->author }}</p>
+                                @if($item->size || $item->color)
+                                <div style="display:flex;gap:6px;">
+                                    @if($item->size)
+                                        <span class="fs-badge" style="background:var(--fs-surface);color:var(--fs-text);font-size:0.6rem;">Size: {{ $item->size }}</span>
+                                    @endif
+                                    @if($item->color)
+                                        <span class="fs-badge" style="background:var(--fs-surface);color:var(--fs-text);font-size:0.6rem;">Mau: {{ $item->color }}</span>
+                                    @endif
+                                </div>
+                                @endif
+                            </div>
+                            <div style="text-align:right;white-space:nowrap;">
+                                <div style="font-size:0.8rem;color:var(--fs-muted);">{{ number_format($item->price) }}d x {{ $item->quantity }}</div>
+                                <div style="font-family:'Playfair Display',serif;font-weight:700;margin-top:2px;">
+                                    {{ number_format($item->price * $item->quantity) }}d
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Summary -->
+                    <div style="border-top:1px solid var(--fs-border);padding:1.5rem;background:var(--fs-surface);">
+                        <div style="max-width:300px;margin-left:auto;">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;font-size:0.875rem;">
+                                <span style="color:var(--fs-muted);">Tam tinh</span>
+                                <span>{{ number_format($order->total_amount - 30000) }}d</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;margin-bottom:0.75rem;font-size:0.875rem;">
+                                <span style="color:var(--fs-muted);">Van chuyen</span>
+                                <span>30,000d</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding-top:0.75rem;border-top:1px solid var(--fs-border);">
+                                <span style="font-weight:600;">Tong cong</span>
+                                <span style="font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--fs-primary);">
+                                    {{ number_format($order->total_amount) }}d
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection 
+@endsection

@@ -24,8 +24,6 @@ use App\Http\Controllers\Admin\ProductvpController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\Admin\CategoryControllerAddUserController;
 
-// Route cho khách
-
 // Route xác thực
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -36,11 +34,11 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Route cho sách
+// Route sản phẩm thời trang (public)
 Route::prefix('books')->group(function () {
     Route::get('/', [BookController::class, 'index'])->name('books.index');
-    Route::get('/{book}', [BookController::class, 'show'])->name('books.show');
     Route::get('/category/{slug}', [BookController::class, 'category'])->name('books.category');
+    Route::get('/{book}', [BookController::class, 'show'])->name('books.show');
 });
 
 // Route cho user đã đăng nhập
@@ -52,6 +50,25 @@ Route::middleware('auth')->group(function () {
     // Thông tin cá nhân
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Giỏ hàng
+    Route::prefix('cart')->group(function () {
+        Route::get('/', [CartController::class, 'index'])->name('cart.index');
+        Route::post('/add', [CartController::class, 'add'])->name('cart.add');
+        Route::put('/{cartItem}', [CartController::class, 'update'])->name('cart.update');
+        Route::delete('/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
+        Route::delete('/', [CartController::class, 'clear'])->name('cart.clear');
+    });
+
+    // Thanh toán
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('orders.checkout');
+
+    // Đơn hàng
+    Route::prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('orders.show');
+    });
 });
 
 // Route cho admin
@@ -68,7 +85,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
     });
 
-    // Quản lý sách
+    // Quản lý sản phẩm thời trang
     Route::prefix('books')->group(function () {
         Route::get('/', [BookManagementController::class, 'index'])->name('books.index');
         Route::get('/create', [BookManagementController::class, 'create'])->name('books.create');
@@ -95,12 +112,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 
-    // Quản lý voucher
+    // Quản lý khuyến mãi
     Route::resource('discounts', DiscountController::class);
 
     Route::resource('employees', EmployeeController::class);
 
-    // Quản lý sản phẩm
+    // Quản lý sản phẩm (bất động sản)
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('products.index');
         Route::get('/create', [ProductController::class, 'create'])->name('products.create');
@@ -122,4 +139,3 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/districts/{province}', [LocationController::class, 'getDistricts'])->name('districts.index');
     Route::get('/wards/{district}', [LocationController::class, 'getWards'])->name('wards.index');
 });
-
