@@ -20,7 +20,7 @@ class Category extends Model
     protected static function boot()
     {
         parent::boot();
-
+        
         static::creating(function ($category) {
             if (!$category->slug) {
                 $category->slug = Str::slug($category->name);
@@ -32,9 +32,4 @@ class Category extends Model
     {
         return $this->hasMany(Book::class);
     }
-
-    public function products()
-    {
-        return $this->hasMany(Book::class);
-    }
-}
+} 

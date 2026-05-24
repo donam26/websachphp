@@ -17,9 +17,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
-
+      
         $Product = Product::query();
         $Topproducts = Product::orderBy('updated_at', 'desc')->take(20)->get();
+        // $Topprice = Product::orderBy('price', 'desc')->take(20)->get();
         $Topprice =  DB::select('SELECT * FROM `products` order by price DESC limit 20');
 
         $User = User::query();
@@ -31,16 +32,17 @@ class DashboardController extends Controller
         // Đơn hàng mới
         $newOrders = Order::where('status', 'pending')->count();
 
-        // Tổng số sản phẩm
+        // Tổng số sách
         $totalBooks = Book::count();
 
+        
         // Đơn hàng gần đây
         $recentOrders = Order::with('user')
             ->latest()
             ->take(5)
             ->get();
 
-        // Sản phẩm bán chạy
+        // Sách bán chạy
         $topBooks = DB::table('books')
             ->leftJoin('order_items', 'books.id', '=', 'order_items.book_id')
             ->leftJoin('orders', function($join) {
@@ -67,4 +69,4 @@ class DashboardController extends Controller
 
         ));
     }
-}
+} 

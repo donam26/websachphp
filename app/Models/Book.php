@@ -12,17 +12,12 @@ class Book extends Model
     protected $fillable = [
         'title',
         'author',
-        'brand',
         'description',
         'category_id',
         'price',
         'quantity',
         'image',
-        'status',
-        'sizes',
-        'colors',
-        'material',
-        'gender'
+        'status'
     ];
 
     protected $casts = [
@@ -30,26 +25,11 @@ class Book extends Model
         'quantity' => 'integer'
     ];
 
-    protected $appends = ['is_available', 'sizes_array', 'colors_array'];
+    protected $appends = ['is_available'];
 
     public function getIsAvailableAttribute()
     {
         return $this->quantity > 0;
-    }
-
-    public function getSizesArrayAttribute()
-    {
-        return $this->sizes ? explode(',', $this->sizes) : [];
-    }
-
-    public function getColorsArrayAttribute()
-    {
-        return $this->colors ? explode(',', $this->colors) : [];
-    }
-
-    public function getBrandNameAttribute()
-    {
-        return $this->brand ?: $this->author;
     }
 
     public function category()
@@ -71,4 +51,4 @@ class Book extends Model
     {
         return $this->hasMany(WishlistItem::class);
     }
-}
+} 

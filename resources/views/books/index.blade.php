@@ -1,181 +1,179 @@
 @extends('layouts.app')
 
-@section('title', 'San pham thoi trang')
+@section('title', 'Danh sách sách')
 
 @section('content')
-<div class="fs-section">
-    <div class="container">
-        <div class="row g-4">
-            <!-- Filter Sidebar -->
-            <div class="col-lg-3">
-                <div class="fs-card" style="position:sticky;top:100px;">
-                    <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--fs-border);display:flex;align-items:center;justify-content:space-between;">
-                        <h6 style="margin:0;font-family:'Playfair Display',serif;font-weight:600;font-size:1rem;">Bo loc</h6>
-                        <i class="bi bi-sliders" style="color:var(--fs-accent);"></i>
-                    </div>
-                    <div style="padding:1.5rem;">
-                        <form action="{{ route('books.index') }}" method="GET">
-                            <div class="mb-3">
-                                <label class="form-label">Tim kiem</label>
-                                <div style="position:relative;">
-                                    <input type="text" name="search" class="form-control" style="padding-left:2.5rem;"
-                                           placeholder="Ten, thuong hieu..."
-                                           value="{{ request('search') }}">
-                                    <i class="bi bi-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--fs-muted);"></i>
-                                </div>
-                            </div>
+<div class="container py-4">
+    <div class="row">
+        <!-- Phần lọc và tìm kiếm -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-funnel"></i> Lọc sách
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('books.index') }}" method="GET">
+                        <div class="mb-3">
+                            <label class="form-label">Danh mục</label>
+                            <select name="category" class="form-select">
+                                <option value="">Tất cả danh mục</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->slug }}" 
+                                            {{ request('category') == $category->slug ? 'selected' : '' }}>
+                                        <i class="{{ $category->icon }}"></i> {{ $category->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Danh muc</label>
-                                <select name="category" class="form-select">
-                                    <option value="">Tat ca danh muc</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->slug }}" {{ request('category') == $category->slug ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sắp xếp</label>
+                            <select name="sort" class="form-select">
+                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>
+                                    Mới nhất trước
+                                </option>
+                                <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>
+                                    Giá tăng dần
+                                </option>
+                                <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>
+                                    Giá giảm dần
+                                </option>
+                                <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>
+                                    Tên A-Z
+                                </option>
+                                <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>
+                                    Tên Z-A
+                                </option>
+                            </select>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Gioi tinh</label>
-                                <select name="gender" class="form-select">
-                                    <option value="">Tat ca</option>
-                                    <option value="nam" {{ request('gender') == 'nam' ? 'selected' : '' }}>Nam</option>
-                                    <option value="nu" {{ request('gender') == 'nu' ? 'selected' : '' }}>Nu</option>
-                                    <option value="unisex" {{ request('gender') == 'unisex' ? 'selected' : '' }}>Unisex</option>
-                                </select>
+                        <div class="mb-3">
+                            <label class="form-label">Khoảng giá</label>
+                            <div class="input-group mb-2">
+                                <input type="number" name="price_from" class="form-control" 
+                                       placeholder="Từ" value="{{ request('price_from') }}">
+                                <span class="input-group-text">đ</span>
                             </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Kich co</label>
-                                <select name="size" class="form-select">
-                                    <option value="">Tat ca size</option>
-                                    @foreach(['S', 'M', 'L', 'XL', 'XXL', 'XXXL'] as $s)
-                                        <option value="{{ $s }}" {{ request('size') == $s ? 'selected' : '' }}>{{ $s }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="input-group">
+                                <input type="number" name="price_to" class="form-control" 
+                                       placeholder="Đến" value="{{ request('price_to') }}">
+                                <span class="input-group-text">đ</span>
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Sap xep</label>
-                                <select name="sort" class="form-select">
-                                    <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Moi nhat</option>
-                                    <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Gia tang dan</option>
-                                    <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Gia giam dan</option>
-                                    <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Ten A-Z</option>
-                                    <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Ten Z-A</option>
-                                </select>
-                            </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-funnel"></i> Lọc kết quả
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Khoang gia</label>
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <input type="number" name="price_from" class="form-control" placeholder="Tu" value="{{ request('price_from') }}">
-                                    </div>
-                                    <div class="col-6">
-                                        <input type="number" name="price_to" class="form-control" placeholder="Den" value="{{ request('price_to') }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="fs-btn fs-btn-primary w-100">
-                                <i class="bi bi-search"></i> Tim kiem
-                            </button>
-                        </form>
+        <!-- Phần danh sách sách -->
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">Danh sách sách</h2>
+                    <p class="text-muted mb-0">Hiển thị {{ $books->count() }} / {{ $books->total() }} cuốn sách</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-primary active">
+                            <i class="bi bi-grid-3x3"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="bi bi-list"></i>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Product Grid -->
-            <div class="col-lg-9">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
-                    <div>
-                        <h1 class="fs-section-title" style="margin-bottom:0.25rem;">Bo suu tap</h1>
-                        <p style="color:var(--fs-muted);font-size:0.875rem;margin:0;">
-                            Hien thi {{ $books->count() }} / {{ $books->total() }} san pham
-                        </p>
-                    </div>
+            @if($books->isEmpty())
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Không tìm thấy sách nào phù hợp với tiêu chí tìm kiếm.
                 </div>
-
-                @if($books->isEmpty())
-                    <div class="fs-card" style="text-align:center;padding:4rem 2rem;">
-                        <i class="bi bi-search" style="font-size:3rem;color:var(--fs-border);"></i>
-                        <h5 style="margin-top:1rem;font-family:'Playfair Display',serif;">Khong tim thay san pham</h5>
-                        <p style="color:var(--fs-muted);font-size:0.875rem;">Thu thay doi bo loc de tim san pham phu hop.</p>
-                    </div>
-                @else
-                    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-                        @foreach($books as $book)
-                        <div class="col">
-                            <div class="product-card fs-card" style="height:100%;">
-                                <div class="product-img-wrap">
-                                    <a href="{{ route('books.show', $book) }}">
-                                        <img src="{{ asset('storage/books/'.$book->image) }}"
-                                             alt="{{ $book->title }}" loading="lazy">
-                                    </a>
-                                    @if($book->gender)
-                                    <span class="product-gender-tag">
-                                        {{ $book->gender == 'nam' ? 'Nam' : ($book->gender == 'nu' ? 'Nu' : 'Unisex') }}
-                                    </span>
+            @else
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    @foreach($books as $book)
+                    <div class="col">
+                        <div class="card book-card h-100 border-0 shadow-sm">
+                            <div class="position-relative book-cover">
+                                <a href="{{ route('books.show', $book) }}">
+                                    <img src="{{ asset('storage/books/'.$book->image) }}" 
+                                         class="card-img-top" 
+                                         alt="{{ $book->title }}">
+                                </a>
+                                <div class="book-actions">
+                                    @if($book->quantity > 0)
+                                    <button class="btn btn-primary btn-sm" data-add-to-cart="{{ $book->id }}" data-book-title="{{ $book->title }}">
+                                        <i class="bi bi-cart-plus"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" data-add-to-wishlist="{{ $book->id }}" data-book-title="{{ $book->title }}">
+                                        <i class="bi bi-heart"></i>
+                                    </button>
                                     @endif
-                                    <div class="product-overlay">
-                                        <a href="{{ route('books.show', $book) }}" class="product-overlay-btn">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="book-category">
+                                        <span class="badge bg-primary-subtle text-primary">
+                                            {{ $book->category ? $book->category->name : 'Chưa phân loại' }}
+                                        </span>
+                                    </div>
+                                    <div class="book-status">
                                         @if($book->quantity > 0)
-                                        <button class="product-overlay-btn" data-add-to-wishlist="{{ $book->id }}">
-                                            <i class="bi bi-heart"></i>
-                                        </button>
+                                            <span class="badge bg-success-subtle text-success">Còn hàng</span>
+                                        @else
+                                            <span class="badge bg-danger-subtle text-danger">Hết hàng</span>
                                         @endif
                                     </div>
                                 </div>
-                                <div style="padding:1.25rem;">
-                                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                                        <span class="fs-badge fs-badge-accent" style="font-size:0.65rem;">
-                                            {{ $book->category ? $book->category->name : 'Chua phan loai' }}
-                                        </span>
-                                        @if($book->quantity > 0)
-                                            <span class="fs-badge fs-badge-success">Con hang</span>
-                                        @else
-                                            <span class="fs-badge fs-badge-danger">Het hang</span>
-                                        @endif
+                                <h5 class="card-title">
+                                    <a href="{{ route('books.show', $book) }}" class="text-decoration-none text-dark">
+                                        {{ $book->title }}
+                                    </a>
+                                </h5>
+                                <p class="card-text text-muted mb-3">{{ $book->author }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="price">
+                                        <span class="text-muted small">Giá bán</span>
+                                        <div class="text-primary fw-bold">{{ number_format($book->price) }}đ</div>
                                     </div>
-                                    <h5 class="product-title">
-                                        <a href="{{ route('books.show', $book) }}">{{ $book->title }}</a>
-                                    </h5>
-                                    <p style="color:var(--fs-muted);font-size:0.8rem;margin-bottom:0.5rem;">
-                                        {{ $book->brand ?: $book->author }}
-                                    </p>
-                                    @if($book->sizes)
-                                    <div style="margin-bottom:0.75rem;display:flex;flex-wrap:wrap;gap:4px;">
-                                        @foreach(explode(',', $book->sizes) as $size)
-                                            <span style="padding:2px 8px;border-radius:4px;background:var(--fs-surface);font-size:0.7rem;font-weight:500;color:var(--fs-muted);">{{ trim($size) }}</span>
-                                        @endforeach
+                                    @if($book->quantity > 0)
+                                    <div class="mb-4">
+                                <form action="{{ route('cart.add') }}" method="POST" class="d-flex align-items-center">
+                                    @csrf
+                                    <input type="hidden" name="book_id" value="{{ $book->id }}">
+                                    <div class="input-group me-3" style="width: 130px;">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="decrementQuantity()">
+                                            <i class="bi bi-dash"></i>
+                                        </button>
+                                        <input type="number" class="form-control text-center" name="quantity" value="1" min="1" max="{{ $book->quantity }}" id="quantity">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="incrementQuantity()">
+                                            <i class="bi bi-plus"></i>
+                                        </button>
                                     </div>
+                                    <button type="submit" class="btn btn-primary" {{ $book->quantity == 0 ? 'disabled' : '' }}>
+                                        <i class="bi bi-cart-plus"></i>
+                                    </button>
+                                </form>
+                            </div>
                                     @endif
-                                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                                        <span style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--fs-primary);">
-                                            {{ number_format($book->price) }}d
-                                        </span>
-                                        @if($book->quantity > 0)
-                                        <a href="{{ route('books.show', $book) }}" class="fs-btn fs-btn-primary" style="padding:0.5rem 1rem;font-size:0.75rem;">
-                                            <i class="bi bi-bag-plus"></i> Mua
-                                        </a>
-                                        @endif
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                        @endforeach
                     </div>
+                    @endforeach
+                </div>
 
-                    <div class="d-flex justify-content-center" style="margin-top:2.5rem;">
-                        {{ $books->links() }}
-                    </div>
-                @endif
-            </div>
+                <div class="d-flex justify-content-center mt-4">
+                    {{ $books->links() }}
+                </div>
+            @endif
         </div>
     </div>
 </div>
@@ -183,107 +181,107 @@
 
 @push('styles')
 <style>
-.product-card {
-    border-radius: var(--fs-radius) !important;
-    overflow: hidden;
+.book-card {
+    transition: all 0.3s ease;
 }
 
-.product-card:hover { transform: translateY(-6px); }
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
 
-.product-img-wrap {
+.book-cover {
+    overflow: hidden;
     position: relative;
-    overflow: hidden;
-    aspect-ratio: 3/4;
-    background: #f0eeeb;
 }
 
-.product-img-wrap img {
-    width: 100%;
-    height: 100%;
+.book-cover img {
+    height: 300px;
     object-fit: cover;
-    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: all 0.3s ease;
 }
 
-.product-card:hover .product-img-wrap img {
-    transform: scale(1.08);
+.book-cover:hover img {
+    transform: scale(1.05);
 }
 
-.product-gender-tag {
+.book-actions {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    padding: 4px 12px;
-    background: var(--fs-primary);
-    color: #fff;
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    border-radius: 100px;
-}
-
-.product-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 1rem;
+    top: 10px;
+    right: 10px;
     display: flex;
-    justify-content: center;
-    gap: 8px;
-    background: linear-gradient(transparent, rgba(0,0,0,0.3));
+    gap: 5px;
     opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.4s ease;
+    transition: all 0.3s ease;
 }
 
-.product-card:hover .product-overlay {
+.book-cover:hover .book-actions {
     opacity: 1;
-    transform: translateY(0);
 }
 
-.product-overlay-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255,255,255,0.95);
-    color: var(--fs-primary);
+.book-actions .btn {
+    width: 35px;
+    height: 35px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-.product-overlay-btn:hover {
-    background: var(--fs-accent);
-    color: #fff;
+.book-actions .btn-primary {
+    color: var(--primary-color);
+}
+
+.book-actions .btn-danger {
+    color: var(--danger-color);
+}
+
+.book-actions .btn:hover {
     transform: scale(1.1);
 }
 
-.product-title {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.92rem;
+.card-title {
+    font-size: 1rem;
     font-weight: 600;
     line-height: 1.4;
-    height: 2.6em;
+    height: 2.8em;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    margin-bottom: 0.35rem;
 }
 
-.product-title a {
-    color: var(--fs-text);
-    text-decoration: none;
-    transition: color 0.3s ease;
+.price {
+    line-height: 1.2;
 }
 
-.product-title a:hover { color: var(--fs-accent); }
+.price .text-primary {
+    font-size: 1.1rem;
+}
 </style>
 @endpush
+
+@push('scripts')
+<script>
+function incrementQuantity() {
+    const input = document.getElementById('quantity');
+    const max = parseInt(input.getAttribute('max'));
+    const currentValue = parseInt(input.value);
+    if (currentValue < max) {
+        input.value = currentValue + 1;
+    }
+}
+
+function decrementQuantity() {
+    const input = document.getElementById('quantity');
+    const currentValue = parseInt(input.value);
+    if (currentValue > 1) {
+        input.value = currentValue - 1;
+    }
+}
+</script>
+@endpush 

@@ -15,7 +15,7 @@ class CheckoutController extends Controller
     public function index()
     {
         $cartItems = auth()->user()->cart()->with('book')->get();
-
+        
         if ($cartItems->isEmpty()) {
             return redirect()->route('cart.index')
                 ->with('error', 'Giỏ hàng của bạn đang trống');
@@ -84,7 +84,7 @@ class CheckoutController extends Controller
             // Tạo đơn hàng
             $order = Order::create([
                 'user_id' => $user->id,
-                'total_amount' => $subtotal + 30000 - $discountAmount,
+                'total_amount' => $subtotal + 30000 - $discountAmount, // Thêm phí vận chuyển
                 'shipping_name' => $validated['shipping_name'],
                 'shipping_phone' => $validated['shipping_phone'],
                 'shipping_address' => $validated['shipping_address'],
@@ -94,18 +94,16 @@ class CheckoutController extends Controller
                 'discount_amount' => $discountAmount,
             ]);
 
-            // Tạo chi tiết đơn hàng và cập nhật tồn kho
+            // Tạo chi tiết đơn hàng và cập nhật số lượng sách
             foreach ($cartItems as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
                     'book_id' => $item->book_id,
                     'quantity' => $item->quantity,
                     'price' => $item->book->price,
-                    'size' => $item->size,
-                    'color' => $item->color,
                 ]);
 
-                // Cập nhật số lượng tồn kho
+                // Cập nhật số lượng sách
                 $book = $item->book;
                 $book->quantity -= $item->quantity;
                 $book->save();
@@ -130,8 +128,8 @@ class CheckoutController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Lỗi đặt hàng: ' . $e->getMessage());
-
+            
             return back()->with('error', $e->getMessage() ?: 'Đã có lỗi xảy ra, vui lòng thử lại');
         }
     }
-}
+} 

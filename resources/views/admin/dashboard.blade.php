@@ -3,123 +3,124 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-    <div>
-        <h1 style="font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:700;color:var(--ad-primary);margin:0;">
-            Tong quan
-        </h1>
-        <p style="color:var(--ad-muted);font-size:0.85rem;margin:0.25rem 0 0;">
-            Chao mung quay tro lai, {{ Auth::user()->full_name ?? Auth::user()->username }}
-        </p>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Nổi bật</h1>
+        <div>
+            <button class="btn btn-warning" onclick="window.print()">
+                <i class="bi bi-printer"></i> In báo cáo
+            </button>
+        </div>
     </div>
-    <button class="ad-btn ad-btn-outline" onclick="window.print()">
-        <i class="bi bi-printer"></i> In bao cao
-    </button>
-</div>
 
-<!-- Stat Cards -->
-<div class="row g-4 mb-4">
-    <div class="col-xl-3 col-md-6">
-        <div class="ad-stat">
-            <div class="ad-stat-icon green"><i class="bi bi-wallet2"></i></div>
-            <div>
-                <div class="ad-stat-label">Tong doanh thu</div>
-                <div class="ad-stat-value">{{ number_format($totalRevenue ?? 0) }}d</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="ad-stat">
-            <div class="ad-stat-icon blue"><i class="bi bi-box-seam"></i></div>
-            <div>
-                <div class="ad-stat-label">Don cho xu ly</div>
-                <div class="ad-stat-value">{{ $newOrders ?? 0 }}</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="ad-stat">
-            <div class="ad-stat-icon purple"><i class="bi bi-handbag"></i></div>
-            <div>
-                <div class="ad-stat-label">Tong san pham</div>
-                <div class="ad-stat-value">{{ $totalBooks ?? 0 }}</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="ad-stat">
-            <div class="ad-stat-icon amber"><i class="bi bi-people"></i></div>
-            <div>
-                <div class="ad-stat-label">Nguoi dung</div>
-                <div class="ad-stat-value">{{ $totalUsers ?? 0 }}</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Tables -->
-<div class="row g-4">
-    <div class="col-lg-6">
-        <div class="ad-card">
-            <div class="ad-card-header">
-                <h5>San pham moi cap nhat</h5>
-                <span class="ad-badge ad-badge-info">Top 20</span>
-            </div>
-            <div style="padding:0;">
-                <table class="ad-table">
-                    <thead>
-                        <tr>
-                            <th>San pham</th>
-                            <th>Gia</th>
-                            <th>Cap nhat</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($Topproducts as $products)
-                        <tr>
-                            <td>
-                                <a href="{{ route('admin.products.show', $products->code) }}"
-                                   style="text-decoration:none;color:var(--ad-text);font-weight:500;" target="_blank">
-                                    {{ Str::limit($products->title, 35) }}
-                                </a>
-                            </td>
-                            <td style="white-space:nowrap;font-weight:500;">{{ number_format($products->price) }}d</td>
-                            <td style="font-size:0.8rem;color:var(--ad-muted);white-space:nowrap;">{{ $products->updated_at->format('d/m/Y') }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+    <div class="row">
+        <!-- Tổng số người dùng Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Tổng số người dùng</div>
+                            <div class="h5 mb-0 font-weight-bold">{{ $totalUsers ?? 0 }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-people fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-6">
-        <div class="ad-card">
-            <div class="ad-card-header">
-                <h5>San pham gia tri cao</h5>
-                <a href="{{ route('admin.products.index') }}" class="ad-btn ad-btn-accent ad-btn-sm">Xem tat ca</a>
+
+    <div class="row">
+        <!-- Sách bán chạy -->
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-danger" style =" font-size: 25px"><b>Top 20 Sản phẩm mới cập nhật</b></h6>
+                   
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style ="background: #E9C780 ; font-size: 20px">MÔ TẢ</th>
+                                    <th style ="min-width: 200px ;background: #E9C780 ; font-size: 20px">GIÁ</th>
+                                    <th style ="min-width: 200px ;background: #E9C780 ; font-size: 20px">NGÀY TẠO</th>
+                                    <th style ="min-width: 200px ;background: #E9C780 ; font-size: 20px">NGÀY CẬP NHẬT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($Topproducts as $products)
+                                    <tr>
+                                        <td> <div class="fw-bold">
+                                        <a href="{{ route('admin.products.show', $products->code) }}"
+                                           target="_blank"
+                                           class="link-black link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                                           title="Chi tiết"
+                                           style="text-decoration: none; color:black">
+                                            {{ $products->title }}
+                                        </a>
+                                    </div></td>
+                                        <td>{{ number_format($products->price)}} VNĐ</td>
+                                        <td>{{ $products->created_at }}</td>
+                                        <td>{{ $products->updated_at }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div style="padding:0;">
-                <table class="ad-table">
-                    <thead>
-                        <tr>
-                            <th>San pham</th>
-                            <th>Gia</th>
-                            <th>Ngay tao</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($Topprice as $item)
-                        <tr>
-                            <td style="font-weight:500;">{{ Str::limit($item->title, 35) }}</td>
-                            <td style="white-space:nowrap;font-weight:500;">{{ number_format($item->price) }}d</td>
-                            <td style="font-size:0.8rem;color:var(--ad-muted);white-space:nowrap;">{{ $item->created_at->format('d/m/Y') }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        </div>
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-danger" style =" font-size: 25px"><b>Top 20 Sản phẩm giá trị cao</b></h6>
+                    <a href="{{ route('admin.products.index') }}" class="btn btn-sm btn-warning">
+                        Xem tất cả
+                    </a>
+        
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style ="background: #E9C780 ; font-size: 20px">MÔ TẢ</th>
+                                    <th style ="min-width: 200px ;background: #E9C780 ; font-size: 20px">GIÁ</th>
+                                    <th style ="min-width: 200px ;background: #E9C780 ; font-size: 20px">NGÀY TẠO</th>
+                                    <th style ="min-width: 200px ;background: #E9C780 ; font-size: 20px">NGÀY CẬP NHẬT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($Topprice as $Topprice)
+                                    <tr>
+                                        <td> <div class="fw-bold">
+                                        <a href="{{ route('admin.products.show', $products->code) }}"
+                                           target="_blank"
+                                           class="link-black link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                                           title="Chi tiết"
+                                           style="text-decoration: none; color:black">
+                                            {{ $Topprice->title }}
+                                        </a>
+                                    </div> </b> </td>
+                                        <td>{{ number_format($Topprice->price)}} VNĐ</td>
+                                        <td>{{ $Topprice->created_at }}</td>
+                                        <td>{{ $Topprice->updated_at }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+
 @endsection

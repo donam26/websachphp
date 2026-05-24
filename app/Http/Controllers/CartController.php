@@ -12,7 +12,7 @@ class CartController extends Controller
     public function index()
     {
         $cartItems = auth()->user()->cart()->with('book')->get();
-
+        
         // Tính tổng tiền trước khi giảm giá
         $subtotal = $cartItems->sum(function ($item) {
             return $item->book->price * $item->quantity;
@@ -31,43 +31,39 @@ class CartController extends Controller
     {
         $validated = $request->validate([
             'book_id' => 'required|exists:books,id',
-            'quantity' => 'required|integer|min:1',
-            'size' => 'nullable|string|max:10',
-            'color' => 'nullable|string|max:50'
+            'quantity' => 'required|integer|min:1'
         ]);
 
         $book = Book::findOrFail($validated['book_id']);
 
         // Kiểm tra số lượng tồn kho
         if ($book->quantity < $validated['quantity']) {
-            return back()->with('error', 'Số lượng sản phẩm trong kho không đủ');
+            return back()->with('error', 'Số lượng sách trong kho không đủ');
         }
 
-        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa (cùng size và color)
+        // Kiểm tra xem sách đã có trong giỏ hàng chưa
         $cartItem = auth()->user()->cart()
             ->where('book_id', $validated['book_id'])
-            ->where('size', $validated['size'] ?? null)
-            ->where('color', $validated['color'] ?? null)
             ->first();
 
         if ($cartItem) {
+            // Nếu có rồi thì cộng thêm số lượng
             $newQuantity = $cartItem->quantity + $validated['quantity'];
-
+            
             if ($book->quantity < $newQuantity) {
-                return back()->with('error', 'Số lượng sản phẩm trong kho không đủ');
+                return back()->with('error', 'Số lượng sách trong kho không đủ');
             }
 
             $cartItem->update(['quantity' => $newQuantity]);
         } else {
+            // Nếu chưa có thì tạo mới
             auth()->user()->cart()->create([
                 'book_id' => $validated['book_id'],
-                'quantity' => $validated['quantity'],
-                'size' => $validated['size'] ?? null,
-                'color' => $validated['color'] ?? null,
+                'quantity' => $validated['quantity']
             ]);
         }
 
-        return back()->with('success', 'Đã thêm vào giỏ hàng thành công');
+        return back()->with('success', 'Thêm vào giỏ hàng thành công');
     }
 
     public function update(Request $request, CartItem $cartItem)
@@ -82,7 +78,7 @@ class CartController extends Controller
 
         // Kiểm tra số lượng tồn kho
         if ($cartItem->book->quantity < $validated['quantity']) {
-            return back()->with('error', 'Số lượng sản phẩm trong kho không đủ');
+            return back()->with('error', 'Số lượng sách trong kho không đủ');
         }
 
         $cartItem->update($validated);
@@ -104,10 +100,10 @@ class CartController extends Controller
     public function clear()
     {
         auth()->user()->cart()->delete();
-
+        
         // Xóa thông tin giảm giá trong session
         session()->forget('applied_discount');
 
         return back()->with('success', 'Đã xóa toàn bộ giỏ hàng');
     }
-}
+} 
