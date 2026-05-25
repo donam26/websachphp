@@ -4,106 +4,126 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\CartItem;
+use App\Models\Order;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
     public function index()
     {
-        $cartItems = auth()->user()->cart()->with('book')->get();
-        
-        // Tính tổng tiền trước khi giảm giá
-        $subtotal = $cartItems->sum(function ($item) {
-            return $item->book->price * $item->quantity;
-        });
+        $cartItems = auth()->user()->cart()->with('book.category')->get();
 
-        // Xử lý giảm giá
-        $discountAmount = 0;
-        if (session()->has('applied_discount')) {
-            $discountAmount = session('applied_discount.amount');
-        }
+        $subtotal = $cartItems->sum(fn ($item) => $item->subtotal);
 
-        return view('cart.index', compact('cartItems', 'subtotal', 'discountAmount'));
+        $discountAmount = session('applied_discount.amount', 0);
+        $discountCode = session('applied_discount.code');
+
+        $shippingFee = $subtotal >= Order::FREESHIP_THRESHOLD || $subtotal === 0 ? 0 : Order::SHIPPING_FEE;
+        $total = max(0, $subtotal + $shippingFee - $discountAmount);
+
+        return view('cart.index', compact(
+            'cartItems',
+            'subtotal',
+            'discountAmount',
+            'discountCode',
+            'shippingFee',
+            'total'
+        ));
     }
 
     public function add(Request $request)
     {
         $validated = $request->validate([
             'book_id' => 'required|exists:books,id',
-            'quantity' => 'required|integer|min:1'
+            'quantity' => 'required|integer|min:1|max:99',
         ]);
 
-        $book = Book::findOrFail($validated['book_id']);
+        try {
+            $book = DB::transaction(function () use ($validated) {
+                $book = Book::lockForUpdate()->findOrFail($validated['book_id']);
 
-        // Kiểm tra số lượng tồn kho
-        if ($book->quantity < $validated['quantity']) {
-            return back()->with('error', 'Số lượng sách trong kho không đủ');
+                if ($book->status !== 'available' || $book->quantity <= 0) {
+                    throw new \RuntimeException('Sản phẩm hiện không có sẵn');
+                }
+
+                $existing = auth()->user()->cart()
+                    ->where('book_id', $book->id)
+                    ->lockForUpdate()
+                    ->first();
+
+                $desiredQuantity = ($existing?->quantity ?? 0) + (int) $validated['quantity'];
+
+                if ($desiredQuantity > $book->quantity) {
+                    throw new \RuntimeException("Sản phẩm chỉ còn {$book->quantity} cuốn trong kho");
+                }
+
+                if ($existing) {
+                    $existing->update(['quantity' => $desiredQuantity]);
+                } else {
+                    auth()->user()->cart()->create([
+                        'book_id' => $book->id,
+                        'quantity' => $validated['quantity'],
+                    ]);
+                }
+
+                return $book;
+            });
+        } catch (\RuntimeException $e) {
+            return back()->with('error', $e->getMessage());
         }
 
-        // Kiểm tra xem sách đã có trong giỏ hàng chưa
-        $cartItem = auth()->user()->cart()
-            ->where('book_id', $validated['book_id'])
-            ->first();
-
-        if ($cartItem) {
-            // Nếu có rồi thì cộng thêm số lượng
-            $newQuantity = $cartItem->quantity + $validated['quantity'];
-            
-            if ($book->quantity < $newQuantity) {
-                return back()->with('error', 'Số lượng sách trong kho không đủ');
-            }
-
-            $cartItem->update(['quantity' => $newQuantity]);
-        } else {
-            // Nếu chưa có thì tạo mới
-            auth()->user()->cart()->create([
-                'book_id' => $validated['book_id'],
-                'quantity' => $validated['quantity']
-            ]);
+        if ($request->boolean('buy_now')) {
+            return redirect()->route('cart.index');
         }
 
-        return back()->with('success', 'Thêm vào giỏ hàng thành công');
+        return back()->with('success', 'Đã thêm "' . $book->title . '" vào giỏ hàng');
     }
 
     public function update(Request $request, CartItem $cartItem)
     {
-        if ($cartItem->user_id !== auth()->id()) {
-            abort(403);
+        abort_if($cartItem->user_id !== auth()->id(), 403);
+
+        $action = $request->input('action');
+        $quantity = (int) $request->input('quantity', $cartItem->quantity);
+
+        if ($action === 'inc') {
+            $quantity = $cartItem->quantity + 1;
+        } elseif ($action === 'dec') {
+            $quantity = $cartItem->quantity - 1;
         }
 
-        $validated = $request->validate([
-            'quantity' => 'required|integer|min:1'
-        ]);
+        $quantity = max(1, min(99, $quantity));
 
-        // Kiểm tra số lượng tồn kho
-        if ($cartItem->book->quantity < $validated['quantity']) {
-            return back()->with('error', 'Số lượng sách trong kho không đủ');
+        $book = $cartItem->book;
+        if (!$book) {
+            $cartItem->delete();
+            return back()->with('error', 'Sản phẩm không tồn tại, đã xoá khỏi giỏ');
         }
 
-        $cartItem->update($validated);
+        if ($book->quantity < $quantity) {
+            return back()->with('error', "Sản phẩm chỉ còn {$book->quantity} cuốn trong kho");
+        }
 
-        return back()->with('success', 'Cập nhật số lượng thành công');
+        $cartItem->update(['quantity' => $quantity]);
+
+        return back()->with('success', 'Đã cập nhật giỏ hàng');
     }
 
     public function remove(CartItem $cartItem)
     {
-        if ($cartItem->user_id !== auth()->id()) {
-            abort(403);
-        }
+        abort_if($cartItem->user_id !== auth()->id(), 403);
 
         $cartItem->delete();
 
-        return back()->with('success', 'Đã xóa sản phẩm khỏi giỏ hàng');
+        return back()->with('success', 'Đã xoá sản phẩm khỏi giỏ hàng');
     }
 
     public function clear()
     {
         auth()->user()->cart()->delete();
-        
-        // Xóa thông tin giảm giá trong session
         session()->forget('applied_discount');
 
-        return back()->with('success', 'Đã xóa toàn bộ giỏ hàng');
+        return back()->with('success', 'Đã xoá toàn bộ giỏ hàng');
     }
-} 
+}

@@ -9,9 +9,29 @@ use Illuminate\Support\Str;
 
 class DiscountController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $discounts = Discount::latest()->paginate(10);
+        $query = Discount::query();
+
+        if ($search = trim($request->input('search', ''))) {
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'like', "%{$search}%")
+                  ->orWhere('name', 'like', "%{$search}%");
+            });
+        }
+
+        if ($status = $request->input('status')) {
+            if ($status === 'active') {
+                $query->active();
+            } elseif ($status === 'inactive') {
+                $query->where('is_active', false);
+            } elseif ($status === 'expired') {
+                $query->where('end_date', '<', now());
+            }
+        }
+
+        $discounts = $query->latest()->paginate(15)->appends($request->query());
+
         return view('admin.discounts.index', compact('discounts'));
     }
 
@@ -22,32 +42,15 @@ class DiscountController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:discounts,code',
-            'description' => 'nullable|string',
-            'type' => 'required|in:fixed,percent',
-            'value' => 'required|numeric|min:0',
-            'min_order_amount' => 'required|numeric|min:0',
-            'max_discount_amount' => 'nullable|numeric|min:0',
-            'usage_limit' => 'nullable|integer|min:1',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'is_active' => 'boolean',
-        ]);
+        $validated = $this->validateInput($request);
 
-        if ($validated['type'] === 'percent' && $validated['value'] > 100) {
-            return back()->withInput()->withErrors(['value' => 'Giá trị giảm giá theo phần trăm không được vượt quá 100%']);
-        }
-
-        $validated['code'] = Str::upper($validated['code']);
-        $validated['is_active'] = $request->has('is_active');
+        $validated['code'] = Str::upper(trim($validated['code']));
+        $validated['is_active'] = $request->boolean('is_active');
         $validated['used_count'] = 0;
 
         Discount::create($validated);
 
-        return redirect()->route('admin.discounts.index')
-            ->with('success', 'Thêm voucher thành công');
+        return redirect()->route('admin.discounts.index')->with('success', 'Thêm mã giảm giá thành công');
     }
 
     public function edit(Discount $discount)
@@ -57,10 +60,28 @@ class DiscountController extends Controller
 
     public function update(Request $request, Discount $discount)
     {
-        $validated = $request->validate([
+        $validated = $this->validateInput($request, $discount->id);
+
+        $validated['code'] = Str::upper(trim($validated['code']));
+        $validated['is_active'] = $request->boolean('is_active');
+
+        $discount->update($validated);
+
+        return redirect()->route('admin.discounts.index')->with('success', 'Cập nhật mã giảm giá thành công');
+    }
+
+    public function destroy(Discount $discount)
+    {
+        $discount->delete();
+        return redirect()->route('admin.discounts.index')->with('success', 'Xoá mã giảm giá thành công');
+    }
+
+    private function validateInput(Request $request, ?int $ignoreId = null): array
+    {
+        $rules = [
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:discounts,code,' . $discount->id,
-            'description' => 'nullable|string',
+            'code' => 'required|string|max:50|unique:discounts,code' . ($ignoreId ? ",{$ignoreId}" : ''),
+            'description' => 'nullable|string|max:500',
             'type' => 'required|in:fixed,percent',
             'value' => 'required|numeric|min:0',
             'min_order_amount' => 'required|numeric|min:0',
@@ -68,27 +89,14 @@ class DiscountController extends Controller
             'usage_limit' => 'nullable|integer|min:1',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'is_active' => 'boolean',
-        ]);
+        ];
+
+        $validated = $request->validate($rules);
 
         if ($validated['type'] === 'percent' && $validated['value'] > 100) {
-            return back()->withInput()->withErrors(['value' => 'Giá trị giảm giá theo phần trăm không được vượt quá 100%']);
+            abort(redirect()->back()->withInput()->withErrors(['value' => 'Giá trị giảm theo phần trăm không được vượt quá 100%']));
         }
 
-        $validated['code'] = Str::upper($validated['code']);
-        $validated['is_active'] = $request->has('is_active');
-
-        $discount->update($validated);
-
-        return redirect()->route('admin.discounts.index')
-            ->with('success', 'Cập nhật voucher thành công');
+        return $validated;
     }
-
-    public function destroy(Discount $discount)
-    {
-        $discount->delete();
-
-        return redirect()->route('admin.discounts.index')
-            ->with('success', 'Xóa voucher thành công');
-    }
-} 
+}

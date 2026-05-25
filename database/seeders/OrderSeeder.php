@@ -2,60 +2,104 @@
 
 namespace Database\Seeders;
 
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\OrderHistory;
-use App\Models\User;
 use App\Models\Book;
+use App\Models\Order;
+use App\Models\OrderHistory;
+use App\Models\OrderItem;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class OrderSeeder extends Seeder
 {
     public function run()
     {
-        $users = User::where('role', 'user')->get();
-        $books = Book::all();
-        $statuses = ['pending', 'confirmed', 'shipping', 'completed', 'cancelled'];
-        $paymentMethods = ['cod', 'vnpay'];
+        $users = User::customers()->get();
+        if ($users->isEmpty()) {
+            return;
+        }
 
-        // Tạo 50 đơn hàng mẫu
-        for ($i = 0; $i < 50; $i++) {
-            $status = $statuses[array_rand($statuses)];
-            $paymentMethod = $paymentMethods[array_rand($paymentMethods)];
+        $books = Book::all();
+        if ($books->isEmpty()) {
+            return;
+        }
+
+        $statuses = [
+            Order::STATUS_PENDING,
+            Order::STATUS_CONFIRMED,
+            Order::STATUS_SHIPPING,
+            Order::STATUS_COMPLETED,
+            Order::STATUS_CANCELLED,
+        ];
+
+        for ($i = 0; $i < 30; $i++) {
             $user = $users->random();
+            $status = $statuses[array_rand($statuses)];
+            $paymentMethod = (rand(0, 1) === 0) ? Order::PAYMENT_COD : Order::PAYMENT_VNPAY;
+            $orderBooks = $books->random(rand(1, 4));
+
+            $subtotal = 0;
+            $items = [];
+            foreach ($orderBooks as $book) {
+                $qty = rand(1, 3);
+                $subtotal += $book->price * $qty;
+                $items[] = [
+                    'book' => $book,
+                    'quantity' => $qty,
+                ];
+            }
+
+            $shippingFee = $subtotal >= Order::FREESHIP_THRESHOLD ? 0 : Order::SHIPPING_FEE;
+            $totalAmount = $subtotal + $shippingFee;
+
+            $paymentStatus = Order::PAYMENT_STATUS_PENDING;
+            $paidAt = null;
+            $cancelledAt = null;
+
+            if ($status === Order::STATUS_COMPLETED) {
+                $paymentStatus = Order::PAYMENT_STATUS_PAID;
+                $paidAt = now()->subDays(rand(1, 30));
+            } elseif ($status === Order::STATUS_CANCELLED) {
+                $cancelledAt = now()->subDays(rand(1, 30));
+                if ($paymentMethod === Order::PAYMENT_VNPAY) {
+                    $paymentStatus = Order::PAYMENT_STATUS_REFUNDED;
+                }
+            } elseif ($status === Order::STATUS_SHIPPING && $paymentMethod === Order::PAYMENT_VNPAY) {
+                $paymentStatus = Order::PAYMENT_STATUS_PAID;
+                $paidAt = now()->subDays(rand(1, 10));
+            }
 
             $order = Order::create([
                 'user_id' => $user->id,
-                'payment_method' => $paymentMethod,
+                'subtotal' => $subtotal,
+                'shipping_fee' => $shippingFee,
+                'discount_amount' => 0,
+                'total_amount' => $totalAmount,
+                'shipping_name' => $user->full_name,
+                'shipping_phone' => $user->phone_number,
                 'shipping_address' => $user->address,
+                'note' => null,
                 'status' => $status,
-                'total_amount' => 0
+                'payment_method' => $paymentMethod,
+                'payment_status' => $paymentStatus,
+                'paid_at' => $paidAt,
+                'cancelled_at' => $cancelledAt,
             ]);
 
-            // Tạo 1-5 sản phẩm cho mỗi đơn hàng
-            $orderBooks = $books->random(rand(1, 5));
-            $totalAmount = 0;
-
-            foreach ($orderBooks as $book) {
-                $quantity = rand(1, 3);
+            foreach ($items as $row) {
                 OrderItem::create([
                     'order_id' => $order->id,
-                    'book_id' => $book->id,
-                    'quantity' => $quantity,
-                    'price' => $book->price
+                    'book_id' => $row['book']->id,
+                    'book_title' => $row['book']->title,
+                    'quantity' => $row['quantity'],
+                    'price' => $row['book']->price,
                 ]);
-                $totalAmount += $book->price * $quantity;
             }
 
-            // Cập nhật tổng tiền (bao gồm phí vận chuyển)
-            $order->update(['total_amount' => $totalAmount + 30000]);
-
-            // Tạo lịch sử đơn hàng
             OrderHistory::create([
                 'order_id' => $order->id,
                 'status' => $status,
-                'note' => 'Đơn hàng được tạo bởi seeder'
+                'note' => 'Khởi tạo dữ liệu mẫu',
             ]);
         }
     }
-} 
+}

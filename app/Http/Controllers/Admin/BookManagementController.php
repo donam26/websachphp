@@ -7,35 +7,44 @@ use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BookManagementController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('admin');
-    }
-
     public function index(Request $request)
     {
         $query = Book::with('category');
 
-        if ($search = $request->input('search')) {
-            $query->where('title', 'like', "%{$search}%")
+        if ($search = trim($request->input('search', ''))) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
                   ->orWhere('author', 'like', "%{$search}%");
+            });
         }
 
-        if ($category_id = $request->input('category_id')) {
-            $query->where('category_id', $category_id);
+        if ($categoryId = $request->input('category_id')) {
+            $query->where('category_id', $categoryId);
         }
 
-        $books = $query->latest()->paginate(10);
-        $categories = Category::all();
+        if ($stock = $request->input('stock')) {
+            if ($stock === 'out') {
+                $query->where('quantity', 0);
+            } elseif ($stock === 'low') {
+                $query->where('quantity', '>', 0)->where('quantity', '<', 5);
+            } elseif ($stock === 'in') {
+                $query->where('quantity', '>=', 5);
+            }
+        }
+
+        $books = $query->latest()->paginate(10)->appends($request->query());
+        $categories = Category::orderBy('name')->get();
+
         return view('admin.books.index', compact('books', 'categories'));
     }
 
     public function create()
     {
-        $categories = Category::all();
+        $categories = Category::orderBy('name')->get();
         return view('admin.books.create', compact('categories'));
     }
 
@@ -46,28 +55,26 @@ class BookManagementController extends Controller
             'author' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
+            'compare_price' => 'nullable|numeric|min:0|gte:price',
             'quantity' => 'required|integer|min:0',
             'description' => 'required|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'status' => 'required|in:available,unavailable'
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'status' => 'required|in:available,unavailable',
+        ], [
+            'compare_price.gte' => 'Giá gốc phải lớn hơn hoặc bằng giá bán',
         ]);
 
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/books', $filename);
-            $validated['image'] = $filename;
-        }
+        $validated['image'] = $this->storeImage($request->file('image'));
 
         Book::create($validated);
 
         return redirect()->route('admin.books.index')
-                        ->with('success', 'Thêm sách mới thành công');
+            ->with('success', 'Thêm sách mới thành công');
     }
 
     public function edit(Book $book)
     {
-        $categories = Category::all();
+        $categories = Category::orderBy('name')->get();
         return view('admin.books.edit', compact('book', 'categories'));
     }
 
@@ -78,41 +85,47 @@ class BookManagementController extends Controller
             'author' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
+            'compare_price' => 'nullable|numeric|min:0|gte:price',
             'quantity' => 'required|integer|min:0',
             'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'status' => 'required|in:available,unavailable'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'status' => 'required|in:available,unavailable',
+        ], [
+            'compare_price.gte' => 'Giá gốc phải lớn hơn hoặc bằng giá bán',
         ]);
 
         if ($request->hasFile('image')) {
-            // Xóa ảnh cũ
             if ($book->image) {
-                Storage::delete('public/books/' . $book->image);
+                Storage::disk('public')->delete('books/' . $book->image);
             }
-
-            // Upload ảnh mới
-            $image = $request->file('image');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/books', $filename);
-            $validated['image'] = $filename;
+            $validated['image'] = $this->storeImage($request->file('image'));
         }
 
         $book->update($validated);
 
         return redirect()->route('admin.books.index')
-                        ->with('success', 'Cập nhật sách thành công');
+            ->with('success', 'Cập nhật sách thành công');
     }
 
     public function destroy(Book $book)
     {
-        // Xóa ảnh
+        if ($book->orderItems()->exists()) {
+            return back()->with('error', 'Không thể xoá sách đã có trong đơn hàng. Đặt trạng thái "Ngừng kinh doanh" thay thế.');
+        }
+
         if ($book->image) {
-            Storage::delete('public/books/' . $book->image);
+            Storage::disk('public')->delete('books/' . $book->image);
         }
 
         $book->delete();
 
-        return redirect()->route('admin.books.index')
-                        ->with('success', 'Xóa sách thành công');
+        return back()->with('success', 'Xoá sách thành công');
     }
-} 
+
+    private function storeImage($file): string
+    {
+        $filename = Str::random(20) . '_' . time() . '.' . $file->getClientOriginalExtension();
+        $file->storeAs('books', $filename, 'public');
+        return $filename;
+    }
+}

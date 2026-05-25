@@ -10,15 +10,25 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->unique();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->decimal('total_amount', 10, 2);
+            $table->decimal('subtotal', 12, 2)->default(0);
+            $table->decimal('shipping_fee', 12, 2)->default(0);
+            $table->decimal('discount_amount', 12, 2)->default(0);
+            $table->decimal('total_amount', 12, 2);
             $table->string('shipping_name');
             $table->string('shipping_phone');
             $table->text('shipping_address');
             $table->text('note')->nullable();
             $table->foreignId('discount_id')->nullable()->constrained()->nullOnDelete();
-            $table->decimal('discount_amount', 10, 2)->default(0);
-            $table->string('status')->default('pending');
+            $table->enum('status', ['pending', 'confirmed', 'shipping', 'completed', 'cancelled'])
+                ->default('pending')
+                ->index();
+            $table->enum('payment_method', ['cod', 'vnpay'])->default('cod');
+            $table->enum('payment_status', ['pending', 'paid', 'failed', 'refunded'])->default('pending');
+            $table->string('payment_ref')->nullable();
+            $table->timestamp('paid_at')->nullable();
+            $table->timestamp('cancelled_at')->nullable();
             $table->timestamps();
         });
     }

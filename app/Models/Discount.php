@@ -36,7 +36,19 @@ class Discount extends Model
         'is_active' => 'boolean',
     ];
 
-    public function isValid()
+    public function scopeActive($query)
+    {
+        $now = Carbon::now();
+        return $query->where('is_active', true)
+            ->where(function ($q) use ($now) {
+                $q->whereNull('start_date')->orWhere('start_date', '<=', $now);
+            })
+            ->where(function ($q) use ($now) {
+                $q->whereNull('end_date')->orWhere('end_date', '>=', $now);
+            });
+    }
+
+    public function isValid(): bool
     {
         if (!$this->is_active) {
             return false;

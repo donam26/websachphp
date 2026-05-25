@@ -5,27 +5,41 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BookController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Book::query();
+        $query = Book::query()->with('category');
+        $currentCategory = null;
 
-        // Xử lý tìm kiếm
+        // Search
         if ($search = $request->input('search')) {
-            $query->where('title', 'like', "%{$search}%")
-                  ->orWhere('author', 'like', "%{$search}%");
-        }
-
-        // Xử lý lọc theo danh mục
-        if ($category = $request->input('category')) {
-            $query->whereHas('category', function($q) use ($category) {
-                $q->where('slug', $category);
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('author', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
-        // Xử lý sắp xếp
+        // Category filter
+        if ($categorySlug = $request->input('category')) {
+            $currentCategory = Category::where('slug', $categorySlug)->first();
+            if ($currentCategory) {
+                $query->where('category_id', $currentCategory->id);
+            }
+        }
+
+        // Price filters
+        if ($request->filled('price_from')) {
+            $query->where('price', '>=', (int) $request->input('price_from'));
+        }
+        if ($request->filled('price_to')) {
+            $query->where('price', '<=', (int) $request->input('price_to'));
+        }
+
+        // Sorting
         switch ($request->input('sort')) {
             case 'price_asc':
                 $query->orderBy('price', 'asc');
@@ -33,24 +47,42 @@ class BookController extends Controller
             case 'price_desc':
                 $query->orderBy('price', 'desc');
                 break;
+            case 'name_asc':
+                $query->orderBy('title', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('title', 'desc');
+                break;
+            case 'best_seller':
+                $query->leftJoin('order_items', 'books.id', '=', 'order_items.book_id')
+                    ->select('books.*')
+                    ->selectRaw('COALESCE(SUM(order_items.quantity), 0) as total_sold')
+                    ->groupBy('books.id')
+                    ->orderByDesc('total_sold');
+                break;
+            case 'discount':
+                $query->where('quantity', '>', 0)->inRandomOrder();
+                break;
+            case 'latest':
             default:
                 $query->latest();
                 break;
         }
 
-        // Phân trang với 12 item mỗi trang
-        $books = $query->with('category')->paginate(12);
-        $categories = Category::all();
+        $books = $query->paginate(12)->appends($request->query());
+        $categories = Category::orderBy('name')->get();
 
-        return view('books.index', compact('books', 'categories'));
+        return view('books.index', compact('books', 'categories', 'currentCategory'));
     }
 
     public function show(Book $book)
     {
-        // Lấy các sách liên quan cùng thể loại
-        $relatedBooks = Book::where('category_id', $book->category_id)
+        $book->load('category');
+
+        $relatedBooks = Book::with('category')
+            ->where('category_id', $book->category_id)
             ->where('id', '!=', $book->id)
-            ->take(4)
+            ->take(5)
             ->get();
 
         return view('books.show', compact('book', 'relatedBooks'));
@@ -58,10 +90,6 @@ class BookController extends Controller
 
     public function category($slug)
     {
-        $category = Category::where('slug', $slug)->firstOrFail();
-        $books = Book::where('category_id', $category->id)->paginate(12);
-        $categories = Category::all();
-
-        return view('books.index', compact('books', 'categories'));
+        return $this->index(request()->merge(['category' => $slug]));
     }
-} 
+}

@@ -1,0 +1,7 @@
+{
+  "tool_name": "Read",
+  "tool_input_preview": "{\"file_path\":\"C:\\\\Users\\\\Anthony\\\\websachphp\\\\app\\\\Http\\\\Middleware\"}",
+  "error": "EISDIR: illegal operation on a directory, read 'C:\\Users\\Anthony\\websachphp\\app\\Http\\Middleware'",
+  "timestamp": "2026-05-25T06:51:41.889Z",
+  "retry_count": 1
+}

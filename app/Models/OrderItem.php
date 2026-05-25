@@ -12,8 +12,14 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'book_id',
+        'book_title',
         'quantity',
-        'price'
+        'price',
+    ];
+
+    protected $casts = [
+        'quantity' => 'integer',
+        'price' => 'float',
     ];
 
     public function order()
@@ -25,4 +31,9 @@ class OrderItem extends Model
     {
         return $this->belongsTo(Book::class);
     }
-} 
+
+    public function getSubtotalAttribute(): float
+    {
+        return $this->price * $this->quantity;
+    }
+}

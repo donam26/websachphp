@@ -12,7 +12,11 @@ class CartItem extends Model
     protected $fillable = [
         'user_id',
         'book_id',
-        'quantity'
+        'quantity',
+    ];
+
+    protected $casts = [
+        'quantity' => 'integer',
     ];
 
     public function user()
@@ -24,4 +28,9 @@ class CartItem extends Model
     {
         return $this->belongsTo(Book::class);
     }
-} 
+
+    public function getSubtotalAttribute(): float
+    {
+        return $this->book ? (float) $this->book->price * $this->quantity : 0;
+    }
+}

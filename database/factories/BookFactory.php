@@ -11,14 +11,18 @@ class BookFactory extends Factory
 
     public function definition()
     {
+        $price = $this->faker->numberBetween(50000, 500000);
+        $hasDiscount = $this->faker->boolean(40);
+
         return [
-            'title' => $this->faker->sentence(3),
+            'title' => ucfirst($this->faker->words(rand(2, 5), true)),
             'author' => $this->faker->name(),
-            'description' => $this->faker->paragraphs(3, true),
-            'price' => $this->faker->numberBetween(50000, 500000),
-            'stock' => $this->faker->numberBetween(0, 100),
-            'image' => 'default-book.jpg', // Cần có ảnh mặc định trong storage
-            'status' => $this->faker->randomElement(['available', 'unavailable']),
+            'description' => $this->faker->paragraphs(4, true),
+            'price' => $price,
+            'compare_price' => $hasDiscount ? round($price * $this->faker->randomFloat(2, 1.1, 1.6), -3) : null,
+            'quantity' => $this->faker->numberBetween(0, 100),
+            'image' => null,
+            'status' => 'available',
         ];
     }
-} 
+}

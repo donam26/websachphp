@@ -1,241 +1,471 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title') - Quản trị Book Store</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Dashboard') - BookStore Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+
     <style>
-
-  table {
-      width: 100%; /* Bảng chiếm toàn bộ chiều rộng */
-      border-collapse: collapse; /* Loại bỏ khoảng cách giữa các ô */
-    }
-
-    th, td {
-      border: 1px solid #ddd; /* Viền cho các ô */
-      padding: 8px; /* Khoảng cách bên trong ô */
-      text-align: left; /* Căn lề trái */
-    }
-
-    /* Responsive: Chuyển bảng thành dạng dọc khi màn hình nhỏ hơn 600px */
-    @media (max-width: 600px) {
-      table, thead, tbody, th, td, tr {
-        display: block; /* Chuyển đổi thành khối */
-      }
-
-      thead tr {
-        display: none; /* Ẩn phần tiêu đề của bảng */
-      }
-
-      tr {
-        margin-bottom: 15px; /* Khoảng cách giữa các hàng */
-      }
-
-      td {
-        position: relative; /* Để hiển thị tiêu đề cột */
-        padding-left: 50%; /* Chừa chỗ cho tiêu đề cột */
-      }
-
-      td::before {
-        content: attr(data-label); /* Lấy tiêu đề từ thuộc tính data-label */
-        position: absolute;
-        left: 10px; /* Căn lề trái */
-        top: 50%;
-        transform: translateY(-50%); /* Căn giữa theo chiều dọc */
-        font-weight: bold; /* In đậm tiêu đề */
-      }
-    }
-
         :root {
-            --primary-color: #191919;
-            --secondary-color: #858796;
-            --success-color: #1cc88a;
-            --info-color: #36b9cc;
-            --warning-color: #f6c23e;
-            --danger-color: #e74a3b;
+            --primary: #c92127;
+            --primary-dark: #a51a1f;
+            --primary-light: #ff4d57;
+            --sidebar-bg: #1f2937;
+            --sidebar-dark: #111827;
+            --sidebar-text: rgba(255, 255, 255, .75);
+            --sidebar-active: var(--primary);
+            --topbar-bg: #ffffff;
+            --content-bg: #f3f4f6;
+            --text-dark: #111827;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --success: #1ca672;
+            --info: #2196f3;
+            --warning: #ff9800;
+            --danger: #e53935;
         }
 
+        * { box-sizing: border-box; }
         body {
-            background-color: #f8f9fc;
+            font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+            background: var(--content-bg);
+            font-size: 14px;
+            color: var(--text-dark);
+            margin: 0;
         }
 
-        .sidebar {
-            background: linear-gradient(180deg, var(--primary-color) 10%, #224abe 100%);
+        a { text-decoration: none; }
+
+        .admin-wrapper {
+            display: flex;
             min-height: 100vh;
-            transition: all 0.3s;
         }
 
-        .sidebar .nav-item {
-            position: relative;
-            margin-bottom: 5px;
+        /* ===== Sidebar ===== */
+        .sidebar {
+            width: 260px;
+            flex-shrink: 0;
+            background: var(--sidebar-bg);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 1030;
+            transition: transform .3s ease;
         }
-
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            padding: 1rem;
+        .sidebar-brand {
+            padding: 18px 20px;
+            background: var(--sidebar-dark);
             display: flex;
             align-items: center;
-            transition: all 0.3s;
-        }
-
-        .sidebar .nav-link:hover {
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
             color: #fff;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
         }
-
-        .sidebar .nav-link i {
-            margin-right: 0.75rem;
-            font-size: 1.1rem;
+        .sidebar-brand .brand-icon {
+            width: 38px; height: 38px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
         }
-
-        .sidebar .nav-link.active {
+        .sidebar-brand small {
+            display: block;
+            font-size: 10.5px;
+            font-weight: 500;
+            opacity: .6;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+        .sidebar-section {
+            padding: 16px 20px 6px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,.4);
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 20px;
+            color: var(--sidebar-text);
+            font-size: 14px;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            transition: all .2s ease;
+        }
+        .sidebar-menu li a i {
+            font-size: 17px;
+            width: 22px;
+            text-align: center;
+        }
+        .sidebar-menu li a:hover {
+            background: rgba(255,255,255,.06);
             color: #fff;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 5px;
+        }
+        .sidebar-menu li a.active {
+            background: rgba(201,33,39,.18);
+            color: #fff;
+            border-left-color: var(--primary);
+        }
+        .sidebar-footer {
+            padding: 14px 20px;
+            border-top: 1px solid rgba(255,255,255,.08);
+            font-size: 12px;
+            color: rgba(255,255,255,.5);
+        }
+
+        /* ===== Main area ===== */
+        .main-area {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .topbar {
-            background-color: #fff;
-            box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
+            background: var(--topbar-bg);
+            padding: 12px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            box-shadow: 0 1px 3px rgba(0,0,0,.04);
+        }
+        .topbar .toggle-btn {
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: var(--text-dark);
+            padding: 4px 10px;
+        }
+        .topbar .page-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .topbar .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .topbar .topbar-link {
+            padding: 6px 12px;
+            border-radius: 8px;
+            color: var(--text-muted);
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .topbar .topbar-link:hover { background: var(--content-bg); color: var(--text-dark); }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: var(--content-bg);
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        .user-avatar {
+            width: 32px; height: 32px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700;
         }
 
-        .topbar .dropdown-toggle::after {
-            display: none;
+        .content-area {
+            padding: 24px;
+            flex: 1;
         }
 
+        /* ===== Cards / Components ===== */
         .card {
             border: none;
-            border-radius: .35rem;
-            box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.05);
         }
-
         .card-header {
-            background-color: #f8f9fc;
-            border-bottom: 1px solid #e3e6f0;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            padding: 14px 20px;
+            font-weight: 600;
+        }
+        .card-body { padding: 20px; }
+
+        .stat-card {
+            border-radius: 12px;
+            padding: 22px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,.08);
+        }
+        .stat-card .stat-icon {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            font-size: 60px;
+            opacity: .18;
+        }
+        .stat-card .stat-label {
+            font-size: 12.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            opacity: .85;
+            margin-bottom: 8px;
+        }
+        .stat-card .stat-value {
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .stat-card .stat-foot { opacity: .8; font-size: 12px; margin-top: 6px; }
+        .stat-card.primary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); }
+        .stat-card.success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .stat-card.info { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+        .stat-card.warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+
+        .table {
+            margin-bottom: 0;
+        }
+        .table th {
+            background: #f9fafb;
+            font-weight: 600;
+            font-size: 12.5px;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 16px;
+        }
+        .table td {
+            padding: 14px 16px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .table-hover tbody tr:hover { background: #fafbfc; }
+
+        .badge {
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11.5px;
+        }
+        .badge-soft-success { background: rgba(16,185,129,.12); color: #047857; }
+        .badge-soft-danger { background: rgba(239,68,68,.12); color: #b91c1c; }
+        .badge-soft-warning { background: rgba(245,158,11,.12); color: #b45309; }
+        .badge-soft-info { background: rgba(59,130,246,.12); color: #1d4ed8; }
+        .badge-soft-primary { background: rgba(201,33,39,.12); color: var(--primary); }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
         }
 
-        .dropdown-menu {
-            box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
-            border: none;
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 .2rem rgba(201,33,39,.12);
         }
 
         .alert {
             border: none;
-            border-radius: .35rem;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-weight: 500;
+        }
+        .alert-success { background: rgba(16,185,129,.12); color: #047857; }
+        .alert-danger { background: rgba(239,68,68,.12); color: #b91c1c; }
+
+        /* ===== Responsive ===== */
+        .sidebar-overlay { display: none; }
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.show { transform: translateX(0); }
+            .main-area { margin-left: 0; }
+            .sidebar-overlay {
+                display: block;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,.4);
+                z-index: 1029;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity .3s;
+            }
+            .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
         }
     </style>
+    @stack('styles')
 </head>
+
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-                <div class="position-sticky pt-4">
-                    <div class="text-center mb-4">
-                        <div class="text-white"><img style ='width: 120px;  height: 120px; '
-                         src="https://hqland.id.vn/storage/products/images/logo%20HQ.png" alt="Logo" class="logo"></div>
-
-                    </div>
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
-                                <i class="bi bi-speedometer2"></i> Nổi bật
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}" href="{{ route('admin.products.index') }}">
-                                <i class="bi bi-house"></i>
-                                <span>Sản phẩm thuê </span>
-                            </a>
-                        </li>
-
-                        {{-- <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
-                                <i class="bi bi-people"></i> Quản lý người dùng
-                            </a>
-                        </li> --}}
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.customer.*') ? 'active' : '' }}"
-                                href="{{ route('admin.customer.index') }}">
-                                <i class="bi bi-person-badge"></i>
-                                <span>Khách hàng</span>
-                            </a>
-                        </li>
-                        @if(Auth::user()->IsDelete === 1)
-                        
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.Adduser.*') ? 'active' : '' }}"
-                                href="{{ route('admin.Adduser.index') }}">
-                                <i class="bi bi-person-badge"></i>
-                                <span>Tạo nhân viên</span>
-                            </a>
-                        </li>
-                        @endif   
-                    </ul>
+    <div class="admin-wrapper">
+        {{-- Sidebar --}}
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <span class="brand-icon"><i class="bi bi-book-half"></i></span>
+                <div>
+                    BookStore
+                    <small>Admin Panel</small>
                 </div>
-            </nav>
+            </div>
 
-            <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <nav class="navbar navbar-expand-lg navbar-light topbar mb-4 static-top">
-                    <div class="container-fluid">
-                        <button class="btn btn-link d-md-none" type="button" data-bs-toggle="collapse" data-bs-target=".sidebar">
-                            <i class="bi bi-list"></i>
-                        </button>
+            <div class="sidebar-section">Tổng quan</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+            </ul>
 
-                        <div class="d-flex align-items-center ms-auto">
-                            <div class="dropdown">
-                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-person-circle me-2"></i>
-                                    <span>{{ Auth::user()->username }}</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('profile') }}">
-                                            <i class="bi bi-person me-2"></i> Thông tin cá nhân
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <form action="{{ route('logout') }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="dropdown-item">
-                                                <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
-                                            </button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+            <div class="sidebar-section">Quản lý sách</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="{{ route('admin.books.index') }}" class="{{ request()->routeIs('admin.books.*') ? 'active' : '' }}">
+                        <i class="bi bi-book"></i> Sách
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.categories.index') }}" class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+                        <i class="bi bi-tags"></i> Danh mục
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-section">Bán hàng</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
+                        <i class="bi bi-receipt"></i> Đơn hàng
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.discounts.index') }}" class="{{ request()->routeIs('admin.discounts.*') ? 'active' : '' }}">
+                        <i class="bi bi-ticket-perforated"></i> Mã giảm giá
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-section">Hệ thống</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                        <i class="bi bi-people"></i> Người dùng
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('home') }}">
+                        <i class="bi bi-house"></i> Về trang chủ
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                v1.0 &mdash; &copy; {{ date('Y') }} BookStore
+            </div>
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        {{-- Main area --}}
+        <div class="main-area">
+            <header class="topbar">
+                <div class="d-flex align-items-center gap-2">
+                    <button class="toggle-btn d-lg-none" id="toggle-sidebar"><i class="bi bi-list"></i></button>
+                    <h1 class="page-title">@yield('page-title', View::yieldContent('title') ?: 'Dashboard')</h1>
+                </div>
+                <div class="topbar-right">
+                    <a href="{{ route('home') }}" target="_blank" class="topbar-link d-none d-md-inline-flex">
+                        <i class="bi bi-box-arrow-up-right"></i> Xem website
+                    </a>
+                    <div class="dropdown">
+                        <a class="user-pill dropdown-toggle text-decoration-none" data-bs-toggle="dropdown" role="button">
+                            <span class="user-avatar">{{ strtoupper(substr(Auth::user()->full_name ?? Auth::user()->username, 0, 1)) }}</span>
+                            <span class="d-none d-md-inline">{{ Auth::user()->full_name ?? Auth::user()->username }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow">
+                            <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="bi bi-person me-2"></i>Thông tin cá nhân</a></li>
+                            <li><a class="dropdown-item" href="{{ route('orders.index') }}"><i class="bi bi-receipt me-2"></i>Đơn hàng</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST">@csrf
+                                    <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</button>
+                                </form>
+                            </li>
+                        </ul>
                     </div>
-                </nav>
+                </div>
+            </header>
 
+            <div class="content-area">
                 @if(session('success'))
-                    <div class="alert alert-success">
-                        <i class="bi bi-check-circle me-2"></i>
-                        {{ session('success') }}
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+                        <button class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
-
                 @if(session('error'))
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-circle me-2"></i>
-                        {{ session('error') }}
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <i class="bi bi-exclamation-circle me-2"></i>{{ session('error') }}
+                        <button class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
 
                 @yield('content')
-            </main>
+            </div>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <script>
+        document.getElementById('toggle-sidebar')?.addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('show');
+            document.getElementById('sidebar-overlay').classList.toggle('show');
+        });
+        document.getElementById('sidebar-overlay')?.addEventListener('click', function() {
+            document.getElementById('sidebar').classList.remove('show');
+            this.classList.remove('show');
+        });
+    </script>
     @stack('scripts')
 </body>
+
 </html>

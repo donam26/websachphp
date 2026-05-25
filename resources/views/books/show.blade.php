@@ -3,189 +3,279 @@
 @section('title', $book->title)
 
 @section('content')
-<div class="container py-5">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('home') }}">Trang chủ</a></li>
-            @if($book->category)
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('books.index') }}" class="text-decoration-none">Sách</a></li>
+        @if($book->category)
             <li class="breadcrumb-item">
-                <a href="{{ route('books.category', $book->category->slug) }}">
-                    {{ $book->category->name }}
-                </a>
+                <a href="{{ route('books.category', $book->category->slug) }}" class="text-decoration-none">{{ $book->category->name }}</a>
             </li>
-            @endif
-            <li class="breadcrumb-item active" aria-current="page">{{ $book->title }}</li>
-        </ol>
-    </nav>
+        @endif
+        <li class="breadcrumb-item active text-truncate" style="max-width:300px;">{{ $book->title }}</li>
+    </ol>
+</nav>
 
-    <div class="row">
-        <!-- Hình ảnh sách -->
-        <div class="col-md-4">
-            <div class="position-sticky" style="top: 2rem;">
-                <div class="card border-0 shadow-sm">
-                    <img src="{{ asset('storage/books/' . $book->image) }}" 
-                         class="card-img-top" 
-                         alt="{{ $book->title }}"
-                         style="object-fit: contain; height: 400px;">
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-4">
+            {{-- Book image --}}
+            <div class="col-md-4">
+                <div class="book-image-wrap">
+                    <img src="{{ $book->image_url }}"
+                         alt="{{ $book->title }}" class="img-fluid main-image"
+                         onerror="this.src='https://placehold.co/400x550/f4f6f8/c92127?text=Book'">
+                </div>
+                <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-outline-danger btn-sm flex-fill">
+                        <i class="bi bi-heart me-1"></i> Yêu thích
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm flex-fill" onclick="navigator.share && navigator.share({url:location.href,title:'{{ addslashes($book->title) }}'})">
+                        <i class="bi bi-share me-1"></i> Chia sẻ
+                    </button>
                 </div>
             </div>
-        </div>
 
-        <!-- Thông tin sách -->
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h1 class="card-title h2 mb-3">{{ $book->title }}</h1>
-                    <p class="text-muted mb-3">
-                        <i class="bi bi-person-circle me-2"></i>Tác giả: {{ $book->author }}
-                    </p>
-                    <p class="text-muted mb-3">
-                        <i class="bi bi-bookmark-fill me-2"></i>Thể loại: {{ $book->category ? $book->category->name : 'Chưa phân loại' }}
-                    </p>
-                    <div class="d-flex align-items-center mb-4">
-                        <h3 class="text-primary mb-0 me-3">{{ number_format($book->price) }}đ</h3>
-                        @if($book->quantity > 0)
-                            <span class="badge bg-success">Còn hàng</span>
-                        @else
-                            <span class="badge bg-danger">Hết hàng</span>
-                        @endif
+            {{-- Book info --}}
+            <div class="col-md-8">
+                @if($book->category)
+                    <a href="{{ route('books.category', $book->category->slug) }}" class="badge badge-soft-primary text-decoration-none">
+                        <i class="bi bi-bookmark-fill me-1"></i>{{ $book->category->name }}
+                    </a>
+                @endif
+                <h1 class="book-title mt-2">{{ $book->title }}</h1>
+                <div class="d-flex flex-wrap gap-3 text-muted small mb-3">
+                    <span><i class="bi bi-person-circle me-1"></i>Tác giả: <strong class="text-dark">{{ $book->author }}</strong></span>
+                    <span class="text-warning">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+                        <span class="text-muted ms-1">(125 đánh giá)</span>
+                    </span>
+                    <span><i class="bi bi-bag-check me-1"></i>Đã bán: {{ $book->orderItems->sum('quantity') }}</span>
+                </div>
+
+                <div class="price-box">
+                    <span class="current-price">{{ number_format($book->price, 0, ',', '.') }}đ</span>
+                    @if($book->compare_price && $book->compare_price > $book->price)
+                        <span class="old-price">{{ number_format($book->compare_price, 0, ',', '.') }}đ</span>
+                        <span class="discount-badge">-{{ $book->discount_percent }}%</span>
+                    @endif
+                </div>
+
+                <div class="info-table mb-3">
+                    <div class="info-row">
+                        <span class="info-label">Tình trạng:</span>
+                        <span class="info-value">
+                            @if($book->quantity > 0)
+                                <span class="badge badge-soft-success">Còn hàng ({{ $book->quantity }})</span>
+                            @else
+                                <span class="badge badge-soft-danger">Hết hàng</span>
+                            @endif
+                        </span>
                     </div>
+                    <div class="info-row">
+                        <span class="info-label">Mã sản phẩm:</span>
+                        <span class="info-value">BK-{{ str_pad($book->id, 6, '0', STR_PAD_LEFT) }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Vận chuyển:</span>
+                        <span class="info-value">Freeship đơn từ 250.000đ - Giao 2-5 ngày</span>
+                    </div>
+                </div>
 
-                    <div class="mb-4">
-                        <form action="{{ route('cart.add') }}" method="POST" class="d-flex align-items-center">
-                            @csrf
-                            <input type="hidden" name="book_id" value="{{ $book->id }}">
-                            <div class="input-group me-3" style="width: 130px;">
-                                <button class="btn btn-outline-secondary" type="button" onclick="decrementQuantity()">
-                                    <i class="bi bi-dash"></i>
-                                </button>
-                                <input type="number" class="form-control text-center" name="quantity" value="1" min="1" max="{{ $book->quantity }}" id="quantity">
-                                <button class="btn btn-outline-secondary" type="button" onclick="incrementQuantity()">
-                                    <i class="bi bi-plus"></i>
-                                </button>
+                @auth
+                    @if($book->is_available)
+                    <form action="{{ route('cart.add') }}" method="POST" class="mb-3">
+                        @csrf
+                        <input type="hidden" name="book_id" value="{{ $book->id }}">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <label class="text-muted">Số lượng:</label>
+                            <div class="quantity-control">
+                                <button class="btn-qty" type="button" onclick="decQty()"><i class="bi bi-dash"></i></button>
+                                <input type="number" id="qty" name="quantity" value="1" min="1" max="{{ $book->quantity }}">
+                                <button class="btn-qty" type="button" onclick="incQty()"><i class="bi bi-plus"></i></button>
                             </div>
-                            <button type="submit" class="btn btn-primary" {{ $book->quantity == 0 ? 'disabled' : '' }}>
-                                <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ
-                            </button>
-                        </form>
-                    </div>
-
-                    <div class="mb-4">
-                        <h5>Mô tả sách</h5>
-                        <div class="book-description">
-                            {{ $book->description }}
+                            <small class="text-muted">(Còn {{ $book->quantity }} sản phẩm)</small>
                         </div>
-                    </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-outline-primary btn-lg flex-fill">
+                                <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ hàng
+                            </button>
+                            <button type="submit" name="buy_now" value="1" class="btn btn-primary btn-lg flex-fill">
+                                <i class="bi bi-lightning-charge-fill me-2"></i>Mua ngay
+                            </button>
+                        </div>
+                    </form>
+                    @else
+                        <button class="btn btn-secondary btn-lg w-100 mb-3" disabled>
+                            <i class="bi bi-x-circle me-2"></i>Hết hàng
+                        </button>
+                    @endif
+                @else
+                    <a href="{{ route('login') }}" class="btn btn-primary btn-lg w-100 mb-3">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập để mua sách
+                    </a>
+                @endauth
 
-                    <!-- Nút chia sẻ -->
-                    <div class="d-flex align-items-center">
-                        <span class="me-3">Chia sẻ:</span>
-                        <a href="#" class="btn btn-outline-primary btn-sm me-2">
-                            <i class="bi bi-facebook"></i>
-                        </a>
-                        <a href="#" class="btn btn-outline-info btn-sm me-2">
-                            <i class="bi bi-twitter"></i>
-                        </a>
-                        <a href="#" class="btn btn-outline-danger btn-sm">
-                            <i class="bi bi-pinterest"></i>
-                        </a>
-                    </div>
+                <div class="benefit-list">
+                    <div class="benefit-item"><i class="bi bi-truck text-primary"></i> Giao hàng toàn quốc</div>
+                    <div class="benefit-item"><i class="bi bi-shield-check text-success"></i> Sách chính hãng 100%</div>
+                    <div class="benefit-item"><i class="bi bi-arrow-counterclockwise text-warning"></i> Đổi trả trong 7 ngày</div>
+                    <div class="benefit-item"><i class="bi bi-credit-card text-info"></i> Thanh toán đa dạng</div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Sách liên quan -->
-    @if($relatedBooks->count() > 0)
-    <div class="mt-5">
-        <h3 class="mb-4">Sách liên quan</h3>
-        <div class="row">
-            @foreach($relatedBooks as $relatedBook)
-            <div class="col-md-3">
-                <div class="card h-100 border-0 shadow-sm">
-                    <img src="{{ asset('storage/books/' . $relatedBook->image) }}" 
-                         class="card-img-top" 
-                         alt="{{ $relatedBook->title }}"
-                         style="object-fit: contain; height: 200px;">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="{{ route('books.show', $relatedBook) }}" class="text-decoration-none text-dark">
-                                {{ Str::limit($relatedBook->title, 40) }}
-                            </a>
-                        </h5>
-                        <p class="card-text text-muted">{{ Str::limit($relatedBook->author, 20) }}</p>
-                        <p class="card-text text-primary fw-bold">{{ number_format($relatedBook->price) }}đ</p>
-                        @if($relatedBook->quantity > 0)
-                            <span class="badge bg-success">Còn hàng</span>
-                        @else
-                            <span class="badge bg-danger">Hết hàng</span>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-    @endif
 </div>
+
+{{-- Description tabs --}}
+<div class="card mb-4">
+    <div class="card-body">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-desc">Mô tả sản phẩm</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-detail">Thông tin chi tiết</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-review">Đánh giá</button></li>
+        </ul>
+        <div class="tab-content pt-4">
+            <div class="tab-pane fade show active" id="tab-desc">
+                <div class="book-description">{!! nl2br(e($book->description)) !!}</div>
+            </div>
+            <div class="tab-pane fade" id="tab-detail">
+                <table class="table table-striped">
+                    <tr><th width="200">Tên sách</th><td>{{ $book->title }}</td></tr>
+                    <tr><th>Tác giả</th><td>{{ $book->author }}</td></tr>
+                    <tr><th>Thể loại</th><td>{{ $book->category->name ?? 'Chưa phân loại' }}</td></tr>
+                    <tr><th>Giá bán</th><td>{{ number_format($book->price) }}đ</td></tr>
+                    <tr><th>Trạng thái</th><td>{{ $book->quantity > 0 ? 'Còn hàng' : 'Hết hàng' }}</td></tr>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="tab-review">
+                <div class="empty-state">
+                    <i class="bi bi-chat-quote"></i>
+                    <h5>Chưa có đánh giá</h5>
+                    <p>Hãy là người đầu tiên đánh giá sản phẩm này.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Related books --}}
+@if($relatedBooks->count() > 0)
+<section>
+    <div class="section-header">
+        <h2 class="section-title">Sách liên quan</h2>
+    </div>
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+        @foreach($relatedBooks as $relatedBook)
+            <div class="col">
+                @include('books._product-card', ['book' => $relatedBook])
+            </div>
+        @endforeach
+    </div>
+</section>
+@endif
+
+@push('styles')
+<style>
+    .book-image-wrap {
+        background: #fafafa;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        border: 1px solid var(--border-light);
+    }
+    .book-image-wrap .main-image {
+        max-height: 450px;
+        object-fit: contain;
+    }
+    .book-title { font-size: 24px; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+    .price-box {
+        background: linear-gradient(135deg, #fff8e1, #fffde7);
+        padding: 16px 20px;
+        border-radius: 10px;
+        margin: 16px 0;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+    .current-price { font-size: 32px; font-weight: 800; color: var(--primary); }
+    .old-price { font-size: 16px; color: var(--text-muted); text-decoration: line-through; }
+    .discount-badge { background: var(--primary); color: #fff; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 13px; }
+
+    .info-table { border-top: 1px solid var(--border-light); padding-top: 14px; }
+    .info-row { display: flex; gap: 12px; padding: 6px 0; font-size: 14px; }
+    .info-label { color: var(--text-muted); min-width: 120px; }
+    .info-value { color: var(--text-dark); font-weight: 500; }
+
+    .quantity-control {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .btn-qty {
+        width: 38px; height: 38px;
+        background: #fff;
+        border: none;
+        color: var(--text-dark);
+    }
+    .btn-qty:hover { background: var(--bg-soft); color: var(--primary); }
+    .quantity-control input {
+        width: 60px;
+        height: 38px;
+        border: none;
+        text-align: center;
+        font-weight: 600;
+        outline: none;
+        border-left: 1px solid var(--border-light);
+        border-right: 1px solid var(--border-light);
+        -moz-appearance: textfield;
+    }
+    .quantity-control input::-webkit-outer-spin-button,
+    .quantity-control input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    .benefit-list {
+        background: var(--bg-soft);
+        padding: 12px 16px;
+        border-radius: 8px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 16px;
+    }
+    .benefit-item { font-size: 13px; }
+    .benefit-item i { margin-right: 6px; font-size: 16px; }
+
+    .nav-tabs .nav-link {
+        border: none;
+        color: var(--text-muted);
+        font-weight: 600;
+        padding: 12px 20px;
+        border-bottom: 2px solid transparent;
+    }
+    .nav-tabs .nav-link.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+        background: transparent;
+    }
+    .book-description { line-height: 1.8; color: #444; white-space: pre-line; }
+
+    .breadcrumb-item + .breadcrumb-item::before { content: '›'; }
+    .breadcrumb { background: transparent; padding: 0; font-size: 13px; }
+</style>
+@endpush
 
 @push('scripts')
 <script>
-function incrementQuantity() {
-    const input = document.getElementById('quantity');
-    const max = parseInt(input.getAttribute('max'));
-    const currentValue = parseInt(input.value);
-    if (currentValue < max) {
-        input.value = currentValue + 1;
-    }
+function incQty() {
+    const i = document.getElementById('qty');
+    if (parseInt(i.value) < parseInt(i.max)) i.value = parseInt(i.value) + 1;
 }
-
-function decrementQuantity() {
-    const input = document.getElementById('quantity');
-    const currentValue = parseInt(input.value);
-    if (currentValue > 1) {
-        input.value = currentValue - 1;
-    }
+function decQty() {
+    const i = document.getElementById('qty');
+    if (parseInt(i.value) > 1) i.value = parseInt(i.value) - 1;
 }
 </script>
-
-<style>
-.book-description {
-    line-height: 1.8;
-    color: #555;
-}
-
-.card {
-    transition: transform 0.2s;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-}
-
-.breadcrumb {
-    background-color: transparent;
-    padding: 0;
-    margin-bottom: 2rem;
-}
-
-.breadcrumb-item + .breadcrumb-item::before {
-    content: "›";
-}
-
-.breadcrumb-item a {
-    color: #6c757d;
-    text-decoration: none;
-}
-
-.breadcrumb-item a:hover {
-    color: #0d6efd;
-}
-
-.badge {
-    padding: 0.5em 1em;
-    font-weight: 500;
-}
-</style>
 @endpush
 @endsection

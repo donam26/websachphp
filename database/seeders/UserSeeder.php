@@ -10,18 +10,28 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        // Tạo tài khoản admin
-        User::create([
-            'username' => 'admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
-            'full_name' => 'Administrator',
-            'phone_number' => '0123456789',
-            'address' => 'Địa chỉ admin',
-            'role' => 'admin'
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@bookstore.com'],
+            [
+                'username' => 'admin',
+                'password' => Hash::make('admin123'),
+                'full_name' => 'Quản trị viên',
+                'phone_number' => '0901234567',
+                'address' => '123 Lê Lợi, Quận 1, TP. Hồ Chí Minh',
+                'role' => User::ROLE_ADMIN,
+            ]
+        );
 
-        // Tạo 10 user thông thường
-        User::factory()->count(10)->create();
+        User::updateOrCreate(
+            ['email' => 'user@bookstore.com'],
+            [
+                'username' => 'demo',
+                'password' => Hash::make('password'),
+                'full_name' => 'Nguyễn Văn A',
+                'phone_number' => '0987654321',
+                'address' => '456 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh',
+                'role' => User::ROLE_USER,
+            ]
+        );
     }
-} 
+}

@@ -3,70 +3,89 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Book;
 use App\Models\Order;
 use App\Models\User;
-use App\Models\Book;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use App\Models\Product;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-      
-        $Product = Product::query();
-        $Topproducts = Product::orderBy('updated_at', 'desc')->take(20)->get();
-        // $Topprice = Product::orderBy('price', 'desc')->take(20)->get();
-        $Topprice =  DB::select('SELECT * FROM `products` order by price DESC limit 20');
+        $today = Carbon::today();
+        $startOfMonth = Carbon::now()->startOfMonth();
 
-        $User = User::query();
-        $totalUsers = $User->count();
-        // Tổng doanh thu
-        $totalRevenue = Order::where('status', 'completed')
+        $totalRevenue = Order::whereIn('status', [Order::STATUS_COMPLETED, Order::STATUS_SHIPPING, Order::STATUS_CONFIRMED])
             ->sum('total_amount');
 
-        // Đơn hàng mới
-        $newOrders = Order::where('status', 'pending')->count();
+        $monthRevenue = Order::whereIn('status', [Order::STATUS_COMPLETED, Order::STATUS_SHIPPING, Order::STATUS_CONFIRMED])
+            ->where('created_at', '>=', $startOfMonth)
+            ->sum('total_amount');
 
-        // Tổng số sách
+        $todayOrders = Order::whereDate('created_at', $today)->count();
+        $pendingOrders = Order::where('status', Order::STATUS_PENDING)->count();
+
         $totalBooks = Book::count();
+        $outOfStockBooks = Book::where('quantity', 0)->count();
+        $lowStockBooks = Book::with('category')->where('quantity', '>', 0)->where('quantity', '<', 5)->take(5)->get();
 
-        
-        // Đơn hàng gần đây
-        $recentOrders = Order::with('user')
-            ->latest()
-            ->take(5)
-            ->get();
+        $totalCustomers = User::customers()->count();
 
-        // Sách bán chạy
-        $topBooks = DB::table('books')
-            ->leftJoin('order_items', 'books.id', '=', 'order_items.book_id')
-            ->leftJoin('orders', function($join) {
+        $recentOrders = Order::with('user')->latest()->take(8)->get();
+
+        $topBooks = Book::leftJoin('order_items', 'books.id', '=', 'order_items.book_id')
+            ->leftJoin('orders', function ($join) {
                 $join->on('order_items.order_id', '=', 'orders.id')
-                    ->where('orders.status', '=', 'completed');
+                    ->where('orders.status', '=', Order::STATUS_COMPLETED);
             })
-            ->select(
-                'books.*',
-                DB::raw('COALESCE(SUM(order_items.quantity), 0) as total_sold'),
-                DB::raw('COALESCE(SUM(order_items.quantity * order_items.price), 0) as revenue')
-            )
-            ->groupBy('books.id', 'books.title', 'books.author', 'books.price', 'books.image', 'books.description', 'books.created_at', 'books.updated_at')
+            ->select('books.*')
+            ->selectRaw('COALESCE(SUM(order_items.quantity), 0) as total_sold')
+            ->groupBy('books.id')
             ->orderByDesc('total_sold')
             ->limit(5)
             ->get();
 
+        $revenueByDay = $this->revenueChartData();
+        $statusDistribution = Order::select('status', DB::raw('COUNT(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
         return view('admin.dashboard', compact(
             'totalRevenue',
-            'newOrders',
+            'monthRevenue',
+            'todayOrders',
+            'pendingOrders',
             'totalBooks',
-            'totalUsers',
+            'outOfStockBooks',
+            'lowStockBooks',
+            'totalCustomers',
             'recentOrders',
-            'topBooks','Topproducts','Topprice'
-
+            'topBooks',
+            'revenueByDay',
+            'statusDistribution'
         ));
     }
-} 
+
+    private function revenueChartData(): array
+    {
+        $labels = [];
+        $values = [];
+        $start = Carbon::now()->subDays(13);
+
+        $raw = Order::select(DB::raw('DATE(created_at) as d'), DB::raw('SUM(total_amount) as total'))
+            ->whereIn('status', [Order::STATUS_COMPLETED, Order::STATUS_SHIPPING, Order::STATUS_CONFIRMED])
+            ->where('created_at', '>=', $start)
+            ->groupBy('d')
+            ->pluck('total', 'd');
+
+        for ($i = 0; $i < 14; $i++) {
+            $date = $start->copy()->addDays($i);
+            $labels[] = $date->format('d/m');
+            $values[] = (float) ($raw[$date->toDateString()] ?? 0);
+        }
+
+        return ['labels' => $labels, 'values' => $values];
+    }
+}
