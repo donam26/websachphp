@@ -4,138 +4,164 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderHistory;
+use App\Services\VNPayService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
 
 class VNPayController extends Controller
 {
-    public function createPayment(Order $order)
+    public function __construct(protected VNPayService $vnpay)
     {
-        $vnpUrl = config('vnpay.url');
-        $vnpReturnUrl = config('vnpay.return_url') ?: URL::to('/vnpay/return');
-        $vnpTmnCode = config('vnpay.tmn_code');
-        $vnpHashSecret = config('vnpay.hash_secret');
-        $vnpLocale = config('vnpay.locale', 'vn');
-
-        $vnpTxnRef = $order->id . '_' . now()->format('YmdHis');
-        $vnpOrderInfo = 'Thanh toan don hang ' . $order->code;
-        $vnpAmount = (int) round($order->total_amount * 100);
-
-        $inputData = [
-            'vnp_Version' => '2.1.0',
-            'vnp_TmnCode' => $vnpTmnCode,
-            'vnp_Amount' => $vnpAmount,
-            'vnp_Command' => 'pay',
-            'vnp_CreateDate' => now()->format('YmdHis'),
-            'vnp_CurrCode' => 'VND',
-            'vnp_IpAddr' => request()->ip(),
-            'vnp_Locale' => $vnpLocale,
-            'vnp_OrderInfo' => $vnpOrderInfo,
-            'vnp_OrderType' => 'other',
-            'vnp_ReturnUrl' => $vnpReturnUrl,
-            'vnp_TxnRef' => $vnpTxnRef,
-        ];
-
-        ksort($inputData);
-
-        $hashData = '';
-        $query = '';
-        foreach ($inputData as $key => $value) {
-            if ($hashData !== '') {
-                $hashData .= '&';
-                $query .= '&';
-            }
-            $hashData .= urlencode($key) . '=' . urlencode($value);
-            $query .= urlencode($key) . '=' . urlencode($value);
-        }
-
-        $secureHash = hash_hmac('sha512', $hashData, $vnpHashSecret);
-        $finalUrl = $vnpUrl . '?' . $query . '&vnp_SecureHash=' . $secureHash;
-
-        Log::info('VNPAY create payment', ['order_id' => $order->id, 'txn_ref' => $vnpTxnRef]);
-
-        return redirect()->away($finalUrl);
     }
 
+    /**
+     * Khởi tạo giao dịch và redirect sang cổng VNPAY.
+     */
+    public function createPayment(Order $order)
+    {
+        // Chỉ chủ đơn mới được thanh toán.
+        if (auth()->id() !== $order->user_id) {
+            abort(403);
+        }
+
+        if ($order->payment_status === Order::PAYMENT_STATUS_PAID) {
+            return redirect()->route('orders.show', $order)
+                ->with('info', 'Đơn hàng này đã được thanh toán.');
+        }
+
+        if ($order->status === Order::STATUS_CANCELLED) {
+            return redirect()->route('orders.show', $order)
+                ->with('error', 'Đơn hàng đã huỷ, không thể thanh toán.');
+        }
+
+        $paymentUrl = $this->vnpay->createPaymentUrl($order);
+
+        Log::info('VNPAY create payment', [
+            'order_id' => $order->id,
+            'code'     => $order->code,
+            'amount'   => $order->total_amount,
+        ]);
+
+        return redirect()->away($paymentUrl);
+    }
+
+    /**
+     * Return URL: VNPAY redirect khách quay về sau khi thanh toán.
+     * Hiển thị thông báo cho khách. KHÔNG dùng để cập nhật trạng thái cuối cùng
+     * (việc đó để IPN làm), nhưng vẫn cập nhật để UX nhanh.
+     */
     public function return(Request $request)
     {
-        $vnpHashSecret = config('vnpay.hash_secret');
-
-        $inputData = [];
-        foreach ($request->all() as $key => $value) {
-            if (str_starts_with($key, 'vnp_')) {
-                $inputData[$key] = $value;
-            }
+        if (!$this->vnpay->validateSignature($request)) {
+            Log::warning('VNPAY return: invalid signature', $request->all());
+            return redirect()->route('orders.index')
+                ->with('error', 'Xác thực thanh toán thất bại.');
         }
 
-        $receivedHash = $inputData['vnp_SecureHash'] ?? '';
-        unset($inputData['vnp_SecureHash'], $inputData['vnp_SecureHashType']);
-        ksort($inputData);
+        $orderId = $this->vnpay->extractOrderId((string) $request->input('vnp_TxnRef'));
+        $order   = $orderId ? Order::find($orderId) : null;
 
-        $hashData = '';
-        foreach ($inputData as $key => $value) {
-            if ($hashData !== '') {
-                $hashData .= '&';
-            }
-            $hashData .= urlencode($key) . '=' . urlencode($value);
-        }
-        $calculatedHash = hash_hmac('sha512', $hashData, $vnpHashSecret);
-
-        $txnRef = $request->input('vnp_TxnRef', '');
-        $orderId = (int) explode('_', $txnRef)[0];
-
-        if (!$orderId || !hash_equals($calculatedHash, $receivedHash)) {
-            Log::warning('VNPAY invalid signature', ['txn_ref' => $txnRef]);
-            return redirect()->route('cart.index')
-                ->with('error', 'Xác thực thanh toán thất bại');
-        }
-
-        $order = Order::find($orderId);
         if (!$order) {
             return redirect()->route('orders.index')
-                ->with('error', 'Không tìm thấy đơn hàng');
+                ->with('error', 'Không tìm thấy đơn hàng.');
         }
 
-        $responseCode = $request->input('vnp_ResponseCode');
-        $transactionNo = $request->input('vnp_TransactionNo');
+        $responseCode = (string) $request->input('vnp_ResponseCode');
+        $this->applyPaymentResult($order, $request, $responseCode);
 
         if ($responseCode === '00') {
-            DB::transaction(function () use ($order, $transactionNo) {
+            return redirect()->route('orders.show', $order)
+                ->with('success', 'Thanh toán thành công! Đơn hàng đã được xác nhận.');
+        }
+
+        return redirect()->route('orders.show', $order)
+            ->with('error', 'Thanh toán không thành công: ' . $this->vnpay->getResponseMessage($responseCode));
+    }
+
+    /**
+     * IPN URL: VNPAY gọi server-to-server để báo kết quả giao dịch.
+     * BẮT BUỘC trả JSON với RspCode/Message theo tài liệu VNPAY.
+     */
+    public function ipn(Request $request): JsonResponse
+    {
+        try {
+            if (!$this->vnpay->validateSignature($request)) {
+                return response()->json(['RspCode' => '97', 'Message' => 'Invalid signature']);
+            }
+
+            $orderId = $this->vnpay->extractOrderId((string) $request->input('vnp_TxnRef'));
+            $order   = $orderId ? Order::find($orderId) : null;
+
+            if (!$order) {
+                return response()->json(['RspCode' => '01', 'Message' => 'Order not found']);
+            }
+
+            // Số tiền VNPAY gửi đã x100 -> phải khớp với total_amount * 100.
+            $expectedAmount = (int) round(((float) $order->total_amount) * 100);
+            $receivedAmount = (int) $request->input('vnp_Amount');
+            if ($expectedAmount !== $receivedAmount) {
+                return response()->json(['RspCode' => '04', 'Message' => 'Invalid amount']);
+            }
+
+            if ($order->payment_status === Order::PAYMENT_STATUS_PAID) {
+                return response()->json(['RspCode' => '02', 'Message' => 'Order already confirmed']);
+            }
+
+            $responseCode = (string) $request->input('vnp_ResponseCode');
+            $this->applyPaymentResult($order, $request, $responseCode);
+
+            return response()->json(['RspCode' => '00', 'Message' => 'Confirm Success']);
+        } catch (\Throwable $e) {
+            Log::error('VNPAY IPN error', ['message' => $e->getMessage()]);
+            return response()->json(['RspCode' => '99', 'Message' => 'Unknown error']);
+        }
+    }
+
+    /**
+     * Cập nhật trạng thái thanh toán cho đơn hàng dựa trên kết quả từ VNPAY.
+     */
+    protected function applyPaymentResult(Order $order, Request $request, string $responseCode): void
+    {
+        $transactionNo = (string) $request->input('vnp_TransactionNo');
+        $bankCode      = (string) $request->input('vnp_BankCode');
+
+        if ($responseCode === '00' && $request->input('vnp_TransactionStatus') === '00') {
+            DB::transaction(function () use ($order, $transactionNo, $bankCode) {
                 if ($order->payment_status === Order::PAYMENT_STATUS_PAID) {
                     return;
                 }
 
                 $order->update([
                     'payment_status' => Order::PAYMENT_STATUS_PAID,
-                    'payment_ref' => $transactionNo,
-                    'paid_at' => now(),
-                    'status' => $order->status === Order::STATUS_PENDING ? Order::STATUS_CONFIRMED : $order->status,
+                    'payment_ref'    => $transactionNo,
+                    'paid_at'        => now(),
+                    'status'         => $order->status === Order::STATUS_PENDING
+                        ? Order::STATUS_CONFIRMED
+                        : $order->status,
                 ]);
 
                 OrderHistory::create([
                     'order_id' => $order->id,
-                    'status' => $order->status,
-                    'note' => 'Thanh toán VNPAY thành công - Mã GD: ' . $transactionNo,
+                    'status'   => $order->status,
+                    'note'     => 'Thanh toán VNPAY thành công - Mã GD: ' . $transactionNo
+                        . ($bankCode ? ' (' . $bankCode . ')' : ''),
                 ]);
             });
 
-            return redirect()->route('orders.show', $order)
-                ->with('success', 'Thanh toán thành công! Đơn hàng đã được xác nhận.');
+            return;
         }
 
-        $order->update([
-            'payment_status' => Order::PAYMENT_STATUS_FAILED,
-        ]);
+        // Chỉ ghi nhận thất bại nếu chưa được thanh toán (tránh ghi đè đơn đã paid).
+        if ($order->payment_status !== Order::PAYMENT_STATUS_PAID) {
+            $order->update(['payment_status' => Order::PAYMENT_STATUS_FAILED]);
 
-        OrderHistory::create([
-            'order_id' => $order->id,
-            'status' => $order->status,
-            'note' => 'Thanh toán VNPAY thất bại - Mã lỗi: ' . $responseCode,
-        ]);
-
-        return redirect()->route('orders.show', $order)
-            ->with('error', 'Thanh toán không thành công. Bạn có thể thanh toán lại từ trang chi tiết đơn hàng.');
+            OrderHistory::create([
+                'order_id' => $order->id,
+                'status'   => $order->status,
+                'note'     => 'Thanh toán VNPAY thất bại - ' . $this->vnpay->getResponseMessage($responseCode),
+            ]);
+        }
     }
 }

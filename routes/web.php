@@ -76,9 +76,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::post('/orders/{order}/repay', [VNPayController::class, 'createPayment'])->name('orders.repay');
 
-    // VNPay callback
+    // VNPay return (khách quay về sau khi thanh toán)
     Route::get('/vnpay/return', [VNPayController::class, 'return'])->name('vnpay.return');
 });
+
+// VNPay IPN (server-to-server, không cần auth/CSRF)
+Route::match(['get', 'post'], '/vnpay/ipn', [VNPayController::class, 'ipn'])->name('vnpay.ipn');
 
 /*
 |--------------------------------------------------------------------------

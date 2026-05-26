@@ -2,125 +2,202 @@
 
 namespace App\Services;
 
+use App\Models\Order;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
+
+/**
+ * Service tích hợp VNPAY (sandbox / production).
+ *
+ * Tham chiếu tài liệu: https://sandbox.vnpayment.vn/apis/docs/thanh-toan-pay/pay.html
+ */
 class VNPayService
 {
-    protected $tmnCode;
-    protected $hashSecret;
-    protected $url;
-    protected $returnUrl;
+    protected string $tmnCode;
+    protected string $hashSecret;
+    protected string $url;
+    protected string $returnUrl;
+    protected string $locale;
 
     public function __construct()
     {
-        $this->tmnCode = config('vnpay.tmn_code');
-        $this->hashSecret = config('vnpay.hash_secret');
-        $this->url = config('vnpay.url');
-        $this->returnUrl = config('vnpay.return_url');
+        $this->tmnCode    = (string) config('vnpay.tmn_code');
+        $this->hashSecret = (string) config('vnpay.hash_secret');
+        $this->url        = (string) config('vnpay.url');
+        $this->returnUrl  = (string) (config('vnpay.return_url') ?: URL::to('/vnpay/return'));
+        $this->locale     = (string) config('vnpay.locale', 'vn');
     }
 
-    public function createPaymentUrl($order)
+    /**
+     * Sinh URL thanh toán VNPAY cho đơn hàng.
+     */
+    public function createPaymentUrl(Order $order, ?string $bankCode = null, ?string $ipAddr = null): string
     {
-        $vnp_TxnRef = $order->id . '_' . time(); // Mã đơn hàng
-        $vnp_OrderInfo = 'Thanh toan don hang #' . $order->id;
-        $vnp_Amount = $order->total_amount * 100;
+        // Mã tham chiếu giao dịch: order_id + timestamp để có thể thanh toán lại đơn hàng cũ.
+        // VNPAY yêu cầu vnp_TxnRef <= 100 ký tự, chỉ chứa chữ/số.
+        $vnpTxnRef = $order->id . str_replace(['-', ':', ' '], '', now()->format('YmdHis'));
 
-        $vnp_Locale = 'vn';
-        $vnp_IpAddr = request()->ip();
-        
-        $inputData = array(
-            "vnp_Version" => "2.1.0",
-            "vnp_TmnCode" => $this->tmnCode,
-            "vnp_Amount" => $vnp_Amount,
-            "vnp_Command" => "pay",
-            "vnp_CreateDate" => date('YmdHis'),
-            "vnp_CurrCode" => "VND",
-            "vnp_IpAddr" => $vnp_IpAddr,
-            "vnp_Locale" => $vnp_Locale,
-            "vnp_OrderInfo" => $vnp_OrderInfo,
-            "vnp_OrderType" => "other",
-            "vnp_ReturnUrl" => $this->returnUrl,
-            "vnp_TxnRef" => $vnp_TxnRef
-        );
+        // VNPAY yêu cầu vnp_OrderInfo không dấu, không ký tự đặc biệt.
+        $orderInfo = $this->sanitizeOrderInfo('Thanh toan don hang ' . ($order->code ?: $order->id));
 
-        if (isset($vnp_BankCode) && $vnp_BankCode != "") {
-            $inputData['vnp_BankCode'] = $vnp_BankCode;
+        $inputData = [
+            'vnp_Version'    => '2.1.0',
+            'vnp_TmnCode'    => $this->tmnCode,
+            'vnp_Amount'     => (int) round(((float) $order->total_amount) * 100),
+            'vnp_Command'    => 'pay',
+            'vnp_CreateDate' => now()->format('YmdHis'),
+            'vnp_CurrCode'   => 'VND',
+            'vnp_IpAddr'     => $ipAddr ?: request()->ip(),
+            'vnp_Locale'     => $this->locale,
+            'vnp_OrderInfo'  => $orderInfo,
+            'vnp_OrderType'  => 'other',
+            'vnp_ReturnUrl'  => $this->returnUrl,
+            'vnp_TxnRef'     => $vnpTxnRef,
+            // Hết hạn thanh toán sau 15 phút (theo chuẩn VNPAY).
+            'vnp_ExpireDate' => now()->addMinutes(15)->format('YmdHis'),
+        ];
+
+        if (!empty($bankCode)) {
+            $inputData['vnp_BankCode'] = $bankCode;
         }
 
         ksort($inputData);
-        $query = "";
-        $i = 0;
-        $hashdata = "";
-        foreach ($inputData as $key => $value) {
-            if ($i == 1) {
-                $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
-            } else {
-                $hashdata .= urlencode($key) . "=" . urlencode($value);
-                $i = 1;
-            }
-            $query .= urlencode($key) . "=" . urlencode($value) . '&';
-        }
 
-        $vnp_Url = $this->url . "?" . $query;
-        $vnpSecureHash = hash_hmac('sha512', $hashdata, $this->hashSecret);
-        $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
+        [$query, $hashData] = $this->buildQuery($inputData);
+        $secureHash = hash_hmac('sha512', $hashData, $this->hashSecret);
 
-        return $vnp_Url;
+        return $this->url . '?' . $query . '&vnp_SecureHash=' . $secureHash;
     }
 
-    public function validatePayment($request)
+    /**
+     * Xác thực chữ ký từ VNPAY (cho cả Return URL và IPN).
+     */
+    public function validateSignature(Request $request): bool
     {
-        $vnp_SecureHash = $request->vnp_SecureHash;
-        $inputData = array();
+        $inputData = [];
         foreach ($request->all() as $key => $value) {
-            if (substr($key, 0, 4) == "vnp_") {
+            if (is_string($key) && str_starts_with($key, 'vnp_')) {
                 $inputData[$key] = $value;
             }
         }
-        unset($inputData['vnp_SecureHash']);
+
+        $receivedHash = $inputData['vnp_SecureHash'] ?? '';
+        unset($inputData['vnp_SecureHash'], $inputData['vnp_SecureHashType']);
+
+        if ($receivedHash === '') {
+            return false;
+        }
+
         ksort($inputData);
-        $i = 0;
-        $hashData = "";
-        foreach ($inputData as $key => $value) {
-            if ($i == 1) {
-                $hashData = $hashData . '&' . urlencode($key) . "=" . urlencode($value);
-            } else {
-                $hashData = $hashData . urlencode($key) . "=" . urlencode($value);
-                $i = 1;
-            }
-        }
+        [, $hashData] = $this->buildQuery($inputData);
+        $calculatedHash = hash_hmac('sha512', $hashData, $this->hashSecret);
 
-        $secureHash = hash_hmac('sha512', $hashData, $this->hashSecret);
-        return $vnp_SecureHash === $secureHash;
+        return hash_equals($calculatedHash, $receivedHash);
     }
 
-    public function getPaymentStatus($responseCode)
+    /**
+     * Trích xuất id đơn hàng gốc từ vnp_TxnRef.
+     * Format: "{orderId}{YmdHis}" -> 14 ký tự cuối là timestamp, phần đầu là id.
+     */
+    public function extractOrderId(string $txnRef): ?int
     {
-        switch ($responseCode) {
-            case "00":
-                return "Giao dịch thành công";
-            case "07":
-                return "Trừ tiền thành công. Giao dịch bị nghi ngờ (liên quan tới lừa đảo, giao dịch bất thường).";
-            case "09":
-                return "Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng chưa đăng ký dịch vụ InternetBanking tại ngân hàng.";
-            case "10":
-                return "Giao dịch không thành công do: Khách hàng xác thực thông tin thẻ/tài khoản không đúng quá 3 lần";
-            case "11":
-                return "Giao dịch không thành công do: Đã hết hạn chờ thanh toán. Xin quý khách vui lòng thực hiện lại giao dịch.";
-            case "12":
-                return "Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng bị khóa.";
-            case "13":
-                return "Giao dịch không thành công do Quý khách nhập sai mật khẩu xác thực giao dịch (OTP).";
-            case "24":
-                return "Giao dịch không thành công do: Khách hàng hủy giao dịch";
-            case "51":
-                return "Giao dịch không thành công do: Tài khoản của quý khách không đủ số dư để thực hiện giao dịch.";
-            case "65":
-                return "Giao dịch không thành công do: Tài khoản của Quý khách đã vượt quá hạn mức giao dịch trong ngày.";
-            case "75":
-                return "Ngân hàng thanh toán đang bảo trì.";
-            case "79":
-                return "Giao dịch không thành công do: KH nhập sai mật khẩu thanh toán quá số lần quy định.";
-            default:
-                return "Giao dịch không thành công";
+        if ($txnRef === '' || strlen($txnRef) <= 14) {
+            return null;
         }
+
+        // 14 ký tự cuối là timestamp YmdHis -> bỏ đi để lấy id.
+        $idPart = substr($txnRef, 0, -14);
+
+        return ctype_digit($idPart) ? (int) $idPart : null;
     }
-} 
+
+    /**
+     * Loại bỏ dấu tiếng Việt và ký tự đặc biệt cho vnp_OrderInfo.
+     */
+    protected function sanitizeOrderInfo(string $value): string
+    {
+        $map = [
+            'à','á','ạ','ả','ã','â','ầ','ấ','ậ','ẩ','ẫ','ă','ằ','ắ','ặ','ẳ','ẵ',
+            'è','é','ẹ','ẻ','ẽ','ê','ề','ế','ệ','ể','ễ',
+            'ì','í','ị','ỉ','ĩ',
+            'ò','ó','ọ','ỏ','õ','ô','ồ','ố','ộ','ổ','ỗ','ơ','ờ','ớ','ợ','ở','ỡ',
+            'ù','ú','ụ','ủ','ũ','ư','ừ','ứ','ự','ử','ữ',
+            'ỳ','ý','ỵ','ỷ','ỹ',
+            'đ',
+            'À','Á','Ạ','Ả','Ã','Â','Ầ','Ấ','Ậ','Ẩ','Ẫ','Ă','Ằ','Ắ','Ặ','Ẳ','Ẵ',
+            'È','É','Ẹ','Ẻ','Ẽ','Ê','Ề','Ế','Ệ','Ể','Ễ',
+            'Ì','Í','Ị','Ỉ','Ĩ',
+            'Ò','Ó','Ọ','Ỏ','Õ','Ô','Ồ','Ố','Ộ','Ổ','Ỗ','Ơ','Ờ','Ớ','Ợ','Ở','Ỡ',
+            'Ù','Ú','Ụ','Ủ','Ũ','Ư','Ừ','Ứ','Ự','Ử','Ữ',
+            'Ỳ','Ý','Ỵ','Ỷ','Ỹ',
+            'Đ',
+        ];
+        $replace = [
+            'a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a',
+            'e','e','e','e','e','e','e','e','e','e','e',
+            'i','i','i','i','i',
+            'o','o','o','o','o','o','o','o','o','o','o','o','o','o','o','o','o',
+            'u','u','u','u','u','u','u','u','u','u','u',
+            'y','y','y','y','y',
+            'd',
+            'A','A','A','A','A','A','A','A','A','A','A','A','A','A','A','A','A',
+            'E','E','E','E','E','E','E','E','E','E','E',
+            'I','I','I','I','I',
+            'O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O',
+            'U','U','U','U','U','U','U','U','U','U','U',
+            'Y','Y','Y','Y','Y',
+            'D',
+        ];
+
+        $value = str_replace($map, $replace, $value);
+        $value = preg_replace('/[^A-Za-z0-9 ]/', '', $value) ?? '';
+
+        return trim($value);
+    }
+
+    /**
+     * Diễn giải mã response VNPAY trả về.
+     */
+    public function getResponseMessage(?string $code): string
+    {
+        return [
+            '00' => 'Giao dịch thành công',
+            '07' => 'Giao dịch nghi ngờ gian lận',
+            '09' => 'Thẻ/Tài khoản chưa đăng ký InternetBanking',
+            '10' => 'Xác thực thông tin thẻ/tài khoản sai quá 3 lần',
+            '11' => 'Hết hạn chờ thanh toán',
+            '12' => 'Thẻ/Tài khoản bị khoá',
+            '13' => 'Sai mật khẩu OTP',
+            '24' => 'Khách hàng huỷ giao dịch',
+            '51' => 'Tài khoản không đủ số dư',
+            '65' => 'Vượt quá hạn mức giao dịch trong ngày',
+            '75' => 'Ngân hàng đang bảo trì',
+            '79' => 'Sai mật khẩu thanh toán quá số lần quy định',
+            '99' => 'Lỗi không xác định',
+        ][$code] ?? 'Giao dịch không thành công';
+    }
+
+    /**
+     * Build query string + hash data theo chuẩn VNPAY (urlencode key/value, nối bằng &).
+     *
+     * @return array{0:string,1:string} [queryString, hashData]
+     */
+    protected function buildQuery(array $data): array
+    {
+        $hashData = '';
+        $query    = '';
+        $first    = true;
+
+        foreach ($data as $key => $value) {
+            if (!$first) {
+                $hashData .= '&';
+                $query    .= '&';
+            }
+            $hashData .= urlencode($key) . '=' . urlencode((string) $value);
+            $query    .= urlencode($key) . '=' . urlencode((string) $value);
+            $first = false;
+        }
+
+        return [$query, $hashData];
+    }
+}
