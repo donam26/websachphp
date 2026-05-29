@@ -133,7 +133,7 @@
 <style>
 .category-icon-circle {
     width: 40px; height: 40px;
-    background: rgba(201,33,39,.08);
+    background: rgba(79,70,229,.08);
     color: var(--primary);
     border-radius: 50%;
     display: flex;

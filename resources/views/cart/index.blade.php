@@ -46,13 +46,13 @@
                                 <a href="{{ route('books.show', $item->book) }}">
                                     <img src="{{ $item->book?->image_url }}"
                                          alt="{{ $item->book?->title }}"
-                                         onerror="this.src='https://placehold.co/120x160/f4f6f8/c92127?text=Book'">
+                                         onerror="this.src='https://placehold.co/120x160/eef2ff/4f46e5?text=Book'">
                                 </a>
                             </div>
                             <div class="cart-info">
                                 <a href="{{ route('books.show', $item->book) }}" class="cart-title">{{ $item->book?->title }}</a>
                                 <div class="cart-meta">
-                                    <span><i class="bi bi-person me-1"></i>{{ $item->book?->author }}</span>
+                                    <span><i class="bi bi-person me-1"></i>{{ $item->book?->author_names }}</span>
                                     @if($item->book?->category)
                                         <span class="badge badge-soft-primary ms-2">{{ $item->book->category->name }}</span>
                                     @endif
@@ -158,22 +158,24 @@
                     </div>
 
                     <h6 class="mb-2">Phương thức thanh toán</h6>
-                    <label class="payment-option">
-                        <input type="radio" name="payment_method" value="cod" checked>
-                        <i class="bi bi-cash-coin text-warning"></i>
-                        <div>
-                            <strong>Thanh toán khi nhận hàng (COD)</strong>
-                            <small class="text-muted d-block">Trả tiền mặt khi shipper giao</small>
-                        </div>
-                    </label>
-                    <label class="payment-option">
-                        <input type="radio" name="payment_method" value="vnpay">
-                        <i class="bi bi-credit-card-2-front text-info"></i>
-                        <div>
-                            <strong>Thanh toán qua VNPay</strong>
-                            <small class="text-muted d-block">Thẻ ATM/Visa/Master/QR</small>
-                        </div>
-                    </label>
+                    @php
+                        $pmMeta = [
+                            'cod' => ['icon' => 'bi-cash-coin text-warning', 'desc' => 'Trả tiền mặt khi shipper giao'],
+                            'vnpay' => ['icon' => 'bi-credit-card-2-front text-info', 'desc' => 'Thẻ ATM/Visa/Master/QR'],
+                        ];
+                    @endphp
+                    @foreach($paymentMethods as $pm)
+                        <label class="payment-option">
+                            <input type="radio" name="payment_method" value="{{ $pm->code }}" {{ old('payment_method', 'cod') === $pm->code ? 'checked' : '' }}>
+                            <i class="bi {{ $pmMeta[$pm->code]['icon'] ?? 'bi-wallet2 text-secondary' }}"></i>
+                            <div>
+                                <strong>{{ $pm->name }}</strong>
+                                @isset($pmMeta[$pm->code]['desc'])
+                                    <small class="text-muted d-block">{{ $pmMeta[$pm->code]['desc'] }}</small>
+                                @endisset
+                            </div>
+                        </label>
+                    @endforeach
 
                     <button type="submit" class="btn btn-primary btn-lg w-100 mt-3 fw-bold">
                         <i class="bi bi-lock-fill me-2"></i>Đặt hàng ngay
@@ -206,7 +208,7 @@
     .payment-option:hover { border-color: var(--primary-light, var(--primary)); }
     .payment-option input { margin-right: 4px; accent-color: var(--primary); }
     .payment-option i { font-size: 28px; }
-    .payment-option:has(input:checked) { border-color: var(--primary); background: rgba(201,33,39,.04); }
+    .payment-option:has(input:checked) { border-color: var(--primary); background: rgba(79,70,229,.04); }
     @media (max-width: 768px) {
         .cart-row { grid-template-columns: 80px 1fr; }
         .cart-qty, .cart-total { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; }

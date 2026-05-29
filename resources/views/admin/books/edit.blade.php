@@ -21,11 +21,31 @@
                                value="{{ old('title', $book->title) }}" required>
                         @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
+                    @php $selectedAuthors = old('author_ids', $book->authors->pluck('id')->all()); @endphp
                     <div class="mb-3">
                         <label class="form-label">Tác giả <span class="text-danger">*</span></label>
-                        <input type="text" name="author" class="form-control @error('author') is-invalid @enderror"
-                               value="{{ old('author', $book->author) }}" required>
-                        @error('author')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        <select name="author_ids[]" class="form-select @error('author_ids') is-invalid @enderror" multiple size="5" required>
+                            @foreach($authors as $author)
+                                <option value="{{ $author->id }}" {{ collect($selectedAuthors)->contains($author->id) ? 'selected' : '' }}>{{ $author->name }}</option>
+                            @endforeach
+                        </select>
+                        <small class="text-muted">Giữ Ctrl (⌘ trên Mac) để chọn nhiều tác giả. <a href="{{ route('admin.authors.index') }}" target="_blank">Quản lý tác giả »</a></small>
+                        @error('author_ids')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                        @error('author_ids.*')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-7">
+                            <label class="form-label">ISBN</label>
+                            <input type="text" name="isbn" class="form-control @error('isbn') is-invalid @enderror"
+                                   value="{{ old('isbn', $book->isbn) }}" placeholder="VD: 978-604-1-12345-6">
+                            @error('isbn')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">Năm xuất bản</label>
+                            <input type="number" name="publish_year" class="form-control @error('publish_year') is-invalid @enderror"
+                                   value="{{ old('publish_year', $book->publish_year) }}" min="1000" max="{{ date('Y') + 1 }}" placeholder="VD: 2024">
+                            @error('publish_year')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Mô tả <span class="text-danger">*</span></label>
@@ -42,7 +62,7 @@
                 <div class="card-body">
                     <div class="img-preview-wrap" id="imgPreviewWrap">
                         <img src="{{ $book->image_url }}"
-                             class="img-fluid" onerror="this.src='https://placehold.co/300x400/f4f6f8/c92127?text=Book'">
+                             class="img-fluid" onerror="this.src='https://placehold.co/300x400/f4f6f8/4f46e5?text=Book'">
                     </div>
                     <input type="file" name="image" id="imageInput" class="form-control mt-2 @error('image') is-invalid @enderror" accept="image/*" onchange="previewImg(event)">
                     <small class="text-muted">Để trống nếu không thay đổi</small>

@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Order;
 use App\Models\OrderHistory;
 use App\Models\OrderItem;
+use App\Models\PaymentMethod;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -22,6 +23,9 @@ class OrderSeeder extends Seeder
         if ($books->isEmpty()) {
             return;
         }
+
+        $paymentMethods = PaymentMethod::pluck('id', 'code');
+        $employees = User::where('role', User::ROLE_ADMIN)->pluck('id');
 
         $statuses = [
             Order::STATUS_PENDING,
@@ -80,6 +84,8 @@ class OrderSeeder extends Seeder
                 'note' => null,
                 'status' => $status,
                 'payment_method' => $paymentMethod,
+                'payment_method_id' => $paymentMethods[$paymentMethod] ?? null,
+                'employee_id' => $status === Order::STATUS_PENDING ? null : ($employees->isNotEmpty() ? $employees->random() : null),
                 'payment_status' => $paymentStatus,
                 'paid_at' => $paidAt,
                 'cancelled_at' => $cancelledAt,

@@ -63,9 +63,15 @@
                 <div class="card-header"><i class="bi bi-person-badge me-2"></i>Phân quyền</div>
                 <div class="card-body">
                     <label class="form-label">Vai trò <span class="text-danger">*</span></label>
-                    <select name="role" class="form-select" required>
+                    <select name="role" class="form-select mb-3" required>
                         <option value="user" {{ old('role', $user->role) === 'user' ? 'selected' : '' }}>Khách hàng</option>
-                        <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin</option>
+                        <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin / Nhân viên</option>
+                    </select>
+                    <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
+                    <select name="status" class="form-select" required>
+                        @foreach(\App\Models\User::statusOptions() as $val => $label)
+                            <option value="{{ $val }}" {{ old('status', $user->status ?? 'active') === $val ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>

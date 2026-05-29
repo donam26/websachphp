@@ -72,12 +72,12 @@
                             <td class="ps-3 text-muted">#{{ $book->id }}</td>
                             <td>
                                 <img src="{{ $book->image_url }}"
-                                     onerror="this.src='https://placehold.co/60x80/f4f6f8/c92127?text=Book'"
+                                     onerror="this.src='https://placehold.co/60x80/f4f6f8/4f46e5?text=Book'"
                                      style="width:48px;height:64px;object-fit:cover;border-radius:6px;">
                             </td>
                             <td>
                                 <div class="fw-semibold">{{ $book->title }}</div>
-                                <small class="text-muted"><i class="bi bi-person me-1"></i>{{ $book->author }}</small>
+                                <small class="text-muted"><i class="bi bi-person me-1"></i>{{ $book->author_names }}</small>
                             </td>
                             <td>
                                 @if($book->category)

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Author;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -13,12 +14,14 @@ class BookManagementController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Book::with('category');
+        $query = Book::with(['category', 'authors']);
 
         if ($search = trim($request->input('search', ''))) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('author', 'like', "%{$search}%");
+                  ->orWhereHas('authors', function ($qa) use ($search) {
+                      $qa->where('name', 'like', "%{$search}%");
+                  });
             });
         }
 
@@ -45,14 +48,18 @@ class BookManagementController extends Controller
     public function create()
     {
         $categories = Category::orderBy('name')->get();
-        return view('admin.books.create', compact('categories'));
+        $authors = Author::orderBy('name')->get();
+        return view('admin.books.create', compact('categories', 'authors'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'author' => 'required|string|max:255',
+            'author_ids' => 'required|array|min:1',
+            'author_ids.*' => 'exists:authors,id',
+            'isbn' => 'nullable|string|max:30|unique:books,isbn',
+            'publish_year' => 'nullable|integer|min:1000|max:' . (date('Y') + 1),
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'compare_price' => 'nullable|numeric|min:0|gte:price',
@@ -62,11 +69,17 @@ class BookManagementController extends Controller
             'status' => 'required|in:available,unavailable',
         ], [
             'compare_price.gte' => 'Giá gốc phải lớn hơn hoặc bằng giá bán',
+            'author_ids.required' => 'Vui lòng chọn ít nhất một tác giả',
         ]);
 
-        $validated['image'] = $this->storeImage($request->file('image'));
+        $authorIds = $validated['author_ids'];
+        unset($validated['author_ids']);
 
-        Book::create($validated);
+        $validated['image'] = $this->storeImage($request->file('image'));
+        $validated['author'] = $this->authorMirror($authorIds);
+
+        $book = Book::create($validated);
+        $book->authors()->sync($authorIds);
 
         return redirect()->route('admin.books.index')
             ->with('success', 'Thêm sách mới thành công');
@@ -74,15 +87,20 @@ class BookManagementController extends Controller
 
     public function edit(Book $book)
     {
+        $book->load('authors');
         $categories = Category::orderBy('name')->get();
-        return view('admin.books.edit', compact('book', 'categories'));
+        $authors = Author::orderBy('name')->get();
+        return view('admin.books.edit', compact('book', 'categories', 'authors'));
     }
 
     public function update(Request $request, Book $book)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'author' => 'required|string|max:255',
+            'author_ids' => 'required|array|min:1',
+            'author_ids.*' => 'exists:authors,id',
+            'isbn' => 'nullable|string|max:30|unique:books,isbn,' . $book->id,
+            'publish_year' => 'nullable|integer|min:1000|max:' . (date('Y') + 1),
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'compare_price' => 'nullable|numeric|min:0|gte:price',
@@ -92,7 +110,11 @@ class BookManagementController extends Controller
             'status' => 'required|in:available,unavailable',
         ], [
             'compare_price.gte' => 'Giá gốc phải lớn hơn hoặc bằng giá bán',
+            'author_ids.required' => 'Vui lòng chọn ít nhất một tác giả',
         ]);
+
+        $authorIds = $validated['author_ids'];
+        unset($validated['author_ids']);
 
         if ($request->hasFile('image')) {
             if ($book->image) {
@@ -101,7 +123,10 @@ class BookManagementController extends Controller
             $validated['image'] = $this->storeImage($request->file('image'));
         }
 
+        $validated['author'] = $this->authorMirror($authorIds);
+
         $book->update($validated);
+        $book->authors()->sync($authorIds);
 
         return redirect()->route('admin.books.index')
             ->with('success', 'Cập nhật sách thành công');
@@ -120,6 +145,14 @@ class BookManagementController extends Controller
         $book->delete();
 
         return back()->with('success', 'Xoá sách thành công');
+    }
+
+    /**
+     * Build the denormalised books.author mirror string from selected authors.
+     */
+    private function authorMirror(array $authorIds): string
+    {
+        return Author::whereIn('id', $authorIds)->orderBy('name')->pluck('name')->implode(', ');
     }
 
     private function storeImage($file): string

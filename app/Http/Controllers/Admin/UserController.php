@@ -55,6 +55,7 @@ class UserController extends Controller
             'phone_number' => ['required', 'string', 'regex:/^[0-9]{9,11}$/'],
             'address' => 'required|string|max:500',
             'role' => 'required|in:user,admin',
+            'status' => 'nullable|in:active,inactive,banned',
         ]);
 
         User::create([
@@ -65,6 +66,7 @@ class UserController extends Controller
             'phone_number' => $validated['phone_number'],
             'address' => $validated['address'],
             'role' => $validated['role'],
+            'status' => $validated['status'] ?? User::STATUS_ACTIVE,
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'Thêm người dùng mới thành công');
@@ -80,10 +82,27 @@ class UserController extends Controller
             'phone_number' => ['required', 'string', 'regex:/^[0-9]{9,11}$/'],
             'address' => 'required|string|max:500',
             'role' => 'required|in:user,admin',
+            'status' => 'nullable|in:active,inactive,banned',
         ]);
 
         if ($user->id === auth()->id() && $validated['role'] !== User::ROLE_ADMIN) {
             return back()->with('error', 'Bạn không thể tự hạ quyền admin của chính mình');
+        }
+
+        if ($user->id === auth()->id() && ($validated['status'] ?? User::STATUS_ACTIVE) !== User::STATUS_ACTIVE) {
+            return back()->with('error', 'Bạn không thể tự khoá tài khoản của chính mình');
+        }
+
+        $losesAdminAccess = $validated['role'] !== User::ROLE_ADMIN
+            || ($validated['status'] ?? User::STATUS_ACTIVE) !== User::STATUS_ACTIVE;
+        if ($user->isAdmin() && $losesAdminAccess) {
+            $otherActiveAdmins = User::where('role', User::ROLE_ADMIN)
+                ->where('status', User::STATUS_ACTIVE)
+                ->where('id', '!=', $user->id)
+                ->count();
+            if ($otherActiveAdmins === 0) {
+                return back()->with('error', 'Không thể gỡ quyền hoặc khoá admin cuối cùng đang hoạt động');
+            }
         }
 
         $data = [
@@ -93,6 +112,7 @@ class UserController extends Controller
             'phone_number' => $validated['phone_number'],
             'address' => $validated['address'],
             'role' => $validated['role'],
+            'status' => $validated['status'] ?? $user->status ?? User::STATUS_ACTIVE,
         ];
 
         if (!empty($validated['password'])) {

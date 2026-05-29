@@ -113,7 +113,7 @@
                             <div class="top-rank rank-{{ $i + 1 }}">{{ $i + 1 }}</div>
                             <img src="{{ $book->image_url }}"
                                  style="width:40px;height:54px;object-fit:cover;border-radius:4px;"
-                                 onerror="this.src='https://placehold.co/50x70/f4f6f8/c92127?text=Book'">
+                                 onerror="this.src='https://placehold.co/50x70/f4f6f8/4f46e5?text=Book'">
                             <div class="flex-fill">
                                 <div class="fw-semibold small">{{ Str::limit($book->title, 38) }}</div>
                                 <small class="text-muted">Đã bán: {{ $book->total_sold ?? 0 }}</small>
@@ -190,9 +190,9 @@
                 data: revenueData.values,
                 fill: true,
                 tension: .35,
-                borderColor: '#c92127',
-                backgroundColor: 'rgba(201,33,39,.08)',
-                pointBackgroundColor: '#c92127',
+                borderColor: '#4f46e5',
+                backgroundColor: 'rgba(79,70,229,.08)',
+                pointBackgroundColor: '#4f46e5',
             }]
         },
         options: {
@@ -210,7 +210,7 @@
             labels: statusKeys.map(k => statusLabels[k] || k),
             datasets: [{
                 data: statusKeys.map(k => statusData[k]),
-                backgroundColor: ['#f59e0b', '#3b82f6', '#c92127', '#10b981', '#ef4444'],
+                backgroundColor: ['#f59e0b', '#3b82f6', '#4f46e5', '#10b981', '#ef4444'],
             }]
         },
         options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } } }

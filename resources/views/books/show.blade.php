@@ -24,7 +24,7 @@
                 <div class="book-image-wrap">
                     <img src="{{ $book->image_url }}"
                          alt="{{ $book->title }}" class="img-fluid main-image"
-                         onerror="this.src='https://placehold.co/400x550/f4f6f8/c92127?text=Book'">
+                         onerror="this.src='https://placehold.co/400x550/eef2ff/4f46e5?text=Book'">
                 </div>
                 <div class="d-flex gap-2 mt-3">
                     <button class="btn btn-outline-danger btn-sm flex-fill">
@@ -45,10 +45,10 @@
                 @endif
                 <h1 class="book-title mt-2">{{ $book->title }}</h1>
                 <div class="d-flex flex-wrap gap-3 text-muted small mb-3">
-                    <span><i class="bi bi-person-circle me-1"></i>Tác giả: <strong class="text-dark">{{ $book->author }}</strong></span>
+                    <span><i class="bi bi-person-circle me-1"></i>Tác giả: <strong class="text-dark">{{ $book->author_names }}</strong></span>
                     <span class="text-warning">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
-                        <span class="text-muted ms-1">(125 đánh giá)</span>
+                        @include('books._stars', ['rating' => $book->average_rating])
+                        <span class="text-muted ms-1">@if($book->reviews->count()){{ number_format($book->average_rating, 1) }} ({{ $book->reviews->count() }} đánh giá)@else(Chưa có đánh giá)@endif</span>
                     </span>
                     <span><i class="bi bi-bag-check me-1"></i>Đã bán: {{ $book->orderItems->sum('quantity') }}</span>
                 </div>
@@ -142,18 +142,76 @@
             <div class="tab-pane fade" id="tab-detail">
                 <table class="table table-striped">
                     <tr><th width="200">Tên sách</th><td>{{ $book->title }}</td></tr>
-                    <tr><th>Tác giả</th><td>{{ $book->author }}</td></tr>
+                    <tr><th>Tác giả</th><td>{{ $book->author_names }}</td></tr>
+                    @if($book->isbn)<tr><th>ISBN</th><td>{{ $book->isbn }}</td></tr>@endif
+                    @if($book->publish_year)<tr><th>Năm xuất bản</th><td>{{ $book->publish_year }}</td></tr>@endif
                     <tr><th>Thể loại</th><td>{{ $book->category->name ?? 'Chưa phân loại' }}</td></tr>
                     <tr><th>Giá bán</th><td>{{ number_format($book->price) }}đ</td></tr>
                     <tr><th>Trạng thái</th><td>{{ $book->quantity > 0 ? 'Còn hàng' : 'Hết hàng' }}</td></tr>
                 </table>
             </div>
             <div class="tab-pane fade" id="tab-review">
-                <div class="empty-state">
-                    <i class="bi bi-chat-quote"></i>
-                    <h5>Chưa có đánh giá</h5>
-                    <p>Hãy là người đầu tiên đánh giá sản phẩm này.</p>
+                {{-- Tổng quan đánh giá --}}
+                <div class="d-flex flex-wrap align-items-center gap-4 mb-4">
+                    <div class="text-center px-3">
+                        <div class="display-5 fw-bold text-warning lh-1">{{ number_format($book->average_rating, 1) }}</div>
+                        <div class="mt-1">@include('books._stars', ['rating' => $book->average_rating])</div>
+                        <div class="text-muted small mt-1">{{ $book->reviews->count() }} đánh giá</div>
+                    </div>
                 </div>
+
+                {{-- Form gửi / cập nhật đánh giá --}}
+                @auth
+                    <form action="{{ route('reviews.store', $book) }}" method="POST" class="border rounded-3 p-3 mb-4">
+                        @csrf
+                        <h6 class="mb-2">{{ $userReview ? 'Cập nhật đánh giá của bạn' : 'Viết đánh giá của bạn' }}</h6>
+                        <div class="rating-input mb-2">
+                            @for($i = 5; $i >= 1; $i--)
+                                <input type="radio" name="rating" id="star{{ $i }}" value="{{ $i }}" {{ (int) old('rating', $userReview?->rating ?? 0) === $i ? 'checked' : '' }}>
+                                <label for="star{{ $i }}" title="{{ $i }} sao"><i class="bi bi-star-fill"></i></label>
+                            @endfor
+                        </div>
+                        @error('rating')<div class="text-danger small mb-2">{{ $message }}</div>@enderror
+                        <textarea name="comment" rows="3" class="form-control mb-2 @error('comment') is-invalid @enderror" placeholder="Chia sẻ cảm nhận của bạn về cuốn sách...">{{ old('comment', $userReview?->comment ?? '') }}</textarea>
+                        @error('comment')<div class="invalid-feedback d-block mb-2">{{ $message }}</div>@enderror
+                        <button type="submit" class="btn btn-primary btn-sm">{{ $userReview ? 'Cập nhật đánh giá' : 'Gửi đánh giá' }}</button>
+                    </form>
+                    @if($userReview)
+                        <form action="{{ route('reviews.destroy', $userReview) }}" method="POST" class="mb-4" onsubmit="return confirm('Xoá đánh giá của bạn?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash me-1"></i>Xoá đánh giá của tôi</button>
+                        </form>
+                    @endif
+                @else
+                    <div class="alert alert-light border mb-4">
+                        <a href="{{ route('login') }}" class="fw-semibold text-decoration-none">Đăng nhập</a> để viết đánh giá cho sản phẩm này.
+                    </div>
+                @endauth
+
+                {{-- Danh sách đánh giá --}}
+                @forelse($book->reviews as $review)
+                    <div class="border-bottom py-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="fw-semibold">{{ $review->user->full_name ?? $review->user->username ?? 'Người dùng' }}</span>
+                                @if($review->is_verified_purchase)
+                                    <span class="badge badge-soft-success ms-1"><i class="bi bi-patch-check-fill me-1"></i>Đã mua hàng</span>
+                                @endif
+                                <div class="mt-1">@include('books._stars', ['rating' => $review->rating])</div>
+                            </div>
+                            <small class="text-muted">{{ $review->created_at->format('d/m/Y') }}</small>
+                        </div>
+                        @if($review->comment)
+                            <p class="mb-0 mt-2">{{ $review->comment }}</p>
+                        @endif
+                    </div>
+                @empty
+                    <div class="empty-state">
+                        <i class="bi bi-chat-quote"></i>
+                        <h5>Chưa có đánh giá</h5>
+                        <p>Hãy là người đầu tiên đánh giá sản phẩm này.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
@@ -177,6 +235,10 @@
 
 @push('styles')
 <style>
+    .rating-input { display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; font-size: 26px; }
+    .rating-input input { display: none; }
+    .rating-input label { color: #d8d8d8; padding: 0 2px; cursor: pointer; transition: color .15s; }
+    .rating-input label:hover, .rating-input label:hover ~ label, .rating-input input:checked ~ label { color: #ffc107; }
     .book-image-wrap {
         background: #fafafa;
         border-radius: 12px;

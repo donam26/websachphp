@@ -10,9 +10,11 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BookManagementController;
+use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController;
@@ -78,6 +80,10 @@ Route::middleware('auth')->group(function () {
 
     // VNPay return (khách quay về sau khi thanh toán)
     Route::get('/vnpay/return', [VNPayController::class, 'return'])->name('vnpay.return');
+
+    // Đánh giá sách
+    Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 // VNPay IPN (server-to-server, không cần auth/CSRF)
@@ -108,6 +114,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/{book}/edit', [BookManagementController::class, 'edit'])->name('edit');
         Route::put('/{book}', [BookManagementController::class, 'update'])->name('update');
         Route::delete('/{book}', [BookManagementController::class, 'destroy'])->name('destroy');
+    });
+
+    // Quản lý tác giả
+    Route::prefix('authors')->name('authors.')->group(function () {
+        Route::get('/', [AuthorController::class, 'index'])->name('index');
+        Route::post('/', [AuthorController::class, 'store'])->name('store');
+        Route::put('/{author}', [AuthorController::class, 'update'])->name('update');
+        Route::delete('/{author}', [AuthorController::class, 'destroy'])->name('destroy');
     });
 
     // Quản lý đơn hàng

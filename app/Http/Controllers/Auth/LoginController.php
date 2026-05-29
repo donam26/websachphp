@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -38,6 +39,13 @@ class LoginController extends Controller
         }
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
+            if (!auth()->user()->isActive()) {
+                Auth::logout();
+                throw ValidationException::withMessages([
+                    'email' => 'Tài khoản của bạn đã bị khoá hoặc tạm ngưng. Vui lòng liên hệ hỗ trợ.',
+                ]);
+            }
+
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
 

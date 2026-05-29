@@ -87,13 +87,13 @@
                                 <tr>
                                     <td class="ps-3">
                                         <div class="d-flex align-items-center gap-3">
-                                            <img src="{{ $item->book?->image_url ?? 'https://placehold.co/80x100/f4f6f8/c92127?text=Book' }}"
+                                            <img src="{{ $item->book?->image_url ?? 'https://placehold.co/80x100/eef2ff/4f46e5?text=Book' }}"
                                                  style="width:60px;height:80px;object-fit:cover;border-radius:6px;"
-                                                 onerror="this.src='https://placehold.co/80x100/f4f6f8/c92127?text=Book'">
+                                                 onerror="this.src='https://placehold.co/80x100/eef2ff/4f46e5?text=Book'">
                                             <div>
                                                 <div class="fw-semibold">{{ $item->book_title ?? $item->book?->title ?? 'Sản phẩm' }}</div>
-                                                @if($item->book?->author)
-                                                    <small class="text-muted">{{ $item->book->author }}</small>
+                                                @if($item->book?->author_names)
+                                                    <small class="text-muted">{{ $item->book->author_names }}</small>
                                                 @endif
                                             </div>
                                         </div>
@@ -219,7 +219,7 @@
 .timeline-step { text-align: center; flex-shrink: 0; }
 .timeline-step .step-icon { width: 48px; height: 48px; background: #e5e7eb; color: #9ca3af; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 20px; transition: .3s; }
 .timeline-step.active .step-icon { background: rgba(28,166,114,.15); color: #1ca672; }
-.timeline-step.current .step-icon { background: var(--primary); color: #fff; box-shadow: 0 0 0 4px rgba(201,33,39,.2); }
+.timeline-step.current .step-icon { background: var(--primary); color: #fff; box-shadow: 0 0 0 4px rgba(79,70,229,.2); }
 .timeline-step .step-label { font-size: 12.5px; color: #6b7280; font-weight: 500; }
 .timeline-step.active .step-label { color: var(--text-dark); }
 .timeline-line { flex: 1; height: 3px; background: #e5e7eb; margin: 0 8px 24px; border-radius: 999px; }
@@ -232,7 +232,7 @@
 .badge-soft-danger { background: rgba(239,68,68,.12); color: #b91c1c; }
 .badge-soft-warning { background: rgba(245,158,11,.12); color: #b45309; }
 .badge-soft-info { background: rgba(59,130,246,.12); color: #1d4ed8; }
-.badge-soft-primary { background: rgba(201,33,39,.12); color: var(--primary); }
+.badge-soft-primary { background: rgba(79,70,229,.12); color: var(--primary); }
 .badge-soft-secondary { background: rgba(107,114,128,.12); color: #4b5563; }
 </style>
 @endpush

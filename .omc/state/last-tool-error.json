@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd /Users/hnam/code/websachphp\\nCURL=/usr/bin/curl\\necho \\\"=== Route cần auth (mong 302 -> login, KHÔNG 500) ===\\\"\\nfor path in \\\"/cart\\\" \\\"/orders\\\" \\\"/profile\\\" \\\"/admin\\\" \\\"/admin/books...",
+  "error": "Exit code 127\n=== Route cần auth (mong 302 -> login, KHÔNG 500) ===\n  /cart          -> 302\n  /orders        -> 302\n  /profile       -> 302\n  /admin         -> 302\n  /admin/books   -> 302\n\n=== Tổng kết: còn sót đỏ ở ĐÂU trong toàn bộ views + app? (mong 0) ===\n(eval):9: command not found: wc\n(eval):9: command not found: tr",
+  "timestamp": "2026-05-28T19:16:40.724Z",
+  "retry_count": 1
+}

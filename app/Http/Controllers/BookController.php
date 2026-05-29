@@ -11,14 +11,16 @@ class BookController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Book::query()->with('category');
+        $query = Book::query()->with(['category', 'authors']);
         $currentCategory = null;
 
         // Search
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('author', 'like', "%{$search}%")
+                  ->orWhereHas('authors', function ($qa) use ($search) {
+                      $qa->where('name', 'like', "%{$search}%");
+                  })
                   ->orWhere('description', 'like', "%{$search}%");
             });
         }
@@ -69,6 +71,10 @@ class BookController extends Controller
                 break;
         }
 
+        // Apply review aggregates AFTER the switch so the best_seller branch's
+        // select('books.*') doesn't clobber the withCount/withAvg subselects.
+        $query->withAvg('reviews', 'rating')->withCount('reviews');
+
         $books = $query->paginate(12)->appends($request->query());
         $categories = Category::orderBy('name')->get();
 
@@ -77,15 +83,21 @@ class BookController extends Controller
 
     public function show(Book $book)
     {
-        $book->load('category');
+        $book->load(['category', 'authors', 'reviews.user']);
 
-        $relatedBooks = Book::with('category')
+        $userReview = auth()->check()
+            ? $book->reviews->firstWhere('user_id', auth()->id())
+            : null;
+
+        $relatedBooks = Book::with(['category', 'authors'])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->where('category_id', $book->category_id)
             ->where('id', '!=', $book->id)
             ->take(5)
             ->get();
 
-        return view('books.show', compact('book', 'relatedBooks'));
+        return view('books.show', compact('book', 'relatedBooks', 'userReview'));
     }
 
     public function category($slug)

@@ -13,9 +13,9 @@
 
     <style>
         :root {
-            --primary: #c92127;
-            --primary-dark: #a51a1f;
-            --primary-light: #ff4d57;
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #818cf8;
             --sidebar-bg: #1f2937;
             --sidebar-dark: #111827;
             --sidebar-text: rgba(255, 255, 255, .75);
@@ -124,7 +124,7 @@
             color: #fff;
         }
         .sidebar-menu li a.active {
-            background: rgba(201,33,39,.18);
+            background: rgba(79,70,229,.18);
             color: #fff;
             border-left-color: var(--primary);
         }
@@ -286,7 +286,7 @@
         .badge-soft-danger { background: rgba(239,68,68,.12); color: #b91c1c; }
         .badge-soft-warning { background: rgba(245,158,11,.12); color: #b45309; }
         .badge-soft-info { background: rgba(59,130,246,.12); color: #1d4ed8; }
-        .badge-soft-primary { background: rgba(201,33,39,.12); color: var(--primary); }
+        .badge-soft-primary { background: rgba(79,70,229,.12); color: var(--primary); }
 
         .btn-primary {
             background-color: var(--primary);
@@ -299,7 +299,7 @@
 
         .form-control:focus, .form-select:focus {
             border-color: var(--primary-light);
-            box-shadow: 0 0 0 .2rem rgba(201,33,39,.12);
+            box-shadow: 0 0 0 .2rem rgba(79,70,229,.12);
         }
 
         .alert {
@@ -364,6 +364,11 @@
                 <li>
                     <a href="{{ route('admin.categories.index') }}" class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
                         <i class="bi bi-tags"></i> Danh mục
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.authors.index') }}" class="{{ request()->routeIs('admin.authors.*') ? 'active' : '' }}">
+                        <i class="bi bi-person-lines-fill"></i> Tác giả
                     </a>
                 </li>
             </ul>

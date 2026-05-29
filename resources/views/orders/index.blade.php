@@ -120,7 +120,7 @@
 .badge-soft-danger { background: rgba(239,68,68,.12); color: #b91c1c; }
 .badge-soft-warning { background: rgba(245,158,11,.12); color: #b45309; }
 .badge-soft-info { background: rgba(59,130,246,.12); color: #1d4ed8; }
-.badge-soft-primary { background: rgba(201,33,39,.12); color: var(--primary); }
+.badge-soft-primary { background: rgba(79,70,229,.12); color: var(--primary); }
 .badge-soft-secondary { background: rgba(107,114,128,.12); color: #4b5563; }
 </style>
 @endpush

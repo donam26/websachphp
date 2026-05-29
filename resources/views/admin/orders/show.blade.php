@@ -33,13 +33,13 @@
                                 <tr>
                                     <td class="ps-3">
                                         <div class="d-flex align-items-center gap-3">
-                                            <img src="{{ $item->book?->image_url ?? 'https://placehold.co/80x100/f4f6f8/c92127?text=Book' }}"
+                                            <img src="{{ $item->book?->image_url ?? 'https://placehold.co/80x100/f4f6f8/4f46e5?text=Book' }}"
                                                  style="width:50px;height:66px;object-fit:cover;border-radius:6px;"
-                                                 onerror="this.src='https://placehold.co/80x100/f4f6f8/c92127?text=Book'">
+                                                 onerror="this.src='https://placehold.co/80x100/f4f6f8/4f46e5?text=Book'">
                                             <div>
                                                 <div class="fw-semibold">{{ $item->book_title ?? $item->book?->title ?? 'Sản phẩm' }}</div>
-                                                @if($item->book?->author)
-                                                    <small class="text-muted">{{ $item->book->author }}</small>
+                                                @if($item->book?->author_names)
+                                                    <small class="text-muted">{{ $item->book->author_names }}</small>
                                                 @endif
                                             </div>
                                         </div>
@@ -118,6 +118,10 @@
                 <div class="d-flex justify-content-between mb-2">
                     <span class="text-muted">Trạng thái:</span>
                     <span class="badge badge-soft-{{ $pmCls }}">{{ $order->payment_status_label }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-0">
+                    <span class="text-muted">Nhân viên xử lý:</span>
+                    <span class="fw-semibold">{{ $order->employee->full_name ?? $order->employee->username ?? 'Chưa có' }}</span>
                 </div>
                 @if($order->payment_ref)
                     <div class="d-flex justify-content-between mb-2">

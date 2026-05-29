@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1779607703665,
-  "projectRoot": "C:\\Users\\Anthony\\websachphp",
+  "lastScanned": 1779992781252,
+  "projectRoot": "/Users/hnam/code/websachphp",
   "techStack": {
     "languages": [
       {
@@ -65,14 +65,14 @@
       "path": "app",
       "purpose": "Application code",
       "fileCount": 0,
-      "lastAccessed": 1779607703570,
+      "lastAccessed": 1779992781240,
       "keyFiles": []
     },
     "bootstrap": {
       "path": "bootstrap",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1779607703572,
+      "lastAccessed": 1779992781240,
       "keyFiles": [
         "app.php"
       ]
@@ -81,7 +81,7 @@
       "path": "config",
       "purpose": "Configuration files",
       "fileCount": 16,
-      "lastAccessed": 1779607703592,
+      "lastAccessed": 1779992781244,
       "keyFiles": [
         "app.php",
         "auth.php",
@@ -94,14 +94,14 @@
       "path": "database",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1779607703594,
+      "lastAccessed": 1779992781244,
       "keyFiles": []
     },
     "public": {
       "path": "public",
       "purpose": "Public files",
       "fileCount": 6,
-      "lastAccessed": 1779607703596,
+      "lastAccessed": 1779992781244,
       "keyFiles": [
         "favicon.ico",
         "index.php",
@@ -114,14 +114,14 @@
       "path": "resources",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1779607703601,
+      "lastAccessed": 1779992781245,
       "keyFiles": []
     },
     "routes": {
       "path": "routes",
       "purpose": "Route handlers",
       "fileCount": 4,
-      "lastAccessed": 1779607703603,
+      "lastAccessed": 1779992781245,
       "keyFiles": [
         "api.php",
         "channels.php",
@@ -133,14 +133,14 @@
       "path": "storage",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1779607703604,
+      "lastAccessed": 1779992781245,
       "keyFiles": []
     },
     "tests": {
       "path": "tests",
       "purpose": "Test files",
       "fileCount": 2,
-      "lastAccessed": 1779607703616,
+      "lastAccessed": 1779992781246,
       "keyFiles": [
         "CreatesApplication.php",
         "TestCase.php"
@@ -150,370 +150,367 @@
       "path": "vendor",
       "purpose": "Third-party code",
       "fileCount": 1,
-      "lastAccessed": 1779607703629,
+      "lastAccessed": 1779992781246,
       "keyFiles": [
         "autoload.php"
       ]
     },
-    "app\\Models": {
-      "path": "app\\Models",
+    "app/Models": {
+      "path": "app/Models",
       "purpose": "Data models",
-      "fileCount": 22,
-      "lastAccessed": 1779607703632,
+      "fileCount": 8,
+      "lastAccessed": 1779992781246,
       "keyFiles": [
         "Book.php",
-        "Cart.php",
-        "CartItem.php"
+        "CartItem.php",
+        "Category.php"
       ]
     },
-    "app\\Services": {
-      "path": "app\\Services",
+    "app/Services": {
+      "path": "app/Services",
       "purpose": "Business logic services",
       "fileCount": 1,
-      "lastAccessed": 1779607703649,
+      "lastAccessed": 1779992781247,
       "keyFiles": [
         "VNPayService.php"
       ]
     },
-    "database\\migrations": {
-      "path": "database\\migrations",
+    "database/migrations": {
+      "path": "database/migrations",
       "purpose": "Database migrations",
-      "fileCount": 26,
-      "lastAccessed": 1779607703661,
+      "fileCount": 12,
+      "lastAccessed": 1779992781248,
       "keyFiles": [
         "2014_10_12_000000_create_users_table.php",
         "2014_10_12_100000_create_password_resets_table.php",
         "2019_08_19_000000_create_failed_jobs_table.php"
       ]
     },
-    "resources\\views": {
-      "path": "resources\\views",
+    "resources/views": {
+      "path": "resources/views",
       "purpose": "View templates",
-      "fileCount": 2,
-      "lastAccessed": 1779607703663,
-      "keyFiles": [
-        "home.blade.php",
-        "welcome.blade.php"
-      ]
-    },
-    "storage\\app": {
-      "path": "storage\\app",
-      "purpose": "Application code",
-      "fileCount": 1,
-      "lastAccessed": 1779607703664,
+      "fileCount": 0,
+      "lastAccessed": 1779992781251,
       "keyFiles": []
     },
-    "vendor\\bin": {
-      "path": "vendor\\bin",
+    "storage/app": {
+      "path": "storage/app",
+      "purpose": "Application code",
+      "fileCount": 1,
+      "lastAccessed": 1779992781251,
+      "keyFiles": []
+    },
+    "vendor/bin": {
+      "path": "vendor/bin",
       "purpose": "Executable scripts",
-      "fileCount": 16,
-      "lastAccessed": 1779607703665,
+      "fileCount": 8,
+      "lastAccessed": 1779992781252,
       "keyFiles": [
         "carbon",
-        "carbon.bat",
-        "patch-type-declarations"
+        "patch-type-declarations",
+        "php-parse"
       ]
     }
   },
   "hotPaths": [
     {
-      "path": "",
-      "accessCount": 54,
-      "lastAccessed": 1779691930708,
-      "type": "directory"
-    },
-    {
-      "path": "resources\\views\\books\\show.blade.php",
-      "accessCount": 10,
-      "lastAccessed": 1779692856033,
+      "path": "resources/views/books/show.blade.php",
+      "accessCount": 11,
+      "lastAccessed": 1779994794740,
       "type": "file"
     },
     {
-      "path": "routes\\web.php",
+      "path": "app/Http/Controllers/Admin/BookManagementController.php",
       "accessCount": 9,
-      "lastAccessed": 1779692314648,
+      "lastAccessed": 1779994530231,
       "type": "file"
     },
     {
-      "path": "resources\\views\\layouts\\app.blade.php",
-      "accessCount": 8,
-      "lastAccessed": 1779691919813,
+      "path": "app/Http/Controllers/BookController.php",
+      "accessCount": 9,
+      "lastAccessed": 1779994895101,
       "type": "file"
     },
     {
-      "path": "app\\Models\\Book.php",
-      "accessCount": 8,
-      "lastAccessed": 1779692102900,
-      "type": "file"
-    },
-    {
-      "path": "app\\Models\\Order.php",
-      "accessCount": 8,
-      "lastAccessed": 1779692118297,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\cart\\index.blade.php",
-      "accessCount": 8,
-      "lastAccessed": 1779692390057,
-      "type": "file"
-    },
-    {
-      "path": "app\\Models\\User.php",
-      "accessCount": 7,
-      "lastAccessed": 1779692128726,
-      "type": "file"
-    },
-    {
-      "path": "app\\Models\\Discount.php",
+      "path": "resources/views/books/_product-card.blade.php",
       "accessCount": 6,
-      "lastAccessed": 1779692236998,
+      "lastAccessed": 1779995301652,
       "type": "file"
     },
     {
-      "path": "app\\Http\\Controllers\\CartController.php",
+      "path": "resources/views/layouts/admin.blade.php",
       "accessCount": 6,
-      "lastAccessed": 1779692252310,
+      "lastAccessed": 1779995411837,
       "type": "file"
     },
     {
-      "path": "app\\Http\\Controllers\\CheckoutController.php",
+      "path": "resources/views/admin/orders/show.blade.php",
       "accessCount": 6,
-      "lastAccessed": 1779692269071,
+      "lastAccessed": 1779995435209,
       "type": "file"
     },
     {
-      "path": "resources\\views\\admin\\dashboard.blade.php",
+      "path": "app/Models/Book.php",
       "accessCount": 6,
-      "lastAccessed": 1779692629331,
+      "lastAccessed": 1779995715818,
       "type": "file"
     },
     {
-      "path": "resources\\views\\admin\\books\\edit.blade.php",
-      "accessCount": 6,
-      "lastAccessed": 1779692668978,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\profile\\index.blade.php",
-      "accessCount": 6,
-      "lastAccessed": 1779692888965,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\layouts\\admin.blade.php",
+      "path": "resources/views/admin/users/index.blade.php",
       "accessCount": 5,
-      "lastAccessed": 1779691876104,
+      "lastAccessed": 1779994273187,
       "type": "file"
     },
     {
-      "path": "resources\\views\\books\\index.blade.php",
+      "path": "app/Models/Order.php",
       "accessCount": 5,
-      "lastAccessed": 1779691881992,
+      "lastAccessed": 1779994523793,
       "type": "file"
     },
     {
-      "path": "app\\Http\\Controllers\\BookController.php",
+      "path": "routes/web.php",
       "accessCount": 5,
-      "lastAccessed": 1779691983307,
+      "lastAccessed": 1779994539490,
       "type": "file"
     },
     {
-      "path": "app\\Http\\Controllers\\HomeController.php",
+      "path": "app/Http/Controllers/Admin/OrderController.php",
       "accessCount": 5,
-      "lastAccessed": 1779691983946,
+      "lastAccessed": 1779994553405,
       "type": "file"
     },
     {
-      "path": "app\\Models\\Category.php",
+      "path": "resources/views/cart/index.blade.php",
       "accessCount": 5,
-      "lastAccessed": 1779692034688,
+      "lastAccessed": 1779994795107,
       "type": "file"
     },
     {
-      "path": "app\\Models\\CartItem.php",
+      "path": "app/Http/Controllers/HomeController.php",
       "accessCount": 5,
-      "lastAccessed": 1779692120844,
+      "lastAccessed": 1779994891325,
       "type": "file"
     },
     {
-      "path": "resources\\views\\orders\\index.blade.php",
-      "accessCount": 5,
-      "lastAccessed": 1779692412690,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\orders\\show.blade.php",
-      "accessCount": 5,
-      "lastAccessed": 1779692458420,
-      "type": "file"
-    },
-    {
-      "path": "app\\Http\\Controllers\\Admin\\DashboardController.php",
-      "accessCount": 5,
-      "lastAccessed": 1779692490014,
-      "type": "file"
-    },
-    {
-      "path": "app\\Http\\Controllers\\Admin\\UserController.php",
-      "accessCount": 5,
-      "lastAccessed": 1779692536557,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\admin\\books\\index.blade.php",
-      "accessCount": 5,
-      "lastAccessed": 1779692651782,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\admin\\books\\create.blade.php",
-      "accessCount": 5,
-      "lastAccessed": 1779692659080,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\admin\\orders\\index.blade.php",
-      "accessCount": 5,
-      "lastAccessed": 1779692686736,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\admin\\orders\\show.blade.php",
-      "accessCount": 5,
-      "lastAccessed": 1779692723245,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\admin\\discounts\\index.blade.php",
-      "accessCount": 5,
-      "lastAccessed": 1779692741821,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\auth\\login.blade.php",
-      "accessCount": 5,
-      "lastAccessed": 1779692807169,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\books\\_product-card.blade.php",
-      "accessCount": 5,
-      "lastAccessed": 1779692834034,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\home\\index.blade.php",
+      "path": "app/Http/Controllers/CartController.php",
       "accessCount": 4,
-      "lastAccessed": 1779691881252,
+      "lastAccessed": 1779994051718,
       "type": "file"
     },
     {
-      "path": "routes",
+      "path": "database/seeders/OrderSeeder.php",
       "accessCount": 4,
-      "lastAccessed": 1779691895377,
-      "type": "directory"
-    },
-    {
-      "path": "app\\Models\\OrderItem.php",
-      "accessCount": 4,
-      "lastAccessed": 1779692124040,
+      "lastAccessed": 1779994334032,
       "type": "file"
     },
     {
-      "path": "app\\Http\\Controllers\\OrderController.php",
+      "path": "app/Models/User.php",
       "accessCount": 4,
-      "lastAccessed": 1779692308269,
+      "lastAccessed": 1779994524217,
       "type": "file"
     },
     {
-      "path": "app\\Http\\Controllers\\Admin\\BookManagementController.php",
+      "path": "app/Http/Controllers/Auth/LoginController.php",
       "accessCount": 4,
-      "lastAccessed": 1779692506267,
+      "lastAccessed": 1779994530480,
       "type": "file"
     },
     {
-      "path": "app\\Http\\Controllers\\Admin\\OrderController.php",
+      "path": "app/Http/Controllers/CheckoutController.php",
       "accessCount": 4,
-      "lastAccessed": 1779692522316,
+      "lastAccessed": 1779994917123,
       "type": "file"
     },
     {
-      "path": "resources\\views\\admin\\users\\index.blade.php",
+      "path": "app/Http/Controllers/Admin/UserController.php",
       "accessCount": 4,
-      "lastAccessed": 1779692571994,
+      "lastAccessed": 1779994923787,
       "type": "file"
     },
     {
-      "path": "resources\\views\\admin\\categories\\index.blade.php",
+      "path": "resources/views/admin/books/index.blade.php",
       "accessCount": 4,
-      "lastAccessed": 1779692573652,
+      "lastAccessed": 1779995420149,
       "type": "file"
     },
     {
-      "path": "resources\\views\\admin\\discounts\\create.blade.php",
+      "path": "resources/views/admin/books/edit.blade.php",
       "accessCount": 4,
-      "lastAccessed": 1779692575183,
+      "lastAccessed": 1779995434332,
       "type": "file"
     },
     {
-      "path": "resources\\views\\auth\\register.blade.php",
+      "path": "database/migrations/2026_05_29_000004_migrate_authors_from_books.php",
       "accessCount": 3,
-      "lastAccessed": 1779691863683,
+      "lastAccessed": 1779994919456,
       "type": "file"
     },
     {
-      "path": "package.json",
+      "path": "resources/views/layouts/app.blade.php",
       "accessCount": 3,
-      "lastAccessed": 1779691922944,
+      "lastAccessed": 1779995386187,
       "type": "file"
     },
     {
-      "path": "resources\\views\\admin\\users\\show.blade.php",
+      "path": "resources/views/admin/categories/index.blade.php",
       "accessCount": 3,
-      "lastAccessed": 1779692573174,
+      "lastAccessed": 1779995436736,
       "type": "file"
     },
     {
-      "path": "resources\\views\\admin\\discounts\\edit.blade.php",
-      "accessCount": 3,
-      "lastAccessed": 1779692575964,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\admin\\discounts\\_form.blade.php",
-      "accessCount": 3,
-      "lastAccessed": 1779692576449,
-      "type": "file"
-    },
-    {
-      "path": "resources\\views\\layouts\\nav.blade.php",
+      "path": "database/seeders/BookSeeder.php",
       "accessCount": 2,
-      "lastAccessed": 1779607946726,
+      "lastAccessed": 1779993202104,
       "type": "file"
     },
     {
-      "path": "resources\\views\\home.blade.php",
+      "path": "app/Http/Controllers/OrderController.php",
       "accessCount": 2,
-      "lastAccessed": 1779607959987,
+      "lastAccessed": 1779993494624,
       "type": "file"
     },
     {
-      "path": "composer.json",
-      "accessCount": 1,
-      "lastAccessed": 1779607733771,
+      "path": "resources/views/orders/show.blade.php",
+      "accessCount": 2,
+      "lastAccessed": 1779993545738,
       "type": "file"
     },
     {
-      "path": "resources\\views\\welcome.blade.php",
-      "accessCount": 1,
-      "lastAccessed": 1779607741109,
+      "path": "resources/views/admin/books/create.blade.php",
+      "accessCount": 2,
+      "lastAccessed": 1779993572963,
       "type": "file"
     },
     {
-      "path": "app\\Models\\Cart.php",
+      "path": "database/seeders/DatabaseSeeder.php",
+      "accessCount": 2,
+      "lastAccessed": 1779993903679,
+      "type": "file"
+    },
+    {
+      "path": "resources/views/admin/users/edit.blade.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994240066,
+      "type": "file"
+    },
+    {
+      "path": "database/factories/BookFactory.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994431607,
+      "type": "file"
+    },
+    {
+      "path": "app/Models/Author.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994522674,
+      "type": "file"
+    },
+    {
+      "path": "app/Models/Review.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994522975,
+      "type": "file"
+    },
+    {
+      "path": "app/Models/PaymentMethod.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994523372,
+      "type": "file"
+    },
+    {
+      "path": "app/Http/Controllers/ReviewController.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994527872,
+      "type": "file"
+    },
+    {
+      "path": "app/Http/Controllers/Admin/AuthorController.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994528360,
+      "type": "file"
+    },
+    {
+      "path": "database/migrations/2026_05_29_000001_create_authors_table.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994534068,
+      "type": "file"
+    },
+    {
+      "path": "database/migrations/2026_05_29_000002_create_book_author_table.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994534551,
+      "type": "file"
+    },
+    {
+      "path": "database/migrations/2026_05_29_000003_add_isbn_and_publish_year_to_books_table.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994535493,
+      "type": "file"
+    },
+    {
+      "path": "database/migrations/2026_05_29_000005_create_reviews_table.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994536395,
+      "type": "file"
+    },
+    {
+      "path": "database/migrations/2026_05_29_000006_create_payment_methods_table.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994537393,
+      "type": "file"
+    },
+    {
+      "path": "database/migrations/2026_05_29_000007_add_payment_method_id_to_orders_table.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994537836,
+      "type": "file"
+    },
+    {
+      "path": "database/migrations/2026_05_29_000008_add_employee_id_to_orders_table.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994538778,
+      "type": "file"
+    },
+    {
+      "path": "database/migrations/2026_05_29_000009_add_status_to_users_table.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994539352,
+      "type": "file"
+    },
+    {
+      "path": "resources/views/books/_stars.blade.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994554346,
+      "type": "file"
+    },
+    {
+      "path": "resources/views/admin/authors/index.blade.php",
+      "accessCount": 2,
+      "lastAccessed": 1779994554611,
+      "type": "file"
+    },
+    {
+      "path": "database/factories/AuthorFactory.php",
       "accessCount": 1,
-      "lastAccessed": 1779608489113,
+      "lastAccessed": 1779993185270,
+      "type": "file"
+    },
+    {
+      "path": "database/factories/ReviewFactory.php",
+      "accessCount": 1,
+      "lastAccessed": 1779993696585,
+      "type": "file"
+    },
+    {
+      "path": "database/seeders/ReviewSeeder.php",
+      "accessCount": 1,
+      "lastAccessed": 1779993889098,
+      "type": "file"
+    },
+    {
+      "path": "database/migrations/2024_03_20_000001_create_books_table.php",
+      "accessCount": 1,
+      "lastAccessed": 1779994552619,
       "type": "file"
     }
   ],

@@ -173,7 +173,7 @@
         color: var(--primary);
     }
     .filter-item.active {
-        background: rgba(201,33,39,.08);
+        background: rgba(79,70,229,.08);
         color: var(--primary);
         font-weight: 600;
     }

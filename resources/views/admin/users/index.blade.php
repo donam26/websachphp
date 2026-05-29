@@ -48,6 +48,7 @@
                         <th>Người dùng</th>
                         <th>Liên hệ</th>
                         <th>Vai trò</th>
+                        <th>Trạng thái</th>
                         <th>Ngày tạo</th>
                         <th class="text-end pe-3" width="160">Thao tác</th>
                     </tr>
@@ -76,6 +77,10 @@
                                     <span class="badge badge-soft-info">Khách hàng</span>
                                 @endif
                             </td>
+                            <td>
+                                @php $stMap = ['active' => ['success', 'Đang hoạt động'], 'inactive' => ['warning', 'Tạm ngưng'], 'banned' => ['danger', 'Đã khoá']]; $st = $stMap[$user->status ?? 'active'] ?? ['secondary', $user->status]; @endphp
+                                <span class="badge badge-soft-{{ $st[0] }}">{{ $st[1] }}</span>
+                            </td>
                             <td><small class="text-muted">{{ $user->created_at->format('d/m/Y') }}</small></td>
                             <td class="text-end pe-3">
                                 <div class="btn-group btn-group-sm">
@@ -91,7 +96,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="text-center text-muted py-4">Chưa có người dùng nào</td></tr>
+                        <tr><td colspan="7" class="text-center text-muted py-4">Chưa có người dùng nào</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -124,7 +129,15 @@
                             <label class="form-label">Vai trò</label>
                             <select name="role" class="form-select">
                                 <option value="user">Khách hàng</option>
-                                <option value="admin">Admin</option>
+                                <option value="admin">Admin / Nhân viên</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Trạng thái</label>
+                            <select name="status" class="form-select">
+                                @foreach(\App\Models\User::statusOptions() as $val => $label)
+                                    <option value="{{ $val }}">{{ $label }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>

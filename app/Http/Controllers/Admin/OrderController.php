@@ -59,7 +59,7 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['user', 'items.book', 'histories', 'discount']);
+        $order->load(['user', 'employee', 'items.book.authors', 'histories', 'discount']);
         $allowedTransitions = self::TRANSITIONS[$order->status] ?? [];
 
         return view('admin.orders.show', compact('order', 'allowedTransitions'));
@@ -86,7 +86,7 @@ class OrderController extends Controller
                 && $order->payment_method === Order::PAYMENT_COD
                 && $order->payment_status !== Order::PAYMENT_STATUS_PAID;
 
-            $updates = ['status' => $newStatus];
+            $updates = ['status' => $newStatus, 'employee_id' => auth()->id()];
 
             if (!empty($validated['payment_status'])) {
                 $updates['payment_status'] = $validated['payment_status'];

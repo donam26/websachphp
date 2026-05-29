@@ -29,7 +29,7 @@ class OrderController extends Controller
     {
         abort_if($order->user_id !== auth()->id(), 403);
 
-        $order->load(['items.book', 'histories', 'discount']);
+        $order->load(['items.book.authors', 'histories', 'discount']);
 
         return view('orders.show', compact('order'));
     }

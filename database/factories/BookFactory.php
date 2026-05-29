@@ -17,6 +17,8 @@ class BookFactory extends Factory
         return [
             'title' => ucfirst($this->faker->words(rand(2, 5), true)),
             'author' => $this->faker->name(),
+            'isbn' => $this->faker->unique()->isbn13(),
+            'publish_year' => $this->faker->numberBetween(1990, 2024),
             'description' => $this->faker->paragraphs(4, true),
             'price' => $price,
             'compare_price' => $hasDiscount ? round($price * $this->faker->randomFloat(2, 1.1, 1.6), -3) : null,

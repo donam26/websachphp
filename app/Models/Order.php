@@ -30,6 +30,7 @@ class Order extends Model
     protected $fillable = [
         'code',
         'user_id',
+        'employee_id',
         'subtotal',
         'shipping_fee',
         'discount_amount',
@@ -40,6 +41,7 @@ class Order extends Model
         'note',
         'status',
         'payment_method',
+        'payment_method_id',
         'payment_status',
         'payment_ref',
         'paid_at',
@@ -70,6 +72,11 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function employee()
+    {
+        return $this->belongsTo(User::class, 'employee_id');
+    }
+
     public function items()
     {
         return $this->hasMany(OrderItem::class);
@@ -83,6 +90,11 @@ class Order extends Model
     public function discount()
     {
         return $this->belongsTo(Discount::class);
+    }
+
+    public function paymentMethod()
+    {
+        return $this->belongsTo(PaymentMethod::class);
     }
 
     public function histories()

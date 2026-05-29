@@ -7,9 +7,11 @@ use App\Models\Discount;
 use App\Models\Order;
 use App\Models\OrderHistory;
 use App\Models\OrderItem;
+use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class CheckoutController extends Controller
 {
@@ -28,7 +30,7 @@ class CheckoutController extends Controller
             'shipping_phone' => ['required', 'string', 'regex:/^[0-9]{9,11}$/'],
             'shipping_address' => 'required|string|max:500',
             'note' => 'nullable|string|max:500',
-            'payment_method' => 'required|in:cod,vnpay',
+            'payment_method' => ['required', Rule::exists('payment_methods', 'code')->where('is_active', true)],
         ], [
             'shipping_phone.regex' => 'Số điện thoại không hợp lệ (9-11 chữ số)',
         ]);
@@ -87,6 +89,7 @@ class CheckoutController extends Controller
                     'note' => $validated['note'] ?? null,
                     'status' => Order::STATUS_PENDING,
                     'payment_method' => $validated['payment_method'],
+                    'payment_method_id' => PaymentMethod::where('code', $validated['payment_method'])->value('id'),
                     'payment_status' => Order::PAYMENT_STATUS_PENDING,
                     'discount_id' => $discountId,
                 ]);
