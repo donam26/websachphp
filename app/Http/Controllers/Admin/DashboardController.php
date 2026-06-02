@@ -34,14 +34,14 @@ class DashboardController extends Controller
 
         $recentOrders = Order::with('user')->latest()->take(8)->get();
 
-        $topBooks = Book::leftJoin('order_items', 'books.id', '=', 'order_items.book_id')
-            ->leftJoin('orders', function ($join) {
-                $join->on('order_items.order_id', '=', 'orders.id')
-                    ->where('orders.status', '=', Order::STATUS_COMPLETED);
-            })
-            ->select('books.*')
-            ->selectRaw('COALESCE(SUM(order_items.quantity), 0) as total_sold')
-            ->groupBy('books.id')
+        // Top sellers = total quantity from COMPLETED orders only.
+        // withSum builds a correlated subquery (no GROUP BY on the outer query),
+        // so it is ONLY_FULL_GROUP_BY-safe and portable across DB engines.
+        $topBooks = Book::withSum(['orderItems as total_sold' => function ($query) {
+                $query->whereHas('order', function ($order) {
+                    $order->where('status', Order::STATUS_COMPLETED);
+                });
+            }], 'quantity')
             ->orderByDesc('total_sold')
             ->limit(5)
             ->get();

@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\Category;
+use App\Models\Order;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class BookController extends Controller
 {
@@ -56,10 +56,12 @@ class BookController extends Controller
                 $query->orderBy('title', 'desc');
                 break;
             case 'best_seller':
-                $query->leftJoin('order_items', 'books.id', '=', 'order_items.book_id')
-                    ->select('books.*')
-                    ->selectRaw('COALESCE(SUM(order_items.quantity), 0) as total_sold')
-                    ->groupBy('books.id')
+                // Correlated subquery (no JOIN/GROUP BY) → ONLY_FULL_GROUP_BY-safe.
+                $query->withSum(['orderItems as total_sold' => function ($q) {
+                        $q->whereHas('order', function ($order) {
+                            $order->where('status', Order::STATUS_COMPLETED);
+                        });
+                    }], 'quantity')
                     ->orderByDesc('total_sold');
                 break;
             case 'latest':
@@ -68,8 +70,7 @@ class BookController extends Controller
                 break;
         }
 
-        // Apply review aggregates AFTER the switch so the best_seller branch's
-        // select('books.*') doesn't clobber the withCount/withAvg subselects.
+        // Review aggregates for the rating display (correlated subqueries).
         $query->withAvg('reviews', 'rating')->withCount('reviews');
 
         $books = $query->paginate(12)->appends($request->query());
