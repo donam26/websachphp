@@ -52,10 +52,6 @@
                         </tbody>
                         <tfoot style="background:#f9fafb;">
                             <tr><td colspan="3" class="text-end">Tạm tính:</td><td class="text-end pe-3">{{ number_format($order->subtotal, 0, ',', '.') }}đ</td></tr>
-                            <tr><td colspan="3" class="text-end">Phí vận chuyển:</td><td class="text-end pe-3">{{ $order->shipping_fee > 0 ? number_format($order->shipping_fee, 0, ',', '.').'đ' : 'Miễn phí' }}</td></tr>
-                            @if($order->discount_amount > 0)
-                            <tr><td colspan="3" class="text-end">Giảm giá @if($order->discount)<code>{{ $order->discount->code }}</code>@endif:</td><td class="text-end pe-3 text-danger">-{{ number_format($order->discount_amount, 0, ',', '.') }}đ</td></tr>
-                            @endif
                             <tr><td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td><td class="text-end pe-3"><strong class="text-primary fs-5">{{ number_format($order->total_amount, 0, ',', '.') }}đ</strong></td></tr>
                         </tfoot>
                     </table>

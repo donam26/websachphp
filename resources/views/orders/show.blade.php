@@ -170,16 +170,6 @@
                     <span class="text-muted">Tạm tính:</span>
                     <span>{{ number_format($order->subtotal, 0, ',', '.') }}đ</span>
                 </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted">Phí ship:</span>
-                    <span>{{ $order->shipping_fee > 0 ? number_format($order->shipping_fee, 0, ',', '.') . 'đ' : 'Miễn phí' }}</span>
-                </div>
-                @if($order->discount_amount > 0)
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Giảm giá @if($order->discount)({{ $order->discount->code }})@endif:</span>
-                        <span class="text-danger">-{{ number_format($order->discount_amount, 0, ',', '.') }}đ</span>
-                    </div>
-                @endif
                 <hr>
                 <div class="d-flex justify-content-between">
                     <strong>Tổng cộng:</strong>

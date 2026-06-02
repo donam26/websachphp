@@ -59,7 +59,7 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['user', 'employee', 'items.book.authors', 'histories', 'discount']);
+        $order->load(['user', 'employee', 'items.book.authors', 'histories']);
         $allowedTransitions = self::TRANSITIONS[$order->status] ?? [];
 
         return view('admin.orders.show', compact('order', 'allowedTransitions'));

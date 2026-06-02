@@ -24,16 +24,11 @@ class Order extends Model
     public const PAYMENT_STATUS_FAILED = 'failed';
     public const PAYMENT_STATUS_REFUNDED = 'refunded';
 
-    public const FREESHIP_THRESHOLD = 250000;
-    public const SHIPPING_FEE = 30000;
-
     protected $fillable = [
         'code',
         'user_id',
         'employee_id',
         'subtotal',
-        'shipping_fee',
-        'discount_amount',
         'total_amount',
         'shipping_name',
         'shipping_phone',
@@ -46,13 +41,10 @@ class Order extends Model
         'payment_ref',
         'paid_at',
         'cancelled_at',
-        'discount_id',
     ];
 
     protected $casts = [
         'subtotal' => 'float',
-        'shipping_fee' => 'float',
-        'discount_amount' => 'float',
         'total_amount' => 'float',
         'paid_at' => 'datetime',
         'cancelled_at' => 'datetime',
@@ -85,11 +77,6 @@ class Order extends Model
     public function orderItems()
     {
         return $this->items();
-    }
-
-    public function discount()
-    {
-        return $this->belongsTo(Discount::class);
     }
 
     public function paymentMethod()

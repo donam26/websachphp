@@ -89,13 +89,6 @@
                         @error('price')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Giá gốc / Giá so sánh (VND)</label>
-                        <input type="number" name="compare_price" class="form-control @error('compare_price') is-invalid @enderror"
-                               value="{{ old('compare_price', $book->compare_price) }}" min="0" step="1000" placeholder="Để trống nếu không hiển thị giá gạch ngang">
-                        <small class="text-muted">Phải ≥ giá bán. Hệ thống tự tính % giảm.</small>
-                        @error('compare_price')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="mb-3">
                         <label class="form-label">Số lượng kho <span class="text-danger">*</span></label>
                         <input type="number" name="quantity" class="form-control @error('quantity') is-invalid @enderror"
                                value="{{ old('quantity', $book->quantity) }}" min="0" required>

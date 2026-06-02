@@ -52,8 +52,7 @@ class OrderSeeder extends Seeder
                 ];
             }
 
-            $shippingFee = $subtotal >= Order::FREESHIP_THRESHOLD ? 0 : Order::SHIPPING_FEE;
-            $totalAmount = $subtotal + $shippingFee;
+            $totalAmount = $subtotal;
 
             $paymentStatus = Order::PAYMENT_STATUS_PENDING;
             $paidAt = null;
@@ -75,8 +74,6 @@ class OrderSeeder extends Seeder
             $order = Order::create([
                 'user_id' => $user->id,
                 'subtotal' => $subtotal,
-                'shipping_fee' => $shippingFee,
-                'discount_amount' => 0,
                 'total_amount' => $totalAmount,
                 'shipping_name' => $user->full_name,
                 'shipping_phone' => $user->phone_number,

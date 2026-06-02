@@ -55,10 +55,6 @@
 
                 <div class="price-box">
                     <span class="current-price">{{ number_format($book->price, 0, ',', '.') }}đ</span>
-                    @if($book->compare_price && $book->compare_price > $book->price)
-                        <span class="old-price">{{ number_format($book->compare_price, 0, ',', '.') }}đ</span>
-                        <span class="discount-badge">-{{ $book->discount_percent }}%</span>
-                    @endif
                 </div>
 
                 <div class="info-table mb-3">
@@ -262,8 +258,6 @@
         flex-wrap: wrap;
     }
     .current-price { font-size: 32px; font-weight: 800; color: var(--primary); }
-    .old-price { font-size: 16px; color: var(--text-muted); text-decoration: line-through; }
-    .discount-badge { background: var(--primary); color: #fff; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 13px; }
 
     .info-table { border-top: 1px solid var(--border-light); padding-top: 14px; }
     .info-row { display: flex; gap: 12px; padding: 6px 0; font-size: 14px; }

@@ -62,13 +62,11 @@ class BookManagementController extends Controller
             'publish_year' => 'nullable|integer|min:1000|max:' . (date('Y') + 1),
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
-            'compare_price' => 'nullable|numeric|min:0|gte:price',
             'quantity' => 'required|integer|min:0',
             'description' => 'required|string',
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'status' => 'required|in:available,unavailable',
         ], [
-            'compare_price.gte' => 'Giá gốc phải lớn hơn hoặc bằng giá bán',
             'author_ids.required' => 'Vui lòng chọn ít nhất một tác giả',
         ]);
 
@@ -103,13 +101,11 @@ class BookManagementController extends Controller
             'publish_year' => 'nullable|integer|min:1000|max:' . (date('Y') + 1),
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
-            'compare_price' => 'nullable|numeric|min:0|gte:price',
             'quantity' => 'required|integer|min:0',
             'description' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'status' => 'required|in:available,unavailable',
         ], [
-            'compare_price.gte' => 'Giá gốc phải lớn hơn hoặc bằng giá bán',
             'author_ids.required' => 'Vui lòng chọn ít nhất một tác giả',
         ]);
 

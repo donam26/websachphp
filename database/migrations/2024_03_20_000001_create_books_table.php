@@ -15,7 +15,6 @@ class CreateBooksTable extends Migration
             $table->text('description');
             $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
             $table->decimal('price', 12, 2);
-            $table->decimal('compare_price', 12, 2)->nullable();
             $table->unsignedInteger('quantity')->default(0);
             $table->string('image')->nullable();
             $table->enum('status', ['available', 'unavailable'])->default('available');

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\CartItem;
-use App\Models\Order;
 use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,21 +15,13 @@ class CartController extends Controller
         $cartItems = auth()->user()->cart()->with(['book.category', 'book.authors'])->get();
 
         $subtotal = $cartItems->sum(fn ($item) => $item->subtotal);
-
-        $discountAmount = session('applied_discount.amount', 0);
-        $discountCode = session('applied_discount.code');
-
-        $shippingFee = $subtotal >= Order::FREESHIP_THRESHOLD || $subtotal === 0 ? 0 : Order::SHIPPING_FEE;
-        $total = max(0, $subtotal + $shippingFee - $discountAmount);
+        $total = $subtotal;
 
         $paymentMethods = PaymentMethod::active()->orderBy('id')->get();
 
         return view('cart.index', compact(
             'cartItems',
             'subtotal',
-            'discountAmount',
-            'discountCode',
-            'shippingFee',
             'total',
             'paymentMethods'
         ));
@@ -126,7 +117,6 @@ class CartController extends Controller
     public function clear()
     {
         auth()->user()->cart()->delete();
-        session()->forget('applied_discount');
 
         return back()->with('success', 'Đã xoá toàn bộ giỏ hàng');
     }

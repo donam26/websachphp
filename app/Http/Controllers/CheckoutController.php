@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
-use App\Models\Discount;
 use App\Models\Order;
 use App\Models\OrderHistory;
 use App\Models\OrderItem;
@@ -60,28 +59,11 @@ class CheckoutController extends Controller
                     ];
                 }
 
-                $discountId = null;
-                $discountAmount = 0;
-
-                if (session()->has('applied_discount')) {
-                    $code = session('applied_discount.code');
-                    $discount = Discount::where('code', $code)->lockForUpdate()->first();
-
-                    if ($discount && $discount->isValid() && $subtotal >= $discount->min_order_amount) {
-                        $discountAmount = $discount->calculateDiscount($subtotal);
-                        $discountId = $discount->id;
-                        $discount->increment('used_count');
-                    }
-                }
-
-                $shippingFee = $subtotal >= Order::FREESHIP_THRESHOLD ? 0 : Order::SHIPPING_FEE;
-                $totalAmount = max(0, $subtotal + $shippingFee - $discountAmount);
+                $totalAmount = $subtotal;
 
                 $order = Order::create([
                     'user_id' => $user->id,
                     'subtotal' => $subtotal,
-                    'shipping_fee' => $shippingFee,
-                    'discount_amount' => $discountAmount,
                     'total_amount' => $totalAmount,
                     'shipping_name' => $validated['shipping_name'],
                     'shipping_phone' => $validated['shipping_phone'],
@@ -91,7 +73,6 @@ class CheckoutController extends Controller
                     'payment_method' => $validated['payment_method'],
                     'payment_method_id' => PaymentMethod::where('code', $validated['payment_method'])->value('id'),
                     'payment_status' => Order::PAYMENT_STATUS_PENDING,
-                    'discount_id' => $discountId,
                 ]);
 
                 foreach ($itemsPayload as $row) {
@@ -113,7 +94,6 @@ class CheckoutController extends Controller
                 ]);
 
                 $user->cart()->delete();
-                session()->forget('applied_discount');
 
                 return $order;
             });

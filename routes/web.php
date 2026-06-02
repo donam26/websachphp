@@ -9,7 +9,6 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -18,7 +17,6 @@ use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\DiscountController as AdminDiscountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,10 +64,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{cartItem}', [CartController::class, 'remove'])->name('remove');
         Route::delete('/', [CartController::class, 'clear'])->name('clear');
     });
-
-    // Discount apply (AJAX)
-    Route::post('/discounts/apply', [DiscountController::class, 'apply'])->name('discounts.apply');
-    Route::delete('/discounts/remove', [DiscountController::class, 'remove'])->name('discounts.remove');
 
     // Checkout / Orders
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('orders.checkout');
@@ -140,7 +134,4 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::put('/{user}', [UserController::class, 'update'])->name('update');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
     });
-
-    // Quản lý mã giảm giá
-    Route::resource('discounts', AdminDiscountController::class)->except(['show']);
 });

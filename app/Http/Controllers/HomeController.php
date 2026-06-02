@@ -29,12 +29,6 @@ class HomeController extends Controller
             ->take(10)
             ->get();
 
-        $discountBooks = Book::with(['category', 'authors'])->withAvg('reviews', 'rating')->withCount('reviews')
-            ->where('quantity', '>', 0)
-            ->inRandomOrder()
-            ->take(10)
-            ->get();
-
-        return view('home.index', compact('categories', 'newBooks', 'bestSellers', 'discountBooks'));
+        return view('home.index', compact('categories', 'newBooks', 'bestSellers'));
     }
 }

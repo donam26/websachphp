@@ -4,9 +4,6 @@
         <img src="{{ $book->image_url }}"
              alt="{{ $book->title }}"
              onerror="this.src='https://placehold.co/300x400/eef2ff/4f46e5?text=Book'">
-        @if($book->discount_percent > 0)
-            <span class="product-discount">-{{ $book->discount_percent }}%</span>
-        @endif
     </a>
     <div class="product-body">
         <a href="{{ route('books.show', $book) }}" class="product-title">{{ $book->title }}</a>
@@ -21,9 +18,6 @@
         @endif
         <div class="d-flex align-items-baseline gap-2">
             <span class="product-price">{{ number_format($book->price, 0, ',', '.') }}đ</span>
-            @if($book->compare_price && $book->compare_price > $book->price)
-                <span class="product-old-price">{{ number_format($book->compare_price, 0, ',', '.') }}đ</span>
-            @endif
         </div>
         <div class="d-flex align-items-center gap-2 mt-1">
             @if($book->is_available)

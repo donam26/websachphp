@@ -380,11 +380,6 @@
                         <i class="bi bi-receipt"></i> Đơn hàng
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('admin.discounts.index') }}" class="{{ request()->routeIs('admin.discounts.*') ? 'active' : '' }}">
-                        <i class="bi bi-ticket-perforated"></i> Mã giảm giá
-                    </a>
-                </li>
             </ul>
 
             <div class="sidebar-section">Hệ thống</div>

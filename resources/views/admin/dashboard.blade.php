@@ -155,7 +155,6 @@
             <div class="col-md-3 col-6"><a href="{{ route('admin.books.create') }}" class="quick-action"><i class="bi bi-plus-circle text-primary"></i><span>Thêm sách mới</span></a></div>
             <div class="col-md-3 col-6"><a href="{{ route('admin.orders.index') }}" class="quick-action"><i class="bi bi-receipt text-info"></i><span>Đơn hàng</span></a></div>
             <div class="col-md-3 col-6"><a href="{{ route('admin.categories.index') }}" class="quick-action"><i class="bi bi-tags text-success"></i><span>Danh mục</span></a></div>
-            <div class="col-md-3 col-6"><a href="{{ route('admin.discounts.index') }}" class="quick-action"><i class="bi bi-ticket-perforated text-warning"></i><span>Mã giảm giá</span></a></div>
         </div>
     </div>
 </div>

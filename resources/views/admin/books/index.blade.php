@@ -88,9 +88,6 @@
                             </td>
                             <td class="text-end">
                                 <div class="fw-semibold text-primary">{{ number_format($book->price, 0, ',', '.') }}đ</div>
-                                @if($book->compare_price && $book->compare_price > $book->price)
-                                    <small class="text-muted text-decoration-line-through">{{ number_format($book->compare_price, 0, ',', '.') }}đ</small>
-                                @endif
                             </td>
                             <td class="text-center">
                                 @php $qcls = $book->quantity === 0 ? 'text-danger' : ($book->quantity < 5 ? 'text-warning' : 'text-success'); @endphp

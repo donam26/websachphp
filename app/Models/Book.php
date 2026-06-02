@@ -18,7 +18,6 @@ class Book extends Model
         'description',
         'category_id',
         'price',
-        'compare_price',
         'quantity',
         'image',
         'status',
@@ -26,12 +25,11 @@ class Book extends Model
 
     protected $casts = [
         'price' => 'decimal:2',
-        'compare_price' => 'decimal:2',
         'quantity' => 'integer',
         'publish_year' => 'integer',
     ];
 
-    protected $appends = ['is_available', 'image_url', 'discount_percent'];
+    protected $appends = ['is_available', 'image_url'];
 
     public function getIsAvailableAttribute(): bool
     {
@@ -44,14 +42,6 @@ class Book extends Model
             return asset('storage/books/' . $this->image);
         }
         return 'https://placehold.co/300x400/eef2ff/4f46e5?text=' . urlencode($this->title ?? 'Book');
-    }
-
-    public function getDiscountPercentAttribute(): int
-    {
-        if ($this->compare_price && $this->compare_price > $this->price) {
-            return (int) round((($this->compare_price - $this->price) / $this->compare_price) * 100);
-        }
-        return 0;
     }
 
     public function scopeAvailable($query)

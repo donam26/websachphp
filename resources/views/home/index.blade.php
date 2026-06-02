@@ -46,8 +46,8 @@
                                 <span class="hero-tag"><i class="bi bi-truck"></i> Khuyến mãi</span>
                                 <h2>Freeship toàn quốc<br>Đơn từ 250.000đ</h2>
                                 <p>Giao hàng nhanh chóng — Đảm bảo nguyên đai nguyên kiện.</p>
-                                <a href="{{ route('books.index', ['sort' => 'discount']) }}" class="btn btn-light btn-lg">
-                                    <i class="bi bi-tag me-2"></i>Xem khuyến mãi
+                                <a href="{{ route('books.index', ['sort' => 'best_seller']) }}" class="btn btn-light btn-lg">
+                                    <i class="bi bi-fire me-2"></i>Xem sách bán chạy
                                 </a>
                             </div>
                             <div class="hero-decor"><i class="bi bi-truck"></i></div>
@@ -64,21 +64,21 @@
         </div>
         <div class="col-lg-3 d-none d-lg-block">
             <div class="d-flex flex-column gap-3 h-100">
-                <a href="{{ route('books.index') }}" class="side-banner side-banner-amber flex-fill">
+                <a href="{{ route('books.index', ['sort' => 'latest']) }}" class="side-banner side-banner-amber flex-fill">
                     <div>
-                        <small>FREESHIP</small>
-                        <h6>Đơn từ 250K</h6>
-                        <span class="side-link">Mua sắm ngay <i class="bi bi-arrow-right"></i></span>
+                        <small>SÁCH MỚI</small>
+                        <h6>Cập nhật mỗi ngày</h6>
+                        <span class="side-link">Xem ngay <i class="bi bi-arrow-right"></i></span>
                     </div>
-                    <i class="bi bi-truck side-icon"></i>
+                    <i class="bi bi-stars side-icon"></i>
                 </a>
-                <a href="{{ route('books.index', ['sort' => 'discount']) }}" class="side-banner side-banner-indigo flex-fill">
+                <a href="{{ route('books.index', ['sort' => 'best_seller']) }}" class="side-banner side-banner-indigo flex-fill">
                     <div>
-                        <small>GIẢM ĐẾN</small>
-                        <h6>50% sách hot</h6>
-                        <span class="side-link">Săn deal ngay <i class="bi bi-arrow-right"></i></span>
+                        <small>BÁN CHẠY</small>
+                        <h6>Sách hot nhất</h6>
+                        <span class="side-link">Khám phá ngay <i class="bi bi-arrow-right"></i></span>
                     </div>
-                    <i class="bi bi-percent side-icon"></i>
+                    <i class="bi bi-fire side-icon"></i>
                 </a>
             </div>
         </div>
@@ -187,23 +187,6 @@
     </div>
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
         @foreach($bestSellers as $book)
-        <div class="col">
-            @include('books._product-card', ['book' => $book])
-        </div>
-        @endforeach
-    </div>
-</section>
-@endif
-
-{{-- ===== DISCOUNT BOOKS ===== --}}
-@if(isset($discountBooks) && $discountBooks->count())
-<section class="mb-4">
-    <div class="section-header">
-        <h2 class="section-title"><span class="title-icon ico-amber"><i class="bi bi-tag-fill"></i></span>Sách khuyến mãi</h2>
-        <a href="{{ route('books.index', ['sort' => 'discount']) }}" class="section-link">Xem tất cả <i class="bi bi-chevron-right"></i></a>
-    </div>
-    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
-        @foreach($discountBooks as $book)
         <div class="col">
             @include('books._product-card', ['book' => $book])
         </div>

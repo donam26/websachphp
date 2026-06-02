@@ -13,14 +13,11 @@ return new class extends Migration
             $table->string('code')->unique();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->decimal('subtotal', 12, 2)->default(0);
-            $table->decimal('shipping_fee', 12, 2)->default(0);
-            $table->decimal('discount_amount', 12, 2)->default(0);
             $table->decimal('total_amount', 12, 2);
             $table->string('shipping_name');
             $table->string('shipping_phone');
             $table->text('shipping_address');
             $table->text('note')->nullable();
-            $table->foreignId('discount_id')->nullable()->constrained()->nullOnDelete();
             $table->enum('status', ['pending', 'confirmed', 'shipping', 'completed', 'cancelled'])
                 ->default('pending')
                 ->index();

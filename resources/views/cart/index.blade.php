@@ -99,41 +99,15 @@
             <div class="card-body">
                 <h5 class="mb-3">Thông tin đơn hàng</h5>
 
-                <form id="discount-form" class="mb-3">
-                    @csrf
-                    <label class="form-label small text-muted">Mã giảm giá</label>
-                    <div class="input-group">
-                        <input type="text" name="code" id="discount-code-input" class="form-control text-uppercase"
-                               placeholder="Nhập mã" value="{{ $discountCode ?? '' }}">
-                        @if($discountCode)
-                            <button class="btn btn-outline-danger" type="button" id="remove-discount-btn">Bỏ mã</button>
-                        @else
-                            <button class="btn btn-outline-primary" type="submit">Áp dụng</button>
-                        @endif
-                    </div>
-                    <div id="discount-message" class="small mt-2"></div>
-                </form>
-
                 <div class="summary-line">
                     <span>Tạm tính:</span>
                     <span id="subtotal">{{ number_format($subtotal, 0, ',', '.') }}đ</span>
-                </div>
-                <div class="summary-line">
-                    <span>Phí vận chuyển:</span>
-                    <span id="shipping-fee">{{ $shippingFee > 0 ? number_format($shippingFee, 0, ',', '.') . 'đ' : 'Miễn phí' }}</span>
-                </div>
-                <div id="discount-amount-row" class="summary-line" style="{{ $discountAmount > 0 ? '' : 'display:none;' }}">
-                    <span>Giảm giá:</span>
-                    <span class="text-danger" id="discount-amount">-{{ number_format($discountAmount, 0, ',', '.') }}đ</span>
                 </div>
                 <hr>
                 <div class="summary-line total-line">
                     <span>Tổng cộng:</span>
                     <span class="text-primary" id="total-amount">{{ number_format($total, 0, ',', '.') }}đ</span>
                 </div>
-                @if($subtotal < 250000)
-                    <small class="text-muted d-block">Mua thêm {{ number_format(250000 - $subtotal, 0, ',', '.') }}đ để được miễn phí giao hàng</small>
-                @endif
 
                 <form action="{{ route('orders.checkout') }}" method="POST" class="mt-3" id="checkout-form">
                     @csrf
@@ -217,45 +191,4 @@
 </style>
 @endpush
 
-@push('scripts')
-<script>
-$('#discount-form').on('submit', function(e) {
-    e.preventDefault();
-    const form = $(this);
-    const code = $('#discount-code-input').val().trim();
-    if (!code) return;
-
-    $.ajax({
-        url: '{{ route('discounts.apply') }}',
-        type: 'POST',
-        data: { code: code, _token: $('meta[name="csrf-token"]').attr('content') },
-        success: function(res) {
-            const msg = $('#discount-message');
-            if (res.success) {
-                msg.removeClass('text-danger').addClass('text-success').html('<i class="bi bi-check-circle me-1"></i>' + res.message);
-                $('#discount-amount-row').show();
-                $('#discount-amount').text('-' + res.discount.formatted_amount);
-                $('#shipping-fee').text(res.discount.formatted_shipping);
-                $('#total-amount').text(res.discount.formatted_total);
-                setTimeout(() => location.reload(), 800);
-            } else {
-                msg.removeClass('text-success').addClass('text-danger').html('<i class="bi bi-x-circle me-1"></i>' + res.message);
-            }
-        },
-        error: function() {
-            $('#discount-message').addClass('text-danger').text('Lỗi áp dụng mã giảm giá');
-        }
-    });
-});
-
-$('#remove-discount-btn').on('click', function() {
-    $.ajax({
-        url: '{{ route('discounts.remove') }}',
-        type: 'DELETE',
-        data: { _token: $('meta[name="csrf-token"]').attr('content') },
-        success: function() { location.reload(); }
-    });
-});
-</script>
-@endpush
 @endsection

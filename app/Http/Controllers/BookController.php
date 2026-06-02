@@ -62,9 +62,6 @@ class BookController extends Controller
                     ->groupBy('books.id')
                     ->orderByDesc('total_sold');
                 break;
-            case 'discount':
-                $query->where('quantity', '>', 0)->inRandomOrder();
-                break;
             case 'latest':
             default:
                 $query->latest();

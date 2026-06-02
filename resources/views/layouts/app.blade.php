@@ -368,18 +368,6 @@
             transition: transform .4s ease;
         }
         .product-card:hover .product-thumb img { transform: scale(1.05); }
-        .product-card .product-discount {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: var(--accent);
-            color: #fff;
-            font-weight: 700;
-            font-size: 11px;
-            padding: 4px 9px;
-            border-radius: var(--radius-pill);
-            box-shadow: var(--shadow-sm);
-        }
         .product-card .product-body {
             padding: 14px;
             display: flex;
@@ -401,7 +389,6 @@
         .product-card .product-title:hover { color: var(--primary); }
         .product-card .product-author { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
         .product-card .product-price { color: var(--primary); font-weight: 800; font-size: 17px; margin-bottom: 2px; letter-spacing: -.3px; }
-        .product-card .product-old-price { font-size: 12px; color: var(--text-light); text-decoration: line-through; }
         .product-card .product-actions { margin-top: auto; padding-top: 12px; }
 
         .btn-add-cart {
@@ -599,7 +586,6 @@
                 <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}"><i class="bi bi-house-door"></i>Trang chủ</a></li>
                 <li><a href="{{ route('books.index') }}" class="{{ request()->routeIs('books.index') && !request('sort') ? 'active' : '' }}"><i class="bi bi-grid"></i>Tất cả sách</a></li>
                 <li><a href="{{ route('books.index', ['sort' => 'best_seller']) }}"><i class="bi bi-fire"></i>Bán chạy</a></li>
-                <li><a href="{{ route('books.index', ['sort' => 'discount']) }}"><i class="bi bi-tag"></i>Khuyến mãi</a></li>
                 <li><a href="{{ route('books.index', ['sort' => 'latest']) }}"><i class="bi bi-stars"></i>Mới phát hành</a></li>
                 @isset($globalCategories)
                     @foreach($globalCategories->take(6) as $cat)
