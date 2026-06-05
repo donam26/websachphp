@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\Category;
+use App\Models\Order;
+use App\Models\StockImport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -43,6 +46,39 @@ class BookManagementController extends Controller
         $categories = Category::orderBy('name')->get();
 
         return view('admin.books.index', compact('books', 'categories'));
+    }
+
+    public function show(Book $book)
+    {
+        $book->load(['category', 'authors']);
+
+        $completedItems = $book->orderItems()
+            ->whereHas('order', fn ($q) => $q->where('status', Order::STATUS_COMPLETED));
+
+        $soldQuantity = (int) (clone $completedItems)->sum('quantity');
+        $revenue = (float) (clone $completedItems)->sum(DB::raw('price * quantity'));
+
+        $recentReviews = $book->reviews()->with('user')->take(5)->get();
+
+        $importItems = $book->stockImportItems()
+            ->with('stockImport.supplier')
+            ->whereHas('stockImport', fn ($q) => $q->where('status', StockImport::STATUS_COMPLETED))
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $totalImported = (int) $book->stockImportItems()
+            ->whereHas('stockImport', fn ($q) => $q->where('status', StockImport::STATUS_COMPLETED))
+            ->sum('quantity');
+
+        return view('admin.books.show', compact(
+            'book',
+            'soldQuantity',
+            'revenue',
+            'recentReviews',
+            'importItems',
+            'totalImported'
+        ));
     }
 
     public function create()

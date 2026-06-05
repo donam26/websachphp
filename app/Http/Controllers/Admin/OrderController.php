@@ -52,9 +52,14 @@ class OrderController extends Controller
             $query->whereDate('created_at', '<=', $to);
         }
 
-        $orders = $query->latest()->paginate(15)->appends($request->query());
+        $sortable = ['created_at', 'status', 'total_amount'];
+        $sort = in_array($request->input('sort'), $sortable, true) ? $request->input('sort') : 'created_at';
+        $dir = $request->input('dir') === 'asc' ? 'asc' : 'desc';
 
-        return view('admin.orders.index', compact('orders'));
+        $orders = $query->orderBy($sort, $dir)->orderBy('id', 'desc')
+            ->paginate(15)->appends($request->query());
+
+        return view('admin.orders.index', compact('orders', 'sort', 'dir'));
     }
 
     public function show(Order $order)

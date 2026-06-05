@@ -382,6 +382,20 @@
                 </li>
             </ul>
 
+            <div class="sidebar-section">Kho &amp; nhập hàng</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="{{ route('admin.stock-imports.index') }}" class="{{ request()->routeIs('admin.stock-imports.*') ? 'active' : '' }}">
+                        <i class="bi bi-box-arrow-in-down"></i> Phiếu nhập
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.suppliers.index') }}" class="{{ request()->routeIs('admin.suppliers.*') ? 'active' : '' }}">
+                        <i class="bi bi-truck"></i> Nhà cung cấp
+                    </a>
+                </li>
+            </ul>
+
             <div class="sidebar-section">Hệ thống</div>
             <ul class="sidebar-menu">
                 <li>

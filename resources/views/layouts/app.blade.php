@@ -556,12 +556,10 @@
                                     </li>
                                 </ul>
                             </div>
-                            <a href="{{ route('cart.index') }}" class="header-action">
+                            <a href="{{ route('cart.index') }}" class="header-action" id="cartLink">
                                 <i class="bi bi-cart3"></i>
-                                <span class="label"><small>Giỏ hàng</small><strong>{{ number_format(($cartCount ?? 0)) }} sp</strong></span>
-                                @if(($cartCount ?? 0) > 0)
-                                    <span class="cart-badge">{{ $cartCount }}</span>
-                                @endif
+                                <span class="label"><small>Giỏ hàng</small><strong><span id="cartCountText">{{ number_format(($cartCount ?? 0)) }}</span> sp</strong></span>
+                                <span class="cart-badge" id="cartBadge" style="{{ ($cartCount ?? 0) > 0 ? '' : 'display:none;' }}">{{ $cartCount ?? 0 }}</span>
                             </a>
                         @else
                             <a href="{{ route('login') }}" class="header-action">
@@ -671,6 +669,71 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    {{-- Toast notifications --}}
+    <div id="toastContainer" style="position:fixed;top:20px;right:20px;z-index:1090;display:flex;flex-direction:column;gap:10px;"></div>
+    <script>
+        function showToast(message, type) {
+            type = type || 'success';
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const el = document.createElement('div');
+            const bg = type === 'success' ? '#059669' : '#dc2626';
+            const icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill';
+            el.style.cssText = 'min-width:280px;max-width:360px;background:' + bg + ';color:#fff;padding:12px 16px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);display:flex;align-items:center;gap:10px;font-weight:500;opacity:0;transform:translateX(20px);transition:all .25s ease;';
+            el.innerHTML = '<i class="bi ' + icon + '" style="font-size:18px;"></i><span style="flex:1;">' + message + '</span>';
+            container.appendChild(el);
+            requestAnimationFrame(function () { el.style.opacity = '1'; el.style.transform = 'translateX(0)'; });
+            setTimeout(function () {
+                el.style.opacity = '0';
+                el.style.transform = 'translateX(20px)';
+                setTimeout(function () { el.remove(); }, 300);
+            }, 3000);
+        }
+
+        function updateCartCount(count) {
+            if (typeof count === 'undefined' || count === null) return;
+            const text = document.getElementById('cartCountText');
+            const badge = document.getElementById('cartBadge');
+            if (text) text.textContent = new Intl.NumberFormat('vi-VN').format(count);
+            if (badge) {
+                badge.textContent = count;
+                badge.style.display = count > 0 ? '' : 'none';
+            }
+        }
+
+        document.addEventListener('submit', function (e) {
+            const form = e.target;
+            if (!(form instanceof HTMLFormElement)) return;
+            const action = form.getAttribute('action') || '';
+            if (!action.includes('/cart/add')) return;
+            // "Mua ngay" giữ submit thường để chuyển sang giỏ hàng
+            if (e.submitter && e.submitter.name === 'buy_now') return;
+
+            e.preventDefault();
+            const btn = e.submitter || form.querySelector('button[type="submit"]');
+            const original = btn ? btn.innerHTML : '';
+            if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>'; }
+
+            fetch(action, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                body: new FormData(form),
+            })
+            .then(async function (res) {
+                const data = await res.json().catch(function () { return {}; });
+                if (!res.ok || !data.success) {
+                    showToast(data.message || 'Có lỗi xảy ra, vui lòng thử lại', 'error');
+                    return;
+                }
+                showToast(data.message, 'success');
+                updateCartCount(data.cartCount);
+            })
+            .catch(function () { showToast('Không thể kết nối máy chủ', 'error'); })
+            .finally(function () { if (btn) { btn.disabled = false; btn.innerHTML = original; } });
+        });
+    </script>
+
     @stack('scripts')
 </body>
 

@@ -65,14 +65,27 @@ class CartController extends Controller
                 return $book;
             });
         } catch (\RuntimeException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
+            }
             return back()->with('error', $e->getMessage());
+        }
+
+        $message = 'Đã thêm "' . $book->title . '" vào giỏ hàng';
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'cartCount' => auth()->user()->cart()->sum('quantity'),
+            ]);
         }
 
         if ($request->boolean('buy_now')) {
             return redirect()->route('cart.index');
         }
 
-        return back()->with('success', 'Đã thêm "' . $book->title . '" vào giỏ hàng');
+        return back()->with('success', $message);
     }
 
     public function update(Request $request, CartItem $cartItem)

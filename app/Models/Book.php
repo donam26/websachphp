@@ -105,4 +105,9 @@ class Book extends Model
     {
         return $this->hasMany(CartItem::class);
     }
+
+    public function stockImportItems()
+    {
+        return $this->hasMany(StockImportItem::class);
+    }
 }

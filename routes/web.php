@@ -17,6 +17,8 @@ use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\StockImportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -105,6 +107,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/', [BookManagementController::class, 'index'])->name('index');
         Route::get('/create', [BookManagementController::class, 'create'])->name('create');
         Route::post('/', [BookManagementController::class, 'store'])->name('store');
+        Route::get('/{book}', [BookManagementController::class, 'show'])->name('show');
         Route::get('/{book}/edit', [BookManagementController::class, 'edit'])->name('edit');
         Route::put('/{book}', [BookManagementController::class, 'update'])->name('update');
         Route::delete('/{book}', [BookManagementController::class, 'destroy'])->name('destroy');
@@ -123,6 +126,23 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/', [AdminOrderController::class, 'index'])->name('index');
         Route::get('/{order}', [AdminOrderController::class, 'show'])->name('show');
         Route::put('/{order}', [AdminOrderController::class, 'update'])->name('update');
+    });
+
+    // Quản lý nhà cung cấp
+    Route::prefix('suppliers')->name('suppliers.')->group(function () {
+        Route::get('/', [SupplierController::class, 'index'])->name('index');
+        Route::post('/', [SupplierController::class, 'store'])->name('store');
+        Route::put('/{supplier}', [SupplierController::class, 'update'])->name('update');
+        Route::delete('/{supplier}', [SupplierController::class, 'destroy'])->name('destroy');
+    });
+
+    // Quản lý phiếu nhập hàng
+    Route::prefix('stock-imports')->name('stock-imports.')->group(function () {
+        Route::get('/', [StockImportController::class, 'index'])->name('index');
+        Route::get('/create', [StockImportController::class, 'create'])->name('create');
+        Route::post('/', [StockImportController::class, 'store'])->name('store');
+        Route::get('/{stockImport}', [StockImportController::class, 'show'])->name('show');
+        Route::post('/{stockImport}/cancel', [StockImportController::class, 'cancel'])->name('cancel');
     });
 
     // Quản lý người dùng

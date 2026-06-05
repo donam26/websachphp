@@ -3,6 +3,15 @@
 @section('title', 'Quản lý đơn hàng')
 
 @section('content')
+@php
+    $sortLink = function ($column, $label) use ($sort, $dir) {
+        $newDir = ($sort === $column && $dir === 'asc') ? 'desc' : 'asc';
+        $icon = $sort === $column ? ($dir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up';
+        $params = array_merge(request()->query(), ['sort' => $column, 'dir' => $newDir]);
+        $cls = $sort === $column ? 'text-primary' : 'text-muted';
+        return '<a href="' . route('admin.orders.index', $params) . '" class="text-decoration-none text-reset d-inline-flex align-items-center gap-1">' . e($label) . ' <i class="bi ' . $icon . ' small ' . $cls . '"></i></a>';
+    };
+@endphp
 <div class="card mb-3">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -38,11 +47,16 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <input type="date" name="from" class="form-control" value="{{ request('from') }}" placeholder="Từ">
+                    <input type="date" name="from" class="form-control" value="{{ request('from') }}" title="Từ ngày">
                 </div>
-                <div class="col-md-2 d-flex gap-2">
-                    <button type="submit" class="btn btn-outline-primary flex-grow-1"><i class="bi bi-funnel"></i></button>
-                    @if(request()->hasAny(['search', 'status', 'payment_status', 'from', 'to']))
+                <div class="col-md-2">
+                    <input type="date" name="to" class="form-control" value="{{ request('to') }}" title="Đến ngày">
+                </div>
+                @if(request('sort'))<input type="hidden" name="sort" value="{{ request('sort') }}">@endif
+                @if(request('dir'))<input type="hidden" name="dir" value="{{ request('dir') }}">@endif
+                <div class="col-12 d-flex gap-2 justify-content-end">
+                    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-funnel me-1"></i>Lọc</button>
+                    @if(request()->hasAny(['search', 'status', 'payment_status', 'from', 'to', 'sort']))
                         <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></a>
                     @endif
                 </div>
@@ -59,10 +73,10 @@
                     <tr>
                         <th class="ps-3">Mã đơn</th>
                         <th>Khách hàng</th>
-                        <th>Tổng tiền</th>
+                        <th>{!! $sortLink('total_amount', 'Tổng tiền') !!}</th>
                         <th>Thanh toán</th>
-                        <th>Trạng thái</th>
-                        <th>Ngày đặt</th>
+                        <th>{!! $sortLink('status', 'Trạng thái') !!}</th>
+                        <th>{!! $sortLink('created_at', 'Ngày đặt') !!}</th>
                         <th class="text-end pe-3">Thao tác</th>
                     </tr>
                 </thead>

@@ -104,7 +104,7 @@
                             </td>
                             <td class="text-end pe-3">
                                 <div class="btn-group btn-group-sm">
-                                    <a href="{{ route('books.show', $book) }}" target="_blank" class="btn btn-outline-secondary" title="Xem"><i class="bi bi-eye"></i></a>
+                                    <a href="{{ route('admin.books.show', $book) }}" class="btn btn-outline-secondary" title="Chi tiết"><i class="bi bi-eye"></i></a>
                                     <a href="{{ route('admin.books.edit', $book) }}" class="btn btn-outline-primary" title="Sửa"><i class="bi bi-pencil"></i></a>
                                     <form action="{{ route('admin.books.destroy', $book) }}" method="POST" class="d-inline" onsubmit="return confirm('Xoá sách này?')">
                                         @csrf @method('DELETE')
