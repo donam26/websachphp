@@ -109,30 +109,4 @@ class StockImportController extends Controller
 
         return view('admin.stock-imports.show', compact('stockImport'));
     }
-
-    public function cancel(StockImport $stockImport)
-    {
-        if (!$stockImport->canBeCancelled()) {
-            return back()->with('error', 'Phiếu nhập này đã bị hủy trước đó');
-        }
-
-        DB::transaction(function () use ($stockImport) {
-            foreach ($stockImport->items as $item) {
-                if (!$item->book_id) {
-                    continue;
-                }
-                $book = Book::lockForUpdate()->find($item->book_id);
-                if ($book) {
-                    $book->update(['quantity' => max(0, $book->quantity - $item->quantity)]);
-                }
-            }
-
-            $stockImport->update([
-                'status' => StockImport::STATUS_CANCELLED,
-                'cancelled_at' => now(),
-            ]);
-        });
-
-        return back()->with('success', 'Đã hủy phiếu nhập và hoàn lại tồn kho');
-    }
 }

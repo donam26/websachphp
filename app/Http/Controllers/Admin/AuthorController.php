@@ -32,6 +32,27 @@ class AuthorController extends Controller
             ->with('success', 'Đã thêm tác giả "' . $author->name . '"');
     }
 
+    /**
+     * Tạo nhanh một tác giả ngay từ ô "nhập tìm" trên form sách (gọi bằng AJAX).
+     * Trả về JSON {id, name} để Tom Select thêm thành thẻ. Trùng tên thì dùng lại bản ghi cũ.
+     */
+    public function quickStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $name = trim($validated['name']);
+
+        $author = Author::whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->first()
+            ?? Author::create(['name' => $name]);
+
+        return response()->json([
+            'id' => $author->id,
+            'name' => $author->name,
+        ]);
+    }
+
     public function update(Request $request, Author $author)
     {
         $author->update($this->validateData($request));

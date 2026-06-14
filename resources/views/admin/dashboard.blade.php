@@ -5,20 +5,24 @@
 @section('content')
 <div class="row g-3 mb-4">
     <div class="col-md-6 col-xl-3">
-        <div class="stat-card primary">
-            <i class="bi bi-currency-dollar stat-icon"></i>
-            <div class="stat-label">Doanh thu tháng</div>
-            <div class="stat-value">{{ number_format($monthRevenue ?? 0, 0, ',', '.') }}đ</div>
-            <div class="stat-foot"><i class="bi bi-graph-up"></i> Tổng all-time: {{ number_format($totalRevenue ?? 0, 0, ',', '.') }}đ</div>
-        </div>
+        <a href="{{ route('admin.orders.index', ['from' => $startOfMonth->toDateString(), 'to' => $endOfMonth->toDateString()]) }}" class="stat-card-link" title="Xem đơn hàng trong tháng này">
+            <div class="stat-card primary">
+                <i class="bi bi-currency-dollar stat-icon"></i>
+                <div class="stat-label">Doanh thu tháng {{ $startOfMonth->format('n') }}</div>
+                <div class="stat-value">{{ number_format($monthRevenue ?? 0, 0, ',', '.') }}đ</div>
+                <div class="stat-foot"><i class="bi bi-graph-up"></i> Tổng all-time: {{ number_format($totalRevenue ?? 0, 0, ',', '.') }}đ</div>
+            </div>
+        </a>
     </div>
     <div class="col-md-6 col-xl-3">
-        <div class="stat-card warning">
-            <i class="bi bi-receipt stat-icon"></i>
-            <div class="stat-label">Đơn chờ xử lý</div>
-            <div class="stat-value">{{ $pendingOrders ?? 0 }}</div>
-            <div class="stat-foot">Hôm nay có {{ $todayOrders ?? 0 }} đơn mới</div>
-        </div>
+        <a href="{{ route('admin.orders.index', ['status' => \App\Models\Order::STATUS_PENDING]) }}" class="stat-card-link" title="Xem các đơn đang chờ xử lý">
+            <div class="stat-card warning">
+                <i class="bi bi-receipt stat-icon"></i>
+                <div class="stat-label">Đơn chờ xử lý</div>
+                <div class="stat-value">{{ $pendingOrders ?? 0 }}</div>
+                <div class="stat-foot">Hôm nay có {{ $todayOrders ?? 0 }} đơn mới <i class="bi bi-arrow-right-short"></i></div>
+            </div>
+        </a>
     </div>
     <div class="col-md-6 col-xl-3">
         <div class="stat-card success">
@@ -41,7 +45,18 @@
 <div class="row g-3 mb-4">
     <div class="col-lg-8">
         <div class="card h-100">
-            <div class="card-header"><i class="bi bi-bar-chart me-2 text-primary"></i>Doanh thu 14 ngày gần nhất</div>
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span><i class="bi bi-bar-chart me-2 text-primary"></i>Doanh thu theo ngày</span>
+                <form method="GET" action="{{ route('admin.dashboard') }}" class="d-flex align-items-center gap-1 flex-wrap">
+                    <input type="hidden" name="year" value="{{ $year }}">
+                    <input type="hidden" name="top_period" value="{{ $topPeriod }}">
+                    <input type="date" name="rev_from" class="form-control form-control-sm" style="width:148px" value="{{ $revFrom->toDateString() }}" max="{{ $revTo->toDateString() }}">
+                    <span class="text-muted small">→</span>
+                    <input type="date" name="rev_to" class="form-control form-control-sm" style="width:148px" value="{{ $revTo->toDateString() }}">
+                    <button type="submit" class="btn btn-sm btn-primary" title="Xem khoảng đã chọn"><i class="bi bi-funnel"></i></button>
+                    <a href="{{ route('admin.dashboard', ['year' => $year, 'top_period' => $topPeriod]) }}" class="btn btn-sm btn-outline-secondary" title="14 ngày gần nhất"><i class="bi bi-arrow-counterclockwise"></i></a>
+                </form>
+            </div>
             <div class="card-body">
                 <canvas id="revenueChart" height="110"></canvas>
             </div>
@@ -52,6 +67,29 @@
             <div class="card-header"><i class="bi bi-pie-chart me-2 text-primary"></i>Đơn theo trạng thái</div>
             <div class="card-body">
                 <canvas id="statusChart" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span><i class="bi bi-calendar3 me-2 text-primary"></i>Doanh thu 12 tháng năm {{ $year }}</span>
+                <form method="GET" action="{{ route('admin.dashboard') }}">
+                    <input type="hidden" name="rev_from" value="{{ $revFrom->toDateString() }}">
+                    <input type="hidden" name="rev_to" value="{{ $revTo->toDateString() }}">
+                    <input type="hidden" name="top_period" value="{{ $topPeriod }}">
+                    <select name="year" class="form-select form-select-sm" style="width:auto" onchange="this.form.submit()">
+                        @foreach($yearOptions as $y)
+                            <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>Năm {{ $y }}</option>
+                        @endforeach
+                    </select>
+                </form>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyRevenueChart" height="80"></canvas>
             </div>
         </div>
     </div>
@@ -102,9 +140,18 @@
 
     <div class="col-lg-5">
         <div class="card mb-3">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span><i class="bi bi-fire me-2 text-danger"></i>Top sách bán chạy</span>
-                <a href="{{ route('admin.books.index') }}" class="btn btn-sm btn-outline-primary">Quản lý sách</a>
+            <div class="card-header d-flex justify-content-between align-items-center gap-2">
+                <span class="text-nowrap"><i class="bi bi-fire me-2 text-danger"></i>Top bán chạy</span>
+                <form method="GET" action="{{ route('admin.dashboard') }}" class="ms-auto">
+                    <input type="hidden" name="rev_from" value="{{ $revFrom->toDateString() }}">
+                    <input type="hidden" name="rev_to" value="{{ $revTo->toDateString() }}">
+                    <input type="hidden" name="year" value="{{ $year }}">
+                    <select name="top_period" class="form-select form-select-sm" style="width:auto" onchange="this.form.submit()" title="Khoảng thời gian">
+                        <option value="week" {{ $topPeriod === 'week' ? 'selected' : '' }}>7 ngày qua</option>
+                        <option value="month" {{ $topPeriod === 'month' ? 'selected' : '' }}>30 ngày qua</option>
+                        <option value="all" {{ $topPeriod === 'all' ? 'selected' : '' }}>Tất cả</option>
+                    </select>
+                </form>
             </div>
             <div class="card-body p-0">
                 <div class="list-group list-group-flush">
@@ -161,6 +208,9 @@
 
 @push('styles')
 <style>
+.stat-card-link { display: block; text-decoration: none; color: inherit; }
+.stat-card-link .stat-card { transition: transform .2s, box-shadow .2s; }
+.stat-card-link:hover .stat-card { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.12); }
 .top-rank { width: 28px; height: 28px; border-radius: 50%; background: #e5e7eb; color: #6b7280; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
 .top-rank.rank-1 { background: #fbbf24; color: #fff; }
 .top-rank.rank-2 { background: #94a3b8; color: #fff; }
@@ -177,6 +227,7 @@
 <script>
 (function() {
     const revenueData = @json($revenueByDay);
+    const monthlyData = @json($revenueByMonth);
     const statusData = @json($statusDistribution);
     const statusLabels = @json(\App\Models\Order::statusOptions());
 
@@ -213,6 +264,25 @@
             }]
         },
         options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } } }
+    });
+
+    new Chart(document.getElementById('monthlyRevenueChart'), {
+        type: 'bar',
+        data: {
+            labels: monthlyData.labels,
+            datasets: [{
+                label: 'Doanh thu (VND)',
+                data: monthlyData.values,
+                backgroundColor: 'rgba(16,185,129,.75)',
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { ticks: { callback: v => new Intl.NumberFormat('vi-VN').format(v) } }
+            }
+        }
     });
 })();
 </script>

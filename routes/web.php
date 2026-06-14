@@ -116,6 +116,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Quản lý tác giả
     Route::prefix('authors')->name('authors.')->group(function () {
         Route::get('/', [AuthorController::class, 'index'])->name('index');
+        Route::post('/quick-store', [AuthorController::class, 'quickStore'])->name('quick-store');
         Route::post('/', [AuthorController::class, 'store'])->name('store');
         Route::put('/{author}', [AuthorController::class, 'update'])->name('update');
         Route::delete('/{author}', [AuthorController::class, 'destroy'])->name('destroy');
@@ -142,7 +143,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/create', [StockImportController::class, 'create'])->name('create');
         Route::post('/', [StockImportController::class, 'store'])->name('store');
         Route::get('/{stockImport}', [StockImportController::class, 'show'])->name('show');
-        Route::post('/{stockImport}/cancel', [StockImportController::class, 'cancel'])->name('cancel');
     });
 
     // Quản lý người dùng

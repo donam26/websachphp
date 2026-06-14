@@ -10,12 +10,6 @@
     </h5>
     <div class="d-flex gap-2">
         <a href="{{ route('admin.stock-imports.index') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Quay lại</a>
-        @if($stockImport->canBeCancelled())
-            <form action="{{ route('admin.stock-imports.cancel', $stockImport) }}" method="POST" onsubmit="return confirm('Hủy phiếu nhập này? Tồn kho các sách sẽ bị trừ lại tương ứng.')">
-                @csrf
-                <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-circle me-1"></i>Hủy phiếu</button>
-            </form>
-        @endif
     </div>
 </div>
 

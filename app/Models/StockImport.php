@@ -79,9 +79,4 @@ class StockImport extends Model
             self::STATUS_CANCELLED => 'danger',
         ][$this->status] ?? 'secondary';
     }
-
-    public function canBeCancelled(): bool
-    {
-        return $this->status === self::STATUS_COMPLETED;
-    }
 }

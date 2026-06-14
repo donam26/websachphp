@@ -29,7 +29,7 @@
                                 <option value="{{ $author->id }}" {{ collect($selectedAuthors)->contains($author->id) ? 'selected' : '' }}>{{ $author->name }}</option>
                             @endforeach
                         </select>
-                        <small class="text-muted">Giữ Ctrl (⌘ trên Mac) để chọn nhiều tác giả. <a href="{{ route('admin.authors.index') }}" target="_blank">Quản lý tác giả »</a></small>
+                        <small class="text-muted">Gõ tên để tìm tác giả, bấm chọn để thêm. Chưa có? Gõ tên mới rồi chọn <strong>“＋ Thêm tác giả mới”</strong>.</small>
                         @error('author_ids')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                         @error('author_ids.*')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                     </div>
@@ -113,7 +113,10 @@
 </form>
 
 @push('styles')
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
 <style>
+.ts-wrapper.form-select { height: auto; padding: 0; }
+.ts-dropdown .create { color: var(--bs-primary, #4f46e5); }
 .img-preview-wrap {
     border: 2px dashed var(--border);
     border-radius: 10px;
@@ -126,6 +129,7 @@
 @endpush
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 <script>
 function previewImg(e) {
     const file = e.target.files[0];
@@ -136,6 +140,34 @@ function previewImg(e) {
     };
     reader.readAsDataURL(file);
 }
+
+new TomSelect('select[name="author_ids[]"]', {
+    plugins: ['remove_button'],
+    persist: false,
+    maxOptions: null,
+    create: function(input, callback) {
+        fetch('{{ route('admin.authors.quick-store') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ name: input })
+        })
+        .then(r => r.ok ? r.json() : Promise.reject(r))
+        .then(data => callback({ value: data.id, text: data.name }))
+        .catch(() => { alert('Không tạo được tác giả mới, vui lòng thử lại.'); callback(); });
+    },
+    render: {
+        option_create: function(data, escape) {
+            return '<div class="create">＋ Thêm tác giả mới: <strong>' + escape(data.input) + '</strong></div>';
+        },
+        no_results: function() {
+            return '<div class="no-results p-2 text-muted">Không tìm thấy. Gõ tên mới để tạo tác giả.</div>';
+        }
+    }
+});
 </script>
 @endpush
 @endsection
