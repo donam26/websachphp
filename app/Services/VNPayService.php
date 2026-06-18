@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 /**
  * Service tích hợp VNPAY (sandbox / production).
@@ -16,7 +16,6 @@ class VNPayService
     protected string $tmnCode;
     protected string $hashSecret;
     protected string $url;
-    protected string $returnUrl;
     protected string $locale;
 
     public function __construct()
@@ -24,8 +23,25 @@ class VNPayService
         $this->tmnCode    = (string) config('vnpay.tmn_code');
         $this->hashSecret = (string) config('vnpay.hash_secret');
         $this->url        = (string) config('vnpay.url');
-        $this->returnUrl  = (string) (config('vnpay.return_url') ?: URL::to('/vnpay/return'));
         $this->locale     = (string) config('vnpay.locale', 'vn');
+    }
+
+    /**
+     * Xác định Return URL.
+     *
+     * Ưu tiên cấu hình công khai (production). Với giá trị localhost (thường thiếu
+     * cổng, gây redirect sai sau khi thanh toán) thì dùng URL thực tế của request
+     * hiện tại để VNPAY quay về đúng host:port người dùng đang truy cập.
+     */
+    protected function resolveReturnUrl(): string
+    {
+        $configured = (string) config('vnpay.return_url');
+
+        if ($configured !== '' && !Str::contains($configured, ['localhost', '127.0.0.1'])) {
+            return $configured;
+        }
+
+        return url('/vnpay/return');
     }
 
     /**
@@ -51,7 +67,7 @@ class VNPayService
             'vnp_Locale'     => $this->locale,
             'vnp_OrderInfo'  => $orderInfo,
             'vnp_OrderType'  => 'other',
-            'vnp_ReturnUrl'  => $this->returnUrl,
+            'vnp_ReturnUrl'  => $this->resolveReturnUrl(),
             'vnp_TxnRef'     => $vnpTxnRef,
             // Hết hạn thanh toán sau 15 phút (theo chuẩn VNPAY).
             'vnp_ExpireDate' => now()->addMinutes(15)->format('YmdHis'),

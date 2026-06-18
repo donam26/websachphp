@@ -43,7 +43,7 @@
 </div>
 
 <div class="row g-3 mb-4">
-    <div class="col-lg-8">
+    <div class="col-12">
         <div class="card h-100">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <span><i class="bi bi-bar-chart me-2 text-primary"></i>Doanh thu theo ngày</span>
@@ -58,15 +58,7 @@
                 </form>
             </div>
             <div class="card-body">
-                <canvas id="revenueChart" height="110"></canvas>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4">
-        <div class="card h-100">
-            <div class="card-header"><i class="bi bi-pie-chart me-2 text-primary"></i>Đơn theo trạng thái</div>
-            <div class="card-body">
-                <canvas id="statusChart" height="180"></canvas>
+                <canvas id="revenueChart" height="80"></canvas>
             </div>
         </div>
     </div>
@@ -228,8 +220,6 @@
 (function() {
     const revenueData = @json($revenueByDay);
     const monthlyData = @json($revenueByMonth);
-    const statusData = @json($statusDistribution);
-    const statusLabels = @json(\App\Models\Order::statusOptions());
 
     new Chart(document.getElementById('revenueChart'), {
         type: 'line',
@@ -239,6 +229,8 @@
                 label: 'Doanh thu (VND)',
                 data: revenueData.values,
                 fill: true,
+                // monotone: đường nội suy không "võng" xuống dưới 0 giữa các điểm.
+                cubicInterpolationMode: 'monotone',
                 tension: .35,
                 borderColor: '#4f46e5',
                 backgroundColor: 'rgba(79,70,229,.08)',
@@ -248,22 +240,14 @@
         options: {
             plugins: { legend: { display: false } },
             scales: {
-                y: { ticks: { callback: v => new Intl.NumberFormat('vi-VN').format(v) } }
+                // Khoá trục Y bắt đầu từ 0 -> không hiển thị phần âm.
+                y: {
+                    beginAtZero: true,
+                    min: 0,
+                    ticks: { callback: v => new Intl.NumberFormat('vi-VN').format(v) }
+                }
             }
         }
-    });
-
-    const statusKeys = Object.keys(statusData);
-    new Chart(document.getElementById('statusChart'), {
-        type: 'doughnut',
-        data: {
-            labels: statusKeys.map(k => statusLabels[k] || k),
-            datasets: [{
-                data: statusKeys.map(k => statusData[k]),
-                backgroundColor: ['#f59e0b', '#3b82f6', '#4f46e5', '#10b981', '#ef4444'],
-            }]
-        },
-        options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } } }
     });
 
     new Chart(document.getElementById('monthlyRevenueChart'), {
@@ -280,7 +264,11 @@
         options: {
             plugins: { legend: { display: false } },
             scales: {
-                y: { ticks: { callback: v => new Intl.NumberFormat('vi-VN').format(v) } }
+                y: {
+                    beginAtZero: true,
+                    min: 0,
+                    ticks: { callback: v => new Intl.NumberFormat('vi-VN').format(v) }
+                }
             }
         }
     });

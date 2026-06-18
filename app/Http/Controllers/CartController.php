@@ -17,7 +17,7 @@ class CartController extends Controller
         $subtotal = $cartItems->sum(fn ($item) => $item->subtotal);
         $total = $subtotal;
 
-        $paymentMethods = PaymentMethod::active()->orderBy('id')->get();
+        $paymentMethods = PaymentMethod::active()->ordered()->get();
 
         return view('cart.index', compact(
             'cartItems',

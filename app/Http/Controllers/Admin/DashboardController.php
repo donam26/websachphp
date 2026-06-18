@@ -59,11 +59,6 @@ class DashboardController extends Controller
         $revenueByMonth = $this->revenueByMonth($year);
         $yearOptions = range(Carbon::now()->year, self::MIN_YEAR);
 
-        $statusDistribution = Order::select('status', DB::raw('COUNT(*) as total'))
-            ->groupBy('status')
-            ->pluck('total', 'status')
-            ->toArray();
-
         return view('admin.dashboard', compact(
             'totalRevenue',
             'monthRevenue',
@@ -82,7 +77,6 @@ class DashboardController extends Controller
             'revenueByMonth',
             'year',
             'yearOptions',
-            'statusDistribution',
             'startOfMonth',
             'endOfMonth'
         ));

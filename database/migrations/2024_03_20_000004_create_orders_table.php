@@ -21,7 +21,9 @@ return new class extends Migration
             $table->enum('status', ['pending', 'confirmed', 'shipping', 'completed', 'cancelled'])
                 ->default('pending')
                 ->index();
-            $table->enum('payment_method', ['cod', 'vnpay'])->default('cod');
+            // String (không phải enum) để admin thêm phương thức thanh toán động.
+            // Giá trị là 'code' tham chiếu bảng payment_methods.
+            $table->string('payment_method')->default('cod')->index();
             $table->enum('payment_status', ['pending', 'paid', 'failed', 'refunded'])->default('pending');
             $table->string('payment_ref')->nullable();
             $table->timestamp('paid_at')->nullable();

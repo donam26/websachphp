@@ -153,7 +153,15 @@ class VNPayController extends Controller
             return;
         }
 
-        // Chỉ ghi nhận thất bại nếu chưa được thanh toán (tránh ghi đè đơn đã paid).
+        // ResponseCode '00' nhưng TransactionStatus chưa phải '00' => giao dịch còn
+        // đang xử lý/treo. KHÔNG đánh dấu thất bại, giữ nguyên 'pending' để khách
+        // có thể thanh toán lại hoặc chờ IPN cập nhật sau.
+        if ($responseCode === '00') {
+            return;
+        }
+
+        // Mã lỗi rõ ràng từ VNPAY (huỷ, sai OTP, hết hạn...). Chỉ ghi nhận thất bại
+        // nếu đơn chưa được thanh toán (tránh ghi đè đơn đã paid).
         if ($order->payment_status !== Order::PAYMENT_STATUS_PAID) {
             $order->update(['payment_status' => Order::PAYMENT_STATUS_FAILED]);
 

@@ -132,21 +132,15 @@
                     </div>
 
                     <h6 class="mb-2">Phương thức thanh toán</h6>
-                    @php
-                        $pmMeta = [
-                            'cod' => ['icon' => 'bi-cash-coin text-warning', 'desc' => 'Trả tiền mặt khi shipper giao'],
-                            'vnpay' => ['icon' => 'bi-credit-card-2-front text-info', 'desc' => 'Thẻ ATM/Visa/Master/QR'],
-                        ];
-                    @endphp
                     @foreach($paymentMethods as $pm)
                         <label class="payment-option">
-                            <input type="radio" name="payment_method" value="{{ $pm->code }}" {{ old('payment_method', 'cod') === $pm->code ? 'checked' : '' }}>
-                            <i class="bi {{ $pmMeta[$pm->code]['icon'] ?? 'bi-wallet2 text-secondary' }}"></i>
+                            <input type="radio" name="payment_method" value="{{ $pm->code }}" {{ old('payment_method', $loop->first ? $pm->code : null) === $pm->code ? 'checked' : '' }}>
+                            <i class="bi {{ $pm->icon ?: 'bi-wallet2 text-secondary' }}"></i>
                             <div>
                                 <strong>{{ $pm->name }}</strong>
-                                @isset($pmMeta[$pm->code]['desc'])
-                                    <small class="text-muted d-block">{{ $pmMeta[$pm->code]['desc'] }}</small>
-                                @endisset
+                                @if($pm->description)
+                                    <small class="text-muted d-block">{{ $pm->description }}</small>
+                                @endif
                             </div>
                         </label>
                     @endforeach

@@ -380,6 +380,11 @@
                         <i class="bi bi-receipt"></i> Đơn hàng
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('admin.payment-methods.index') }}" class="{{ request()->routeIs('admin.payment-methods.*') ? 'active' : '' }}">
+                        <i class="bi bi-credit-card-2-front"></i> Phương thức thanh toán
+                    </a>
+                </li>
             </ul>
 
             <div class="sidebar-section">Kho &amp; nhập hàng</div>
@@ -457,6 +462,18 @@
                 @if(session('error'))
                     <div class="alert alert-danger alert-dismissible fade show">
                         <i class="bi bi-exclamation-circle me-2"></i>{{ session('error') }}
+                        <button class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+                @if(session('warning'))
+                    <div class="alert alert-warning alert-dismissible fade show">
+                        <i class="bi bi-exclamation-triangle me-2"></i>{{ session('warning') }}
+                        <button class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+                @if(session('info'))
+                    <div class="alert alert-info alert-dismissible fade show">
+                        <i class="bi bi-info-circle me-2"></i>{{ session('info') }}
                         <button class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
