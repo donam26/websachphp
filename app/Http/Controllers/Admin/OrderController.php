@@ -56,7 +56,17 @@ class OrderController extends Controller
         $sort = in_array($request->input('sort'), $sortable, true) ? $request->input('sort') : 'created_at';
         $dir = $request->input('dir') === 'asc' ? 'asc' : 'desc';
 
-        $orders = $query->orderBy($sort, $dir)->orderBy('id', 'desc')
+        if ($sort === 'status') {
+            // Sắp theo đúng luồng xử lý đơn (Chờ xác nhận → ... → Đã huỷ),
+            // không phải theo bảng chữ cái của giá trị chuỗi.
+            $statusOrder = array_keys(Order::statusOptions());
+            $placeholders = implode(',', array_fill(0, count($statusOrder), '?'));
+            $query->orderByRaw("FIELD(status, {$placeholders}) {$dir}", $statusOrder);
+        } else {
+            $query->orderBy($sort, $dir);
+        }
+
+        $orders = $query->orderBy('id', 'desc')
             ->paginate(15)->appends($request->query());
 
         return view('admin.orders.index', compact('orders', 'sort', 'dir'));
