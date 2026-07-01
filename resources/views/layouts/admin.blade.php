@@ -96,12 +96,30 @@
             text-transform: uppercase;
             color: rgba(255,255,255,.4);
         }
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,.2) transparent;
+        }
+        .sidebar-nav::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background-color: rgba(255,255,255,.2);
+            border-radius: 3px;
+        }
+        .sidebar-nav::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(255,255,255,.35);
+        }
         .sidebar-menu {
             list-style: none;
             padding: 0;
             margin: 0;
-            flex: 1;
-            overflow-y: auto;
         }
         .sidebar-menu li a {
             display: flex;
@@ -345,75 +363,77 @@
                 </div>
             </div>
 
-            <div class="sidebar-section">Tổng quan</div>
-            <ul class="sidebar-menu">
-                <li>
-                    <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                        <i class="bi bi-speedometer2"></i> Dashboard
-                    </a>
-                </li>
-            </ul>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">Tổng quan</div>
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                </ul>
 
-            <div class="sidebar-section">Quản lý sách</div>
-            <ul class="sidebar-menu">
-                <li>
-                    <a href="{{ route('admin.books.index') }}" class="{{ request()->routeIs('admin.books.*') ? 'active' : '' }}">
-                        <i class="bi bi-book"></i> Sách
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.categories.index') }}" class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
-                        <i class="bi bi-tags"></i> Danh mục
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.authors.index') }}" class="{{ request()->routeIs('admin.authors.*') ? 'active' : '' }}">
-                        <i class="bi bi-person-lines-fill"></i> Tác giả
-                    </a>
-                </li>
-            </ul>
+                <div class="sidebar-section">Quản lý sách</div>
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="{{ route('admin.books.index') }}" class="{{ request()->routeIs('admin.books.*') ? 'active' : '' }}">
+                            <i class="bi bi-book"></i> Sách
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.categories.index') }}" class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+                            <i class="bi bi-tags"></i> Danh mục
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.authors.index') }}" class="{{ request()->routeIs('admin.authors.*') ? 'active' : '' }}">
+                            <i class="bi bi-person-lines-fill"></i> Tác giả
+                        </a>
+                    </li>
+                </ul>
 
-            <div class="sidebar-section">Bán hàng</div>
-            <ul class="sidebar-menu">
-                <li>
-                    <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
-                        <i class="bi bi-receipt"></i> Đơn hàng
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.payment-methods.index') }}" class="{{ request()->routeIs('admin.payment-methods.*') ? 'active' : '' }}">
-                        <i class="bi bi-credit-card-2-front"></i> Phương thức thanh toán
-                    </a>
-                </li>
-            </ul>
+                <div class="sidebar-section">Bán hàng</div>
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
+                            <i class="bi bi-receipt"></i> Đơn hàng
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.payment-methods.index') }}" class="{{ request()->routeIs('admin.payment-methods.*') ? 'active' : '' }}">
+                            <i class="bi bi-credit-card-2-front"></i> Phương thức thanh toán
+                        </a>
+                    </li>
+                </ul>
 
-            <div class="sidebar-section">Kho &amp; nhập hàng</div>
-            <ul class="sidebar-menu">
-                <li>
-                    <a href="{{ route('admin.stock-imports.index') }}" class="{{ request()->routeIs('admin.stock-imports.*') ? 'active' : '' }}">
-                        <i class="bi bi-box-arrow-in-down"></i> Phiếu nhập
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.suppliers.index') }}" class="{{ request()->routeIs('admin.suppliers.*') ? 'active' : '' }}">
-                        <i class="bi bi-truck"></i> Nhà cung cấp
-                    </a>
-                </li>
-            </ul>
+                <div class="sidebar-section">Kho &amp; nhập hàng</div>
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="{{ route('admin.stock-imports.index') }}" class="{{ request()->routeIs('admin.stock-imports.*') ? 'active' : '' }}">
+                            <i class="bi bi-box-arrow-in-down"></i> Phiếu nhập
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.suppliers.index') }}" class="{{ request()->routeIs('admin.suppliers.*') ? 'active' : '' }}">
+                            <i class="bi bi-truck"></i> Nhà cung cấp
+                        </a>
+                    </li>
+                </ul>
 
-            <div class="sidebar-section">Hệ thống</div>
-            <ul class="sidebar-menu">
-                <li>
-                    <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                        <i class="bi bi-people"></i> Người dùng
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('home') }}">
-                        <i class="bi bi-house"></i> Về trang chủ
-                    </a>
-                </li>
-            </ul>
+                <div class="sidebar-section">Hệ thống</div>
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                            <i class="bi bi-people"></i> Người dùng
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('home') }}">
+                            <i class="bi bi-house"></i> Về trang chủ
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
             <div class="sidebar-footer">
                 v1.0 &mdash; &copy; {{ date('Y') }} BookStore
