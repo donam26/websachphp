@@ -33,12 +33,14 @@
         </div>
     </div>
     <div class="col-md-6 col-xl-3">
-        <div class="stat-card info">
-            <i class="bi bi-people stat-icon"></i>
-            <div class="stat-label">Khách hàng</div>
-            <div class="stat-value">{{ $totalCustomers ?? 0 }}</div>
-            <div class="stat-foot">Đã đăng ký</div>
-        </div>
+        <a href="{{ route('admin.users.index', ['role' => \App\Models\User::ROLE_USER]) }}" class="stat-card-link" title="Xem danh sách khách hàng">
+            <div class="stat-card info">
+                <i class="bi bi-people stat-icon"></i>
+                <div class="stat-label">Khách hàng</div>
+                <div class="stat-value">{{ $totalCustomers ?? 0 }}</div>
+                <div class="stat-foot">Đã đăng ký</div>
+            </div>
+        </a>
     </div>
 </div>
 

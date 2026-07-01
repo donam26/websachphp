@@ -141,9 +141,9 @@
                 <form action="{{ route('admin.orders.update', $order) }}" method="POST">
                     @csrf @method('PUT')
                     <div class="mb-3">
-                        <label class="form-label small">Trạng thái mới</label>
-                        <select name="status" class="form-select" required>
-                            <option value="{{ $order->status }}">— Giữ nguyên ({{ $order->status_label }}) —</option>
+                        <label class="form-label small">Chuyển trạng thái</label>
+                        <select name="status" class="form-select">
+                            <option value="" selected>— Không đổi —</option>
                             @foreach($allowedTransitions as $next)
                                 <option value="{{ $next }}">{{ \App\Models\Order::statusOptions()[$next] }}</option>
                             @endforeach
@@ -153,7 +153,7 @@
                     <div class="mb-3">
                         <label class="form-label small">Trạng thái thanh toán (COD)</label>
                         <select name="payment_status" class="form-select">
-                            <option value="">— Giữ nguyên —</option>
+                            <option value="">— Không đổi —</option>
                             <option value="pending">Chưa thanh toán</option>
                             <option value="paid">Đã thanh toán</option>
                         </select>
@@ -171,7 +171,7 @@
             </div>
         </div>
         @else
-        <div class="alert alert-secondary mb-0"><i class="bi bi-info-circle me-1"></i>Đơn ở trạng thái cuối, không thể thay đổi.</div>
+        <div class="alert alert-secondary mb-0"><i class="bi bi-info-circle me-1"></i>Đơn hàng đã hoàn thành, không thể thay đổi.</div>
         @endif
     </div>
 </div>
