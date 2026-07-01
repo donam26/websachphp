@@ -25,12 +25,14 @@
         </a>
     </div>
     <div class="col-md-6 col-xl-3">
-        <div class="stat-card success">
-            <i class="bi bi-book stat-icon"></i>
-            <div class="stat-label">Tổng số sách</div>
-            <div class="stat-value">{{ $totalBooks ?? 0 }}</div>
-            <div class="stat-foot">{{ $outOfStockBooks ?? 0 }} sách đã hết hàng</div>
-        </div>
+        <a href="{{ route('admin.books.index', ['stock' => 'low']) }}" class="stat-card-link" title="Xem sách sắp hết hàng">
+            <div class="stat-card success">
+                <i class="bi bi-box-seam stat-icon"></i>
+                <div class="stat-label">Sách sắp hết</div>
+                <div class="stat-value">{{ $lowStockCount ?? 0 }}</div>
+                <div class="stat-foot">{{ $outOfStockBooks ?? 0 }} sách đã hết hàng</div>
+            </div>
+        </a>
     </div>
     <div class="col-md-6 col-xl-3">
         <a href="{{ route('admin.users.index', ['role' => \App\Models\User::ROLE_USER]) }}" class="stat-card-link" title="Xem danh sách khách hàng">
@@ -185,17 +187,6 @@
                     @endforelse
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-header"><i class="bi bi-lightning me-2 text-warning"></i>Truy cập nhanh</div>
-    <div class="card-body">
-        <div class="row g-3">
-            <div class="col-md-3 col-6"><a href="{{ route('admin.books.create') }}" class="quick-action"><i class="bi bi-plus-circle text-primary"></i><span>Thêm sách mới</span></a></div>
-            <div class="col-md-3 col-6"><a href="{{ route('admin.orders.index') }}" class="quick-action"><i class="bi bi-receipt text-info"></i><span>Đơn hàng</span></a></div>
-            <div class="col-md-3 col-6"><a href="{{ route('admin.categories.index') }}" class="quick-action"><i class="bi bi-tags text-success"></i><span>Danh mục</span></a></div>
         </div>
     </div>
 </div>

@@ -38,6 +38,7 @@ class DashboardController extends Controller
 
         $totalBooks = Book::count();
         $outOfStockBooks = Book::where('quantity', 0)->count();
+        $lowStockCount = Book::where('quantity', '>', 0)->where('quantity', '<', 5)->count();
         $lowStockBooks = Book::with('category')->where('quantity', '>', 0)->where('quantity', '<', 5)->take(5)->get();
 
         $totalCustomers = User::customers()->count();
@@ -66,6 +67,7 @@ class DashboardController extends Controller
             'pendingOrders',
             'totalBooks',
             'outOfStockBooks',
+            'lowStockCount',
             'lowStockBooks',
             'totalCustomers',
             'recentOrders',
