@@ -47,9 +47,13 @@ class OrderController extends Controller
         ]);
 
         DB::transaction(function () use ($order, $request) {
-            foreach ($order->items as $item) {
-                if ($item->book) {
-                    $item->book->increment('quantity', $item->quantity);
+            // Chỉ hoàn kho nếu đơn đã thực sự trừ kho (đơn VNPAY chưa thanh toán
+            // chưa từng trừ kho -> không hoàn để tránh thổi phồng tồn kho).
+            if ($order->stockWasDeducted()) {
+                foreach ($order->items as $item) {
+                    if ($item->book) {
+                        $item->book->increment('quantity', $item->quantity);
+                    }
                 }
             }
 

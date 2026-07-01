@@ -145,6 +145,17 @@ class Order extends Model
             && $this->payment_status !== self::PAYMENT_STATUS_PAID;
     }
 
+    /**
+     * Kho đã bị trừ hay chưa. Đơn không phải VNPAY (COD...) trừ kho ngay lúc đặt;
+     * đơn VNPAY chỉ trừ kho khi thanh toán thành công. Dùng để quyết định có
+     * hoàn kho khi huỷ đơn hay không (tránh hoàn kho cho đơn chưa từng trừ).
+     */
+    public function stockWasDeducted(): bool
+    {
+        return $this->payment_method !== self::PAYMENT_VNPAY
+            || $this->payment_status === self::PAYMENT_STATUS_PAID;
+    }
+
     public function canBeUpdatedByAdmin(): bool
     {
         return !in_array($this->status, [self::STATUS_COMPLETED, self::STATUS_CANCELLED]);

@@ -75,6 +75,11 @@ class CheckoutController extends Controller
                     'payment_status' => Order::PAYMENT_STATUS_PENDING,
                 ]);
 
+                // Đơn VNPAY chưa trừ kho lúc đặt: chỉ giữ chỗ, kho sẽ bị trừ khi
+                // thanh toán thành công (xem VNPayController). Nhờ vậy đơn VNPAY bị
+                // huỷ/thất bại không ôm kho. Các phương thức khác (COD) trừ kho ngay.
+                $deductStockNow = $validated['payment_method'] !== Order::PAYMENT_VNPAY;
+
                 foreach ($itemsPayload as $row) {
                     OrderItem::create([
                         'order_id' => $order->id,
@@ -84,7 +89,9 @@ class CheckoutController extends Controller
                         'price' => $row['price'],
                     ]);
 
-                    $row['book']->decrement('quantity', $row['quantity']);
+                    if ($deductStockNow) {
+                        $row['book']->decrement('quantity', $row['quantity']);
+                    }
                 }
 
                 OrderHistory::create([

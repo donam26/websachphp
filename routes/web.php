@@ -75,15 +75,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::post('/orders/{order}/repay', [VNPayController::class, 'createPayment'])->name('orders.repay');
 
-    // VNPay return (khách quay về sau khi thanh toán)
-    Route::get('/vnpay/return', [VNPayController::class, 'return'])->name('vnpay.return');
-
     // Đánh giá sách
     Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
-// VNPay IPN (server-to-server, không cần auth/CSRF)
+// VNPay return + IPN: đặt NGOÀI middleware 'auth' để không mất trạng thái khi
+// khách quay về lúc session đã hết hạn. Return không cần đăng nhập vì đã được
+// xác thực bằng chữ ký VNPAY; IPN là server-to-server nên cũng miễn CSRF.
+Route::get('/vnpay/return', [VNPayController::class, 'return'])->name('vnpay.return');
 Route::match(['get', 'post'], '/vnpay/ipn', [VNPayController::class, 'ipn'])->name('vnpay.ipn');
 
 /*

@@ -96,7 +96,10 @@ class OrderController extends Controller
         }
 
         DB::transaction(function () use ($order, $validated, $newStatus) {
-            $shouldRestoreStock = $newStatus === Order::STATUS_CANCELLED && $order->status !== Order::STATUS_CANCELLED;
+            $isCancelling = $newStatus === Order::STATUS_CANCELLED && $order->status !== Order::STATUS_CANCELLED;
+            // Chỉ hoàn kho khi đơn đã thực sự trừ kho (đơn VNPAY chưa thanh toán
+            // chưa từng trừ kho -> không hoàn).
+            $shouldRestoreStock = $isCancelling && $order->stockWasDeducted();
             $shouldMarkPaid = $newStatus === Order::STATUS_COMPLETED
                 && $order->payment_method === Order::PAYMENT_COD
                 && $order->payment_status !== Order::PAYMENT_STATUS_PAID;
@@ -115,15 +118,20 @@ class OrderController extends Controller
                 $updates['paid_at'] = now();
             }
 
+            // Huỷ đơn: luôn đặt cancelled_at và hoàn tiền nếu đã thanh toán,
+            // độc lập với việc có hoàn kho hay không.
+            if ($isCancelling) {
+                $updates['cancelled_at'] = now();
+                if ($order->payment_status === Order::PAYMENT_STATUS_PAID) {
+                    $updates['payment_status'] = Order::PAYMENT_STATUS_REFUNDED;
+                }
+            }
+
             if ($shouldRestoreStock) {
                 foreach ($order->items as $item) {
                     if ($item->book) {
                         $item->book->increment('quantity', $item->quantity);
                     }
-                }
-                $updates['cancelled_at'] = now();
-                if ($order->payment_status === Order::PAYMENT_STATUS_PAID) {
-                    $updates['payment_status'] = Order::PAYMENT_STATUS_REFUNDED;
                 }
             }
 
